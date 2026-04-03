@@ -37,6 +37,27 @@
             <!-- Formular -->
             <VerticalStackLayout Spacing="14">
 
+                <!-- Benutzername -->
+                <VerticalStackLayout Spacing="6">
+                    <Label Text="BENUTZERNAME"
+                           FontSize="11" FontAttributes="Bold"
+                           TextColor="{StaticResource TextMuted}"
+                           CharacterSpacing="1.2" />
+                    <Border BackgroundColor="{StaticResource CardColor}"
+                            Stroke="{StaticResource BorderColor}" StrokeThickness="1"
+                            StrokeShape="RoundRectangle 14" Padding="16,0">
+                        <Entry x:Name="UsernameEntry"
+                               Placeholder="Benutzername"
+                               PlaceholderColor="{StaticResource TextMuted}"
+                               TextColor="{StaticResource TextPrimary}"
+                               FontSize="15"
+                               HeightRequest="50"
+                               BackgroundColor="Transparent"
+                               ReturnType="Next"
+                               Keyboard="Text" />
+                    </Border>
+                </VerticalStackLayout>
+
                 <!-- Passwort -->
                 <VerticalStackLayout Spacing="6">
                     <Label Text="PASSWORT"

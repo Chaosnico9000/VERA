@@ -1,3 +1,5 @@
-<Solution>
+﻿<Solution>
   <Project Path="VERA/VERA.csproj" />
+  <Project Path="VERA.Server/VERA.Server.csproj" />
+  <Project Path="VERA.Shared/VERA.Shared.csproj" />
 </Solution>

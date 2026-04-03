@@ -23,6 +23,13 @@ namespace VERA
             builder.Services.AddSingleton<ITimeTrackingService, TimeTrackingService>();
             builder.Services.AddSingleton<GamificationService>();
             builder.Services.AddSingleton<AccountService>();
+            builder.Services.AddSingleton<ApiClient>(sp =>
+            {
+                var client = new ApiClient();
+                var url = Preferences.Default.Get("server_url", string.Empty);
+                if (!string.IsNullOrEmpty(url)) client.SetBaseUrl(url);
+                return client;
+            });
 
 #if ANDROID
             builder.Services.AddSingleton<INotificationService,

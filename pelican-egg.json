@@ -1,0 +1,72 @@
+{
+  "_comment": "VERA Backend Server – Pelican/Pterodactyl Egg",
+  "meta": {
+    "version": "PTDL_v2",
+    "update_url": null
+  },
+  "exported_at": "2025-01-01T00:00:00+00:00",
+  "name": "VERA Backend",
+  "author": "vera@local",
+  "description": "ASP.NET Core 10 Backend für die VERA Zeiterfassungs-App. SQLite-Datenbank, JWT-Auth, HTTPS.",
+  "features": null,
+  "docker_images": {
+    "mcr.microsoft.com/dotnet/aspnet:10.0": "mcr.microsoft.com/dotnet/aspnet:10.0"
+  },
+  "file_denylist": [],
+  "startup": "dotnet VERA.Server.dll",
+  "config": {
+    "files": "{}",
+    "startup": "{\"done\": \"Now listening on\"}",
+    "logs": "{}",
+    "stop": "^C"
+  },
+  "scripts": {
+    "installation": {
+      "script": "#!/bin/bash\napt-get update -y\napt-get install -y wget unzip\ncd /mnt/server\nwget -q https://github.com/Chaosnico9000/VERA/releases/latest/download/vera-server.zip -O server.zip\nunzip -o server.zip\nrm server.zip\nchmod +x VERA.Server.dll",
+      "container": "mcr.microsoft.com/dotnet/sdk:10.0",
+      "entrypoint": "bash"
+    }
+  },
+  "variables": [
+    {
+      "name": "JWT Secret",
+      "description": "Geheimer Schlüssel für JWT-Tokens. Mind. 32 Zeichen. NIEMALS teilen!",
+      "env_variable": "Jwt__Secret",
+      "default_value": "",
+      "user_viewable": false,
+      "user_editable": false,
+      "rules": "required|string|min:32",
+      "field_type": "text"
+    },
+    {
+      "name": "JWT Issuer",
+      "description": "Issuer für JWT-Tokens (z.B. deine Domain)",
+      "env_variable": "Jwt__Issuer",
+      "default_value": "vera-server",
+      "user_viewable": true,
+      "user_editable": true,
+      "rules": "required|string",
+      "field_type": "text"
+    },
+    {
+      "name": "JWT Audience",
+      "description": "Audience für JWT-Tokens",
+      "env_variable": "Jwt__Audience",
+      "default_value": "vera-app",
+      "user_viewable": true,
+      "user_editable": true,
+      "rules": "required|string",
+      "field_type": "text"
+    },
+    {
+      "name": "Server Port",
+      "description": "Port auf dem der Server läuft",
+      "env_variable": "ASPNETCORE_HTTP_PORTS",
+      "default_value": "8080",
+      "user_viewable": true,
+      "user_editable": true,
+      "rules": "required|numeric|between:1024,65535",
+      "field_type": "text"
+    }
+  ]
+}

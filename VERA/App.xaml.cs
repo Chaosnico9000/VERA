@@ -15,15 +15,19 @@ namespace VERA
 
         protected override Window CreateWindow(IActivationState? activationState)
         {
-            var account = MauiProgram.Services.GetRequiredService<AccountService>();
-            var auth    = MauiProgram.Services.GetRequiredService<IAuthService>();
+            var api  = MauiProgram.Services.GetRequiredService<ApiClient>();
+            var auth = MauiProgram.Services.GetRequiredService<IAuthService>();
 
-            // Kein Account? → Registrierung anzeigen
-            if (!account.AccountExists())
-                return new Window(new NavigationPage(new RegisterPage(account)));
+            // Kein Server konfiguriert oder keine Sitzung → Registrierung/Login
+            var serverUrl = Preferences.Default.Get("server_url", string.Empty);
+            if (string.IsNullOrEmpty(serverUrl))
+                return new Window(new NavigationPage(new RegisterPage(api)));
 
-            // Account vorhanden → Login anzeigen
-            return new Window(new NavigationPage(new LoginPage(account, auth)));
+            if (!api.HasSession)
+                return new Window(new NavigationPage(new LoginPage(api, auth)));
+
+            // Sitzung vorhanden → direkt zur App (Token wird beim ersten API-Call erneuert)
+            return new Window(new AppShell());
         }
 
         protected override void OnSleep()
@@ -38,10 +42,10 @@ namespace VERA
             if (!_lockOnResume) return;
             _lockOnResume = false;
 
-            var account = MauiProgram.Services.GetRequiredService<AccountService>();
-            var auth    = MauiProgram.Services.GetRequiredService<IAuthService>();
+            var api  = MauiProgram.Services.GetRequiredService<ApiClient>();
+            var auth = MauiProgram.Services.GetRequiredService<IAuthService>();
             if (Windows.Count > 0)
-                Windows[0].Page = new NavigationPage(new LoginPage(account, auth));
+                Windows[0].Page = new NavigationPage(new LoginPage(api, auth));
         }
     }
 }

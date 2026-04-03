@@ -1,0 +1,9 @@
+**/bin/
+**/obj/
+**/.vs/
+**/node_modules/
+**/*.user
+**/vera_account.dat
+**/vera_entries.json
+**/vera.db
+VERA/Platforms/

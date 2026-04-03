@@ -1,17 +1,10 @@
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
+using VERA.Shared;
 
 namespace VERA.Services
 {
-    public enum LoginResult
-    {
-        Success,
-        InvalidPassword,
-        NoAccountFound,
-        AccountLocked,
-    }
-
     public class AccountService
     {
         // ── Sicherheitsparameter ──────────────────────────────────────────────

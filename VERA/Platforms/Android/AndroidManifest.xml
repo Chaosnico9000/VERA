@@ -11,7 +11,9 @@
 				 android:exported="false"
 				 android:foregroundServiceType="dataSync" />
 	</application>
-	<!-- Kein INTERNET oder ACCESS_NETWORK_STATE – App funktioniert vollständig offline -->
+	<!-- INTERNET für Backend-Verbindung (nur HTTPS) -->
+	<uses-permission android:name="android.permission.INTERNET" />
+	<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 	<uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
 	<uses-permission android:name="android.permission.FOREGROUND_SERVICE_DATA_SYNC" />
 	<uses-permission android:name="android.permission.POST_NOTIFICATIONS" />

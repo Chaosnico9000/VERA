@@ -36,6 +36,27 @@
                 <!-- Formular -->
                 <VerticalStackLayout Spacing="14">
 
+                    <!-- Server-URL -->
+                    <VerticalStackLayout Spacing="6">
+                        <Label Text="SERVER-URL"
+                               FontSize="11" FontAttributes="Bold"
+                               TextColor="{StaticResource TextMuted}"
+                               CharacterSpacing="1.2" />
+                        <Border BackgroundColor="{StaticResource CardColor}"
+                                Stroke="{StaticResource BorderColor}" StrokeThickness="1"
+                                StrokeShape="RoundRectangle 14" Padding="16,0">
+                            <Entry x:Name="ServerUrlEntry"
+                                   Placeholder="https://dein-server:8080"
+                                   PlaceholderColor="{StaticResource TextMuted}"
+                                   TextColor="{StaticResource TextPrimary}"
+                                   FontSize="14"
+                                   HeightRequest="50"
+                                   BackgroundColor="Transparent"
+                                   Keyboard="Url"
+                                   ReturnType="Next" />
+                        </Border>
+                    </VerticalStackLayout>
+
                     <!-- Benutzername -->
                     <VerticalStackLayout Spacing="6">
                         <Label Text="BENUTZERNAME"

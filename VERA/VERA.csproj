@@ -34,7 +34,7 @@
 		<ApplicationId>com.companyname.vera</ApplicationId>
 
 		<!-- Versions -->
-		<ApplicationDisplayVersion>1.0</ApplicationDisplayVersion>
+		<ApplicationDisplayVersion>1.0.0</ApplicationDisplayVersion>
 		<ApplicationVersion>1</ApplicationVersion>
 
 		<!-- To develop, package, and publish an app to the Microsoft Store, see: https://aka.ms/MauiTemplateUnpackaged -->
@@ -106,6 +106,10 @@
 
 	<ItemGroup Condition="'$(TargetFramework)' == 'net10.0-android'">
 	  <PackageReference Include="Xamarin.AndroidX.Biometric" Version="1.1.0.32" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\VERA.Shared\VERA.Shared.csproj" />
 	</ItemGroup>
 
 </Project>
