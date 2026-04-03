@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    VERA Netzwerk-Sicherheitskonfiguration
+    Alle externen Verbindungen sind blockiert – die App funktioniert vollständig offline.
+    Kein Cleartext-Traffic (HTTP), keine externen Hosts erlaubt.
+-->
+<network-security-config>
+    <!-- Keinerlei Cleartext-Traffic (HTTP) erlaubt -->
+    <base-config cleartextTrafficPermitted="false">
+        <!-- Keine Domains zugelassen – nur lokale Datenspeicherung -->
+        <trust-anchors>
+            <!-- Keine externen CAs – Verbindungen zu fremden Servern werden abgelehnt -->
+        </trust-anchors>
+    </base-config>
+    <!-- Debug-Builds ebenfalls ohne Netzwerkzugang -->
+    <debug-overrides>
+        <trust-anchors>
+            <certificates src="system" />
+        </trust-anchors>
+    </debug-overrides>
+</network-security-config>

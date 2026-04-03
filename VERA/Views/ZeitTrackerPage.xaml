@@ -1,0 +1,466 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:VERA.ViewModels"
+             xmlns:svc="clr-namespace:VERA.Services"
+             xmlns:models="clr-namespace:VERA.Models"
+             x:Class="VERA.Views.ZeitTrackerPage"
+             x:DataType="vm:DashboardViewModel"
+             BackgroundColor="{StaticResource AppBackground}"
+             Title="Zeittracker">
+
+    <ScrollView>
+        <VerticalStackLayout Spacing="0">
+
+            <!-- Header -->
+            <Grid Padding="8,48,20,12" ColumnDefinitions="56,*,Auto">
+                <Button Grid.Column="0"
+                        Text="&#9776;"
+                        FontSize="22"
+                        TextColor="{StaticResource TextPrimary}"
+                        BackgroundColor="Transparent"
+                        Clicked="OnMenuClicked"
+                        VerticalOptions="Center" />
+                <VerticalStackLayout Grid.Column="1" Spacing="1" VerticalOptions="Center">
+                    <Label Text="Zeittracker"
+                           FontSize="22"
+                           FontAttributes="Bold"
+                           TextColor="{StaticResource TextPrimary}" />
+                    <Label Text="Vertrauensarbeitszeit"
+                           FontSize="11"
+                           TextColor="{StaticResource TextMuted}" />
+                </VerticalStackLayout>
+                <Border Grid.Column="2"
+                        BackgroundColor="{StaticResource CardColor}"
+                        Stroke="{StaticResource BorderColor}"
+                        StrokeThickness="1"
+                        StrokeShape="RoundRectangle 10"
+                        Padding="10,6"
+                        VerticalOptions="Center">
+                    <Label x:Name="DateLabel"
+                           FontSize="12"
+                           TextColor="{StaticResource TextSecondary}" />
+                </Border>
+            </Grid>
+
+            <!-- Timer-Karte -->
+            <Border Margin="16,0"
+                    BackgroundColor="{StaticResource CardColor}"
+                    Stroke="{StaticResource BorderColor}"
+                    StrokeThickness="1"
+                    StrokeShape="RoundRectangle 20">
+                <VerticalStackLayout Padding="24,20" Spacing="14">
+
+                    <!-- Grosse Zeitanzeige -->
+                    <Label Text="{Binding TimerDisplay}"
+                           FontSize="46"
+                           FontAttributes="Bold"
+                           TextColor="{StaticResource TextPrimary}"
+                           HorizontalOptions="Center"
+                           CharacterSpacing="3"
+                           FontFamily="OpenSansRegular" />
+
+                    <!-- Laufend-Anzeige mit Startzeit -->
+                    <VerticalStackLayout HorizontalOptions="Center" Spacing="4">
+                        <HorizontalStackLayout HorizontalOptions="Center"
+                                               Spacing="8"
+                                               IsVisible="{Binding IsRunning}">
+                            <Ellipse WidthRequest="8" HeightRequest="8"
+                                     Fill="{StaticResource RunningColor}"
+                                     VerticalOptions="Center" />
+                            <Label Text="L&#228;uft"
+                                   FontSize="13"
+                                   TextColor="{StaticResource RunningColor}" />
+                        </HorizontalStackLayout>
+                        <!-- Startzeit -->
+                        <Label Text="{Binding StartZeit}"
+                               FontSize="12"
+                               TextColor="{StaticResource TextMuted}"
+                               HorizontalOptions="Center"
+                               IsVisible="{Binding IsRunning}" />
+                        <!-- Gesperrt-Hinweis -->
+                        <Label Text="&#128274; Sondertag heute eingetragen"
+                               FontSize="12"
+                               TextColor="{StaticResource Accent}"
+                               HorizontalOptions="Center"
+                               IsVisible="{Binding TimerGesperrt}" />
+                    </VerticalStackLayout>
+
+                    <!-- Start / Stopp -->
+                    <Button Text="{Binding ButtonLabel}"
+                            Command="{Binding ToggleTimerCommand}"
+                            BackgroundColor="{Binding ButtonColor}"
+                            TextColor="{StaticResource TextPrimary}"
+                            FontSize="17"
+                            FontAttributes="Bold"
+                            HeightRequest="54"
+                            CornerRadius="14"
+                            Opacity="{Binding TimerGesperrt, Converter={StaticResource BoolToOpacityConverter}}" />
+
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- Sollzeit-Fortschritt -->
+            <Border Margin="16,14,16,0"
+                    BackgroundColor="{StaticResource CardColor}"
+                    Stroke="{StaticResource BorderColor}"
+                    StrokeThickness="1"
+                    StrokeShape="RoundRectangle 18"
+                    Padding="20,18">
+                <VerticalStackLayout Spacing="12">
+
+                    <Grid ColumnDefinitions="*,Auto">
+                        <VerticalStackLayout Grid.Column="0" Spacing="2">
+                            <Label Text="Tagesfortschritt" FontSize="13" TextColor="{StaticResource TextSecondary}" />
+                            <Label Text="{Binding TodayTotal}"
+                                   FontSize="24"
+                                   FontAttributes="Bold"
+                                   TextColor="{StaticResource TextPrimary}" />
+                        </VerticalStackLayout>
+                        <Border Grid.Column="1"
+                                BackgroundColor="{StaticResource SurfaceColor}"
+                                Stroke="{StaticResource BorderColor}"
+                                StrokeThickness="1"
+                                StrokeShape="RoundRectangle 10"
+                                Padding="12,8"
+                                VerticalOptions="Center">
+                            <Label Text="{Binding PufferDisplay}"
+                                   FontSize="15"
+                                   FontAttributes="Bold"
+                                   TextColor="{Binding PufferColor}" />
+                        </Border>
+                    </Grid>
+
+                    <ProgressBar Progress="{Binding TodayProgress}"
+                                 ProgressColor="{Binding ProgressColor}"
+                                 BackgroundColor="{StaticResource SurfaceColor}"
+                                 HeightRequest="8" />
+
+                    <Grid ColumnDefinitions="*,Auto">
+                        <Label Grid.Column="0"
+                               Text="Sollzeit"
+                               FontSize="12"
+                               TextColor="{StaticResource TextMuted}" />
+                        <Label Grid.Column="1"
+                               Text="{Binding TodayCount, StringFormat='{0} Eintr&#228;ge'}"
+                               FontSize="12"
+                               TextColor="{StaticResource TextMuted}" />
+                    </Grid>
+
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- Urlaub und Feiertag -->
+            <Border Margin="16,14,16,0"
+                    BackgroundColor="{StaticResource CardColor}"
+                    Stroke="{StaticResource BorderColor}"
+                    StrokeThickness="1"
+                    StrokeShape="RoundRectangle 18"
+                    Padding="20,16">
+                <VerticalStackLayout Spacing="10">
+
+                    <Label Text="F&#220;R HEUTE EINTRAGEN"
+                           FontSize="11"
+                           FontAttributes="Bold"
+                           TextColor="{StaticResource TextMuted}"
+                           CharacterSpacing="1.5" />
+
+                    <Grid ColumnDefinitions="*,*,*" ColumnSpacing="8">
+                        <Button Grid.Column="0"
+                                Text="&#127968; Urlaub&#10;ganztags"
+                                Command="{Binding UrlaubGanztagCommand}"
+                                BackgroundColor="{StaticResource SurfaceColor}"
+                                TextColor="{StaticResource TextSecondary}"
+                                FontSize="12"
+                                HeightRequest="56"
+                                CornerRadius="12"
+                                LineBreakMode="WordWrap"
+                                Padding="4,4" />
+                        <Button Grid.Column="1"
+                                Text="&#9748; Urlaub&#10;halbtags"
+                                Command="{Binding UrlaubHalbtagCommand}"
+                                BackgroundColor="{StaticResource SurfaceColor}"
+                                TextColor="{StaticResource TextSecondary}"
+                                FontSize="12"
+                                HeightRequest="56"
+                                CornerRadius="12"
+                                LineBreakMode="WordWrap"
+                                Padding="4,4" />
+                        <Button Grid.Column="2"
+                                Text="&#127881; Feiertag"
+                                Command="{Binding FeiertagCommand}"
+                                BackgroundColor="{StaticResource SurfaceColor}"
+                                TextColor="{StaticResource TextSecondary}"
+                                FontSize="12"
+                                HeightRequest="56"
+                                CornerRadius="12"
+                                Padding="4,4" />
+                    </Grid>
+
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- Gamification-Karte -->
+            <Border x:Name="GamificationCard"
+                    Margin="16,14,16,0"
+                    BackgroundColor="{StaticResource CardColor}"
+                    Stroke="{StaticResource BorderColor}"
+                    StrokeThickness="1"
+                    StrokeShape="RoundRectangle 18"
+                    Padding="20,16">
+                <VerticalStackLayout Spacing="14">
+
+                    <!-- Header: Rang-Badge + Titel -->
+                    <Grid ColumnDefinitions="Auto,*,Auto">
+                        <Border Grid.Column="0"
+                                BackgroundColor="{StaticResource SurfaceColor}"
+                                Stroke="{Binding Gamification.RangFarbe}"
+                                StrokeThickness="1.5"
+                                StrokeShape="RoundRectangle 8"
+                                Padding="8,4"
+                                VerticalOptions="Center">
+                            <Label Text="{Binding Gamification.RangTitel}"
+                                   FontSize="11" FontAttributes="Bold"
+                                   TextColor="{Binding Gamification.RangFarbe}" />
+                        </Border>
+                        <Label Grid.Column="1"
+                               Text="FORTSCHRITT"
+                               FontSize="11" FontAttributes="Bold"
+                               TextColor="{StaticResource TextMuted}"
+                               CharacterSpacing="1.5"
+                               VerticalOptions="Center"
+                               Margin="10,0,0,0" />
+                        <Label Grid.Column="2"
+                               Text="{Binding Gamification.AchievementLabel}"
+                               FontSize="11"
+                               TextColor="{StaticResource TextMuted}"
+                               VerticalOptions="Center" />
+                    </Grid>
+
+                    <!-- Level + Streak -->
+                    <Grid ColumnDefinitions="*,Auto" ColumnSpacing="12">
+                        <VerticalStackLayout Grid.Column="0" Spacing="6">
+                            <HorizontalStackLayout Spacing="10">
+                                <Label x:Name="LevelEmojiLabel"
+                                       Text="{Binding Gamification.LevelEmoji}"
+                                       FontSize="32"
+                                       VerticalOptions="Center" />
+                                <VerticalStackLayout Spacing="2" VerticalOptions="Center">
+                                    <Label Text="{Binding Gamification.LevelTitle}"
+                                           FontSize="17" FontAttributes="Bold"
+                                           TextColor="{StaticResource TextPrimary}" />
+                                    <HorizontalStackLayout Spacing="6">
+                                        <Label FontSize="12" TextColor="{StaticResource TextMuted}">
+                                            <Label.FormattedText>
+                                                <FormattedString>
+                                                    <Span Text="Lvl " TextColor="{StaticResource TextMuted}" FontSize="12"/>
+                                                    <Span Text="{Binding Gamification.Level}" TextColor="{Binding Gamification.RangFarbe}" FontAttributes="Bold" FontSize="13"/>
+                                                </FormattedString>
+                                            </Label.FormattedText>
+                                        </Label>
+                                        <Label Text="·" FontSize="12" TextColor="{StaticResource TextMuted}" VerticalOptions="Center"/>
+                                        <Label Text="{Binding Gamification.ArbeitszeitGesamt}"
+                                               FontSize="12" TextColor="{StaticResource TextMuted}"
+                                               VerticalOptions="Center"/>
+                                    </HorizontalStackLayout>
+                                </VerticalStackLayout>
+                            </HorizontalStackLayout>
+                        </VerticalStackLayout>
+
+                        <!-- Streak-Box -->
+                        <Border Grid.Column="1"
+                                BackgroundColor="{StaticResource SurfaceColor}"
+                                Stroke="{StaticResource BorderColor}"
+                                StrokeThickness="1"
+                                StrokeShape="RoundRectangle 14"
+                                Padding="14,10"
+                                VerticalOptions="Center">
+                            <VerticalStackLayout Spacing="1" HorizontalOptions="Center">
+                                <Label Text="{Binding Gamification.StreakFlame}"
+                                       FontSize="22" HorizontalOptions="Center" />
+                                <Label Text="{Binding Gamification.Streak}"
+                                       FontSize="20" FontAttributes="Bold"
+                                       TextColor="{StaticResource WarningColor}"
+                                       HorizontalOptions="Center" />
+                                <Label Text="Wochen" FontSize="10"
+                                       TextColor="{StaticResource TextMuted}"
+                                       HorizontalOptions="Center" />
+                                <Label Text="{Binding Gamification.BesterStreakLabel}"
+                                       FontSize="9"
+                                       TextColor="{StaticResource TextMuted}"
+                                       HorizontalOptions="Center" />
+                            </VerticalStackLayout>
+                        </Border>
+                    </Grid>
+
+                    <!-- XP-Fortschrittsbalken -->
+                    <VerticalStackLayout Spacing="5">
+                        <Grid ColumnDefinitions="*,Auto">
+                            <Label Grid.Column="0" FontSize="12" TextColor="{StaticResource TextSecondary}">
+                                <Label.FormattedText>
+                                    <FormattedString>
+                                        <Span Text="{Binding Gamification.XPInLevel, StringFormat='{0:N0}'}" TextColor="{Binding Gamification.ProgressColor}" FontAttributes="Bold" FontSize="12"/>
+                                        <Span Text=" / " TextColor="{StaticResource TextMuted}" FontSize="12"/>
+                                        <Span Text="{Binding Gamification.XPForNextLevel, StringFormat='{0:N0}'}" TextColor="{StaticResource TextMuted}" FontSize="12"/>
+                                        <Span Text=" XP" TextColor="{StaticResource TextMuted}" FontSize="12"/>
+                                    </FormattedString>
+                                </Label.FormattedText>
+                            </Label>
+                            <Label Grid.Column="1"
+                                   Text="{Binding Gamification.TotalXPLabel}"
+                                   FontSize="11" TextColor="{StaticResource TextMuted}"
+                                   VerticalOptions="Center"/>
+                        </Grid>
+                        <ProgressBar x:Name="XpProgressBar"
+                                     Progress="{Binding Gamification.LevelProgress}"
+                                     ProgressColor="{Binding Gamification.ProgressColor}"
+                                     BackgroundColor="{StaticResource SurfaceColor}"
+                                     HeightRequest="10" />
+                    </VerticalStackLayout>
+
+                    <!-- Stats-Zeile -->
+                    <Grid ColumnDefinitions="*,*,*" ColumnSpacing="8">
+                        <Border Grid.Column="0" BackgroundColor="{StaticResource SurfaceColor}"
+                                Stroke="{StaticResource BorderColor}" StrokeThickness="1"
+                                StrokeShape="RoundRectangle 10" Padding="10,8">
+                            <VerticalStackLayout Spacing="2" HorizontalOptions="Center">
+                                <Label Text="{Binding Gamification.Arbeitstage}"
+                                       FontSize="16" FontAttributes="Bold"
+                                       TextColor="{StaticResource TextPrimary}"
+                                       HorizontalOptions="Center" />
+                                <Label Text="Tage" FontSize="10"
+                                       TextColor="{StaticResource TextMuted}"
+                                       HorizontalOptions="Center" />
+                            </VerticalStackLayout>
+                        </Border>
+                        <Border Grid.Column="1" BackgroundColor="{StaticResource SurfaceColor}"
+                                Stroke="{StaticResource BorderColor}" StrokeThickness="1"
+                                StrokeShape="RoundRectangle 10" Padding="10,8">
+                            <VerticalStackLayout Spacing="2" HorizontalOptions="Center">
+                                <Label Text="{Binding Gamification.AchievementCount}"
+                                       FontSize="16" FontAttributes="Bold"
+                                       TextColor="{StaticResource WarningColor}"
+                                       HorizontalOptions="Center" />
+                                <Label Text="Erfolge" FontSize="10"
+                                       TextColor="{StaticResource TextMuted}"
+                                       HorizontalOptions="Center" />
+                            </VerticalStackLayout>
+                        </Border>
+                        <Border Grid.Column="2" BackgroundColor="{StaticResource SurfaceColor}"
+                                Stroke="{StaticResource BorderColor}" StrokeThickness="1"
+                                StrokeShape="RoundRectangle 10" Padding="10,8">
+                            <VerticalStackLayout Spacing="2" HorizontalOptions="Center">
+                                <Label Text="{Binding Gamification.ArbeitszeitGesamt}"
+                                       FontSize="16" FontAttributes="Bold"
+                                       TextColor="{StaticResource CyanColor}"
+                                       HorizontalOptions="Center" />
+                                <Label Text="Gesamt" FontSize="10"
+                                       TextColor="{StaticResource TextMuted}"
+                                       HorizontalOptions="Center" />
+                            </VerticalStackLayout>
+                        </Border>
+                    </Grid>
+
+                    <!-- Achievements (nur erreichte) -->
+                    <CollectionView ItemsSource="{Binding Gamification.Achievements}"
+                                    HeightRequest="52">
+                        <CollectionView.ItemsLayout>
+                            <LinearItemsLayout Orientation="Horizontal" ItemSpacing="6"/>
+                        </CollectionView.ItemsLayout>
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate x:DataType="svc:Achievement">
+                                <Border BackgroundColor="{StaticResource SurfaceColor}"
+                                        Stroke="{StaticResource BorderColor}"
+                                        StrokeThickness="1"
+                                        StrokeShape="RoundRectangle 10"
+                                        Padding="10,6"
+                                        Opacity="{Binding Erreicht, Converter={StaticResource BoolToOpacityConverter}}">
+                                    <VerticalStackLayout Spacing="2" HorizontalOptions="Center">
+                                        <Label Text="{Binding Emoji}" FontSize="16" HorizontalOptions="Center" />
+                                        <Label Text="{Binding Titel}" FontSize="8"
+                                               TextColor="{StaticResource TextMuted}"
+                                               HorizontalOptions="Center"
+                                               LineBreakMode="TailTruncation"
+                                               MaximumWidthRequest="60"/>
+                                    </VerticalStackLayout>
+                                </Border>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- Level-Up / Achievement Banner -->
+            <Border x:Name="LevelUpBanner"
+                    Margin="16,8,16,0"
+                    BackgroundColor="#1A3580"
+                    Stroke="{StaticResource Primary}"
+                    StrokeThickness="1"
+                    StrokeShape="RoundRectangle 14"
+                    Padding="16,12"
+                    IsVisible="False"
+                    Opacity="0">
+                <Label x:Name="LevelUpLabel"
+                       Text="🎉 Level Up!"
+                       FontSize="16" FontAttributes="Bold"
+                       TextColor="{StaticResource TextPrimary}"
+                       HorizontalOptions="Center" />
+            </Border>
+
+            <!-- Letzte Eintraege -->
+            <VerticalStackLayout Padding="16,14,16,28" Spacing="8">
+                <Label Text="Zuletzt"
+                       FontSize="17"
+                       FontAttributes="Bold"
+                       TextColor="{StaticResource TextPrimary}"
+                       Margin="4,0,0,4" />
+
+                <CollectionView ItemsSource="{Binding RecentEntries}">
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate x:DataType="models:TimeEntry">
+                            <Border BackgroundColor="{StaticResource CardColor}"
+                                    Stroke="{StaticResource BorderColor}"
+                                    StrokeThickness="1"
+                                    StrokeShape="RoundRectangle 14"
+                                    Margin="0,4"
+                                    Padding="16,12">
+                                <Grid ColumnDefinitions="10,*,Auto" ColumnSpacing="12">
+                                    <Ellipse Grid.Column="0"
+                                             WidthRequest="9" HeightRequest="9"
+                                             Fill="{StaticResource Primary}"
+                                             VerticalOptions="Center" />
+                                    <VerticalStackLayout Grid.Column="1" Spacing="2">
+                                        <Label Text="{Binding Title}"
+                                               FontSize="14"
+                                               FontAttributes="Bold"
+                                               TextColor="{StaticResource TextPrimary}"
+                                               LineBreakMode="TailTruncation" />
+                                        <Label Text="{Binding StartTimeDisplay}"
+                                               FontSize="11"
+                                               TextColor="{StaticResource TextMuted}" />
+                                    </VerticalStackLayout>
+                                    <Label Grid.Column="2"
+                                           Text="{Binding DurationDisplay}"
+                                           FontSize="14"
+                                           FontAttributes="Bold"
+                                           TextColor="{StaticResource SuccessColor}"
+                                           VerticalOptions="Center" />
+                                </Grid>
+                            </Border>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                    <CollectionView.EmptyView>
+                        <Label Text="Starte deinen ersten Timer &#9654;"
+                               FontSize="14"
+                               TextColor="{StaticResource TextMuted}"
+                               HorizontalOptions="Center"
+                               Margin="0,16" />
+                    </CollectionView.EmptyView>
+                </CollectionView>
+            </VerticalStackLayout>
+
+        </VerticalStackLayout>
+    </ScrollView>
+
+</ContentPage>
