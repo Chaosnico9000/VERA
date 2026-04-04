@@ -92,4 +92,24 @@ app.Use(async (ctx, next) =>
 
 app.MapControllers();
 
+app.Lifetime.ApplicationStarted.Register(() =>
+{
+    var logger    = app.Services.GetRequiredService<ILogger<Program>>();
+    var endpoints = app.Services.GetRequiredService<IEnumerable<EndpointDataSource>>()
+                       .SelectMany(s => s.Endpoints)
+                       .OfType<RouteEndpoint>()
+                       .OrderBy(e => e.RoutePattern.RawText);
+
+    logger.LogInformation("──────────── Registrierte Endpoints ────────────");
+    foreach (var ep in endpoints)
+    {
+        var methods = ep.Metadata.GetMetadata<HttpMethodMetadata>()?.HttpMethods
+                      ?? ["*"];
+        logger.LogInformation("  [{Methods}] /{Route}",
+            string.Join(", ", methods),
+            ep.RoutePattern.RawText);
+    }
+    logger.LogInformation("─────────────────────────────────────────────────");
+});
+
 app.Run();
