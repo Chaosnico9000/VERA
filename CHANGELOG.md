@@ -11,7 +11,15 @@ dieses Projekt hält sich an [Semantic Versioning](https://semver.org/lang/de/).
 
 ---
 
-## [1.0.2] - 2025-07-06
+## [1.0.3] - 2025-07-06
+
+### Fixed
+- Pelican Egg Installationsskript: `mv vera-server/* .` hinzugefügt, damit Dateien direkt in `/mnt/server/` liegen statt im Unterordner `vera-server/`
+- `chmod +x VERA.Server.dll` schlug fehl, weil die DLL im falschen Verzeichnis gesucht wurde
+
+---
+
+## [1.0.2]
 
 ### Fixed
 - GitHub Actions 403-Fehler beim Release-Erstellen: `actions: read`-Permission ergänzt
