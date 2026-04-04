@@ -39,6 +39,21 @@ namespace VERA.Views
             await LoginButton.ScaleTo(0.96, 80);
             await LoginButton.ScaleTo(1.0,  80);
 
+            var compat = await _api.CheckServerAsync();
+            if (compat != ServerCompatibility.Ok)
+            {
+                var msg = compat switch
+                {
+                    ServerCompatibility.Unreachable  => "Server nicht erreichbar. Bitte Server-URL in den Einstellungen prüfen.",
+                    ServerCompatibility.ClientTooOld => "Diese App-Version wird vom Server nicht mehr unterstützt. Bitte aktualisieren.",
+                    ServerCompatibility.ServerTooOld => "Der Server ist veraltet. Bitte den Server aktualisieren.",
+                    _                                => "Verbindungsfehler."
+                };
+                ShowError(msg);
+                LoginButton.IsEnabled = true;
+                return;
+            }
+
             var (result, error) = await _api.LoginAsync(username, password);
             switch (result)
             {

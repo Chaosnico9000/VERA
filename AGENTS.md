@@ -27,7 +27,7 @@ VERA.Client/                 ← .NET 10 MAUI App (Android primär)
   App.xaml.cs                ← Startup: Server-URL-Check → RegisterPage/LoginPage/AppShell
   MauiProgram.cs             ← DI: ApiClient, AccountService, GamificationService
   Services/
-    ApiClient.cs             ← HTTP-Client, JWT-Refresh transparent
+    ApiClient.cs             ← HTTP-Client, JWT-Refresh transparent, X-Client-Version Header, CheckServerAsync()
     AccountService.cs        ← Lokale Accounts (PBKDF2, nur Fallback)
     GamificationService.cs   ← 30 Level, exponentielle XP, 18 Achievements, 5 Ränge
     TimeTrackingService.cs   ← Lokaler JSON-Speicher, atomare Schreiboperationen
@@ -44,6 +44,7 @@ VERA.Server/                 ← ASP.NET Core 10 Web API
   Controllers/
     AuthController.cs        ← /api/auth (register, login, refresh, logout, change-password)
     TimeEntriesController.cs ← /api/entries (GET, POST, DELETE, POST sync)
+    InfoController.cs        ← /api/info (GET, keine Auth) — Server-Version + MinClientVersion
   Services/
     AuthService.cs           ← PBKDF2-SHA256, JWT-Ausgabe, Refresh-Rotation, Lockout
   Data/
@@ -53,7 +54,8 @@ VERA.Server/                 ← ASP.NET Core 10 Web API
   appsettings.json           ← DataDirectory, Jwt-Konfiguration
 
 VERA.Shared/                 ← .NET 10 Class Library (Single Source of Truth)
-  Dto/ApiDtos.cs             ← RegisterRequest, LoginRequest, AuthResponse, TimeEntryDto, ...
+  Dto/ApiDtos.cs             ← RegisterRequest, LoginRequest, AuthResponse, TimeEntryDto, ServerInfoResponse, ...
+  AppVersion.cs              ← Versionskonstanten: Current, MinServerVersion, MinClientVersion
   LoginResult.cs             ← Enum: Success, InvalidPassword, NoAccountFound, AccountLocked
 
 Dockerfile                   ← Multi-Stage Build, Non-Root User vera (uid 1001), Port 8080
@@ -92,7 +94,7 @@ Format: **`MAJOR.MINOR.PATCH`**
 
 > Kein manuelles `git tag` nötig.
 
-**Aktuelle Version: `1.0.0`**
+**Aktuelle Version: `1.1.0`**
 
 ---
 
@@ -172,6 +174,8 @@ Das `CHANGELOG.md` folgt dem [Keep a Changelog](https://keepachangelog.com/de/1.
 4. **EF Core Migrations:** Änderungen an `Entities.cs` erfordern neue Migration + `db.Database.Migrate()` läuft automatisch beim Serverstart
 5. **pelican-egg.json Install-Script:** Referenziert GitHub-Releases-URL → muss aktuell sein, wenn Releases veröffentlicht werden
 6. **Android minSdkVersion:** 23 (Android 6.0) — Biometric-NuGet ist Android-only
+7. **`AppVersion.Current`** muss mit `ApplicationDisplayVersion` in `VERA.Client.csproj` übereinstimmen — bei Versionserhöhung beide aktualisieren
+8. **`GET /api/info`** ist bewusst ohne `[Authorize]` — wird vor dem Login aufgerufen
 
 ---
 

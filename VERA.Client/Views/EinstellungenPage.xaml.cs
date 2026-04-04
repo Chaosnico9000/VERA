@@ -1,4 +1,5 @@
 using VERA.Services;
+using VERA.Shared;
 using VERA.ViewModels;
 
 namespace VERA.Views
@@ -21,6 +22,31 @@ namespace VERA.Views
             Preferences.Default.Set("server_url", url);
             var client = MauiProgram.Services.GetRequiredService<ApiClient>();
             if (!string.IsNullOrEmpty(url)) client.SetBaseUrl(url);
+        }
+
+        private async void OnTestConnectionClicked(object? sender, EventArgs e)
+        {
+            var url = ServerUrlEntry.Text?.Trim() ?? string.Empty;
+            if (string.IsNullOrEmpty(url))
+            {
+                await DisplayAlert("Fehler", "Bitte zuerst eine Server-URL eingeben.", "OK");
+                return;
+            }
+
+            Preferences.Default.Set("server_url", url);
+            var client = MauiProgram.Services.GetRequiredService<ApiClient>();
+            client.SetBaseUrl(url);
+
+            var result = await client.CheckServerAsync();
+            var msg = result switch
+            {
+                ServerCompatibility.Ok           => "✅ Verbindung erfolgreich!",
+                ServerCompatibility.ServerTooOld => $"⚠️ Server-Version zu alt. Mindestens v{AppVersion.MinServerVersion} wird benötigt.",
+                ServerCompatibility.ClientTooOld => "⚠️ Diese App-Version wird nicht mehr unterstützt. Bitte aktualisieren.",
+                ServerCompatibility.Unreachable  => "❌ Server nicht erreichbar. URL oder Netzwerk prüfen.",
+                _                                => "Unbekannter Fehler."
+            };
+            await DisplayAlert("Verbindungstest", msg, "OK");
         }
 
         private async void OnChangePasswordClicked(object? sender, EventArgs e)

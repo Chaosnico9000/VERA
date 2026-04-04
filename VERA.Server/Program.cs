@@ -5,6 +5,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using VERA.Server.Data;
 using VERA.Server.Services;
+using VERA.Shared;
+using VERA.Shared.Dto;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -58,6 +60,28 @@ app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
 
+// Veraltete Clients abweisen (426 Upgrade Required)
+app.Use(async (ctx, next) =>
+{
+    if (!ctx.Request.Path.StartsWithSegments("/api/info") &&
+        ctx.Request.Headers.TryGetValue("X-Client-Version", out var clientVersionHeader))
+    {
+        var headerValue = clientVersionHeader.FirstOrDefault();
+        if (headerValue != null &&
+            Version.TryParse(headerValue,                   out var clientVer) &&
+            Version.TryParse(AppVersion.MinClientVersion,   out var minVer)    &&
+            clientVer < minVer)
+        {
+            ctx.Response.StatusCode = 426;
+            await ctx.Response.WriteAsJsonAsync(new ApiError(
+                "UPDATE_REQUIRED",
+                $"Client-Version {headerValue} wird nicht mehr unterstützt. Mindestversion: {AppVersion.MinClientVersion}"));
+            return;
+        }
+    }
+    await next();
+});
+
 // Einfaches IP-basiertes Rate Limiting für Auth-Endpoints
 var rateLimitStore = new ConcurrentDictionary<string, (int Count, DateTime Window)>();
 app.Use(async (ctx, next) =>
@@ -100,6 +124,8 @@ app.Lifetime.ApplicationStarted.Register(() =>
                        .OfType<RouteEndpoint>()
                        .OrderBy(e => e.RoutePattern.RawText);
 
+    logger.LogInformation("──────────── VERA Server v{Version} ────────────", AppVersion.Current);
+    logger.LogInformation("  Min. Client-Version : {Min}", AppVersion.MinClientVersion);
     logger.LogInformation("──────────── Registrierte Endpoints ────────────");
     foreach (var ep in endpoints)
     {

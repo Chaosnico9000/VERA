@@ -11,6 +11,25 @@ dieses Projekt hält sich an [Semantic Versioning](https://semver.org/lang/de/).
 
 ---
 
+## [1.1.0] - 2026-04-04
+
+### Added
+- `VERA.Shared/AppVersion.cs` — zentrale Versionskonstanten (`Current`, `MinServerVersion`, `MinClientVersion`) als Single Source of Truth für Client und Server
+- `ServerInfoResponse`-DTO in `VERA.Shared/Dto/ApiDtos.cs`
+- `GET /api/info` Endpoint (`InfoController`) — liefert Server-Version und Min-Client-Version ohne Authentifizierung
+- `ServerCompatibility`-Enum in `ApiClient` (`Ok`, `ServerTooOld`, `ClientTooOld`, `Unreachable`)
+- `ApiClient.CheckServerAsync()` — prüft Erreichbarkeit und beidseitige Versionskompatibilität
+- `X-Client-Version`-Header wird bei jedem HTTP-Request automatisch mitgesendet
+- Server-Middleware: veraltete Clients (Header `< MinClientVersion`) erhalten `426 Upgrade Required`
+- Login-Guard in `LoginPage`: Versionscheck vor jedem Login-Versuch mit klarer Fehlermeldung
+- „🔌 Verbindung testen"-Button in den Einstellungen — testet Erreichbarkeit und Versionskompatibilität und zeigt Ergebnis als Alert
+- Startup-Log zeigt Server-Version und Min-Client-Version zusätzlich zu den Endpoints
+
+### Changed
+- Pelican Egg Installationsskript: `set -e` entfernt, `rm`-Befehle zusammengefasst, `chmod +x VERA.Server` hinzugefügt
+
+---
+
 ## [1.0.8] - 2025-07-06
 
 ### Changed

@@ -40,4 +40,8 @@ namespace VERA.Shared.Dto
         [Range(0, 10)] int Type);
 
     public record ApiError(string Code, string Message);
+
+    public record ServerInfoResponse(
+        string ServerVersion,
+        string MinClientVersion);
 }

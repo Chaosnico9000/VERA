@@ -171,6 +171,12 @@
                                    Keyboard="Url"
                                    Completed="OnServerUrlCompleted" />
                         </Border>
+                        <Button Text="🔌  Verbindung testen"
+                                Clicked="OnTestConnectionClicked"
+                                BackgroundColor="{StaticResource SurfaceColor}"
+                                TextColor="{StaticResource CyanColor}"
+                                FontSize="13" HeightRequest="40"
+                                CornerRadius="10" Margin="0,2,0,0" />
                     </VerticalStackLayout>
                     <BoxView HeightRequest="1" BackgroundColor="{StaticResource BorderColor}" />
                     <Button Text="🔑  Passwort ändern"

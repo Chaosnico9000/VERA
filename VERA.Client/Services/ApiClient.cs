@@ -5,6 +5,8 @@ using VERA.Shared.Dto;
 
 namespace VERA.Services
 {
+    public enum ServerCompatibility { Ok, ServerTooOld, ClientTooOld, Unreachable }
+
     public class ApiClient
     {
         private readonly HttpClient _http;
@@ -21,6 +23,7 @@ namespace VERA.Services
             {
                 Timeout = TimeSpan.FromSeconds(15)
             };
+            _http.DefaultRequestHeaders.Add("X-Client-Version", AppVersion.Current);
             // Refresh-Token aus sicherem Speicher laden
             _refreshToken = Preferences.Default.Get(PrefKeyRefresh, string.Empty);
             if (string.IsNullOrEmpty(_refreshToken)) _refreshToken = null;
@@ -34,7 +37,29 @@ namespace VERA.Services
         public bool HasSession => _refreshToken != null;
         public string? Username => Preferences.Default.Get(PrefKeyUsername, string.Empty);
 
-        // ── Auth ──────────────────────────────────────────────────────────────
+        // ── Serververbindung & Versionscheck ──────────────────────────────────
+
+        public async Task<ServerCompatibility> CheckServerAsync()
+        {
+            try
+            {
+                var info = await _http.GetFromJsonAsync<ServerInfoResponse>("api/info");
+                if (info is null) return ServerCompatibility.Unreachable;
+
+                if (Version.TryParse(info.ServerVersion,        out var serverVer) &&
+                    Version.TryParse(AppVersion.MinServerVersion, out var minServer) &&
+                    serverVer < minServer)
+                    return ServerCompatibility.ServerTooOld;
+
+                if (Version.TryParse(info.MinClientVersion, out var minClient) &&
+                    Version.TryParse(AppVersion.Current,    out var clientVer) &&
+                    clientVer < minClient)
+                    return ServerCompatibility.ClientTooOld;
+
+                return ServerCompatibility.Ok;
+            }
+            catch { return ServerCompatibility.Unreachable; }
+        }
 
         public async Task<(bool Ok, string Error)> RegisterAsync(string username, string password)
         {
