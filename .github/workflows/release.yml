@@ -2,16 +2,27 @@ name: Release VERA Server
 
 on:
   push:
-    tags:
-      - "v*.*.*"   # Trigger bei Tags wie v1.0.0, v1.1.0, ...
+    branches:
+      - master
+      - main
 
 jobs:
   build-and-release:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write   # Nötig um Releases und Tags anzulegen
 
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
+      - name: Version aus VERA.csproj auslesen
+        id: version
+        run: |
+          VERSION=$(grep -oP '(?<=<ApplicationDisplayVersion>)[^<]+' VERA/VERA.csproj)
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "tag=v$VERSION" >> $GITHUB_OUTPUT
+          echo "Detected version: $VERSION"
 
       - name: Setup .NET 10
         uses: actions/setup-dotnet@v4
@@ -31,13 +42,23 @@ jobs:
           cd publish
           zip -r ../vera-server.zip vera-server/
 
+      - name: Git-Tag setzen (falls noch nicht vorhanden)
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git tag ${{ steps.version.outputs.tag }} || echo "Tag existiert bereits, wird überschrieben"
+          git push origin ${{ steps.version.outputs.tag }} --force
+
       - name: GitHub Release erstellen & ZIP hochladen
         uses: softprops/action-gh-release@v2
         with:
+          tag_name: ${{ steps.version.outputs.tag }}
           files: vera-server.zip
-          name: "VERA ${{ github.ref_name }}"
+          name: "VERA ${{ steps.version.outputs.version }}"
           body: |
-            ## VERA Server ${{ github.ref_name }}
+            ## VERA Server ${{ steps.version.outputs.version }}
+
+            Automatisch gebaut aus Branch `${{ github.ref_name }}` — Commit `${{ github.sha }}`
 
             ### Installation (Pelican/Pterodactyl)
             Das Egg (`pelican-egg.json`) lädt diese ZIP automatisch beim Server-Start herunter.
@@ -50,5 +71,6 @@ jobs:
             ```
 
             Siehe [Deployment-Guide](https://github.com/Chaosnico9000/VERA/blob/master/docs/DEPLOYMENT.md) für Details.
+          make_latest: true
           draft: false
           prerelease: false
