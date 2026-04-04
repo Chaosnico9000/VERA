@@ -11,7 +11,16 @@ dieses Projekt hält sich an [Semantic Versioning](https://semver.org/lang/de/).
 
 ---
 
-## [1.4.3] - 2026-04-05
+## [1.5.0] - 2026-04-05
+
+### Added
+- **Live-Uhrzeit im Header:** Die aktuelle Uhrzeit wird im Datums-Badge rechts oben sekündlich aktualisiert — unabhängig vom Gerätedisplay immer im Blick.
+- **Pausen-Vorschlag:** Die App erkennt automatisch, wenn du heute ≥ 5 Stunden 30 Minuten ohne erkennbare Pause gearbeitet hast, und blendet einen grünen Hinweis-Banner ein. Der Banner lässt sich per ✕ schließen und meldet sich danach alle 2 Stunden erneut.
+- **Wochenübersicht:** Eine neue Karte auf der Hauptseite zeigt die Summe der letzten 7 Tage in Stunden, einen Fortschrittsbalken gegenüber dem 5-Tage-Wochenziel und den Puffer (grün = Überstunden, lila = noch offen).
+
+---
+
+## [1.4.3]
 
 ### Added
 - **In-App Update-Installer (Android):** Die App lädt Updates jetzt direkt herunter und startet den Android-System-Installer automatisch — kein manueller Browser-Download mehr nötig. Fortschritt wird im Update-Button angezeigt. Funktioniert sowohl beim App-Start-Dialog als auch über Einstellungen → Über die App.

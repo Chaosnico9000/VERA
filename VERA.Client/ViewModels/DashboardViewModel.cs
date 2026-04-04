@@ -1,4 +1,4 @@
-﻿using System.Collections.ObjectModel;
+using System.Collections.ObjectModel;
 using System.Windows.Input;
 using VERA.Models;
 using VERA.Services;
@@ -11,6 +11,7 @@ namespace VERA.ViewModels
         private readonly INotificationService _notification;
         private TimeEntry? _activeEntry;
         private string _timerDisplay = "00:00:00";
+        private string _uhrzeitDisplay = string.Empty;
         private bool _isRunning;
         private string _todayTotal = "0m";
         private int _todayCount;
@@ -20,8 +21,23 @@ namespace VERA.ViewModels
         private Color _pufferColor = Color.FromArgb("#8FA0DC");
         private string _startZeit = string.Empty;
         private bool _sondertagHeuteVorhanden;
+
+        // Pausen-Vorschlag
+        private bool _pausenVorschlagSichtbar;
+        private string _pausenVorschlagText = string.Empty;
+
+        // Wochenübersicht
+        private string _wochenStundenDisplay = "0h 00m";
+        private string _wochenZielDisplay = "0h";
+        private string _wochenPufferDisplay = "\u00b10h 00m";
+        private Color _wochenPufferFarbe = Color.FromArgb("#8FA0DC");
+        private double _wochenProgress;
+
         private IDispatcherTimer? _ticker;
         private GamificationViewModel? _gamification;
+
+        // Zustand für Pausen-Erkennung: letzte Gesamtminuten beim letzten Vorschlags-Check
+        private double _lastPausenCheckMinuten = -1;
 
         public DashboardViewModel(ITimeTrackingService service, INotificationService notification)
         {
@@ -31,6 +47,7 @@ namespace VERA.ViewModels
             UrlaubGanztagCommand = new Command(async () => await AddSonderTagAsync(EntryType.UrlaubGanztag));
             UrlaubHalbtagCommand = new Command(async () => await AddSonderTagAsync(EntryType.UrlaubHalbtag));
             FeiertagCommand = new Command(async () => await AddSonderTagAsync(EntryType.Feiertag));
+            PauseAbweisenCommand = new Command(() => PausenVorschlagSichtbar = false);
         }
 
         // Wird von ZeitTrackerPage gesetzt (vermeidet zirkuläre DI)
@@ -44,6 +61,12 @@ namespace VERA.ViewModels
         {
             get => _timerDisplay;
             private set => SetProperty(ref _timerDisplay, value);
+        }
+
+        public string UhrzeitDisplay
+        {
+            get => _uhrzeitDisplay;
+            private set => SetProperty(ref _uhrzeitDisplay, value);
         }
 
         public bool IsRunning
@@ -124,15 +147,61 @@ namespace VERA.ViewModels
             ? Color.FromArgb("#8240CE")
             : Color.FromArgb("#3566E5");
 
+        // ── Pausen-Vorschlag ────────────────────────────────────────────────
+        public bool PausenVorschlagSichtbar
+        {
+            get => _pausenVorschlagSichtbar;
+            private set => SetProperty(ref _pausenVorschlagSichtbar, value);
+        }
+
+        public string PausenVorschlagText
+        {
+            get => _pausenVorschlagText;
+            private set => SetProperty(ref _pausenVorschlagText, value);
+        }
+
+        // ── Wochenübersicht ────────────────────────────────────────────────
+        public string WochenStundenDisplay
+        {
+            get => _wochenStundenDisplay;
+            private set => SetProperty(ref _wochenStundenDisplay, value);
+        }
+
+        public string WochenZielDisplay
+        {
+            get => _wochenZielDisplay;
+            private set => SetProperty(ref _wochenZielDisplay, value);
+        }
+
+        public string WochenPufferDisplay
+        {
+            get => _wochenPufferDisplay;
+            private set => SetProperty(ref _wochenPufferDisplay, value);
+        }
+
+        public Color WochenPufferFarbe
+        {
+            get => _wochenPufferFarbe;
+            private set => SetProperty(ref _wochenPufferFarbe, value);
+        }
+
+        public double WochenProgress
+        {
+            get => _wochenProgress;
+            private set => SetProperty(ref _wochenProgress, value);
+        }
+
         public ObservableCollection<TimeEntry> RecentEntries { get; } = [];
 
         public ICommand ToggleTimerCommand { get; }
         public ICommand UrlaubGanztagCommand { get; }
         public ICommand UrlaubHalbtagCommand { get; }
         public ICommand FeiertagCommand { get; }
+        public ICommand PauseAbweisenCommand { get; }
 
         public async Task InitializeAsync()
         {
+            UhrzeitDisplay = DateTime.Now.ToString("HH:mm:ss");
             var active = await _service.GetActiveEntryAsync();
             if (active != null)
             {
@@ -156,6 +225,8 @@ namespace VERA.ViewModels
                 IsRunning = false;
                 TimerDisplay = "00:00:00";
                 StartZeit = string.Empty;
+                PausenVorschlagSichtbar = false;
+                _lastPausenCheckMinuten = -1;
             }
             else
             {
@@ -244,10 +315,73 @@ namespace VERA.ViewModels
 
         private void OnTick(object? sender, EventArgs e)
         {
-            if (_activeEntry == null) return;
-            var elapsed = DateTime.Now - _activeEntry.StartTime;
-            TimerDisplay = elapsed.ToString(@"hh\:mm\:ss");
-            _notification.UpdateTimerNotification(TimerDisplay, _activeEntry.Title);
+            var now = DateTime.Now;
+            UhrzeitDisplay = now.ToString("HH:mm:ss");
+
+            if (_activeEntry != null)
+            {
+                var elapsed = now - _activeEntry.StartTime;
+                TimerDisplay = elapsed.ToString(@"hh\:mm\:ss");
+                _notification.UpdateTimerNotification(TimerDisplay, _activeEntry.Title);
+
+                // Pausen-Vorschlag alle 60 Sekunden prüfen (nicht jede Sekunde neu laden)
+                var elapsedMinutes = elapsed.TotalMinutes;
+                if (elapsedMinutes - _lastPausenCheckMinuten >= 1.0)
+                {
+                    _lastPausenCheckMinuten = elapsedMinutes;
+                    _ = CheckPausenVorschlagAsync();
+                }
+            }
+        }
+
+        private async Task CheckPausenVorschlagAsync()
+        {
+            if (!IsRunning || PausenVorschlagSichtbar) return;
+
+            var all = await _service.GetEntriesAsync();
+            var today = all.Where(e => e.StartTime.Date == DateTime.Today && !e.IsSonderTag).ToList();
+
+            // Gesamte heute gearbeitete Minuten (inkl. laufendem Eintrag)
+            double totalMinuten = 0;
+            foreach (var entry in today)
+            {
+                if (entry.EndTime != null)
+                    totalMinuten += (entry.EndTime.Value - entry.StartTime).TotalMinutes;
+                else if (entry.IsRunning)
+                    totalMinuten += (DateTime.Now - entry.StartTime).TotalMinutes;
+            }
+
+            // Schwellwerte: 5,5h → erste Erinnerung; danach alle 2h eine weitere
+            const double ersteSchwelle = 330.0; // 5h 30min
+            const double wiederholen = 120.0;   // alle 2h danach
+
+            bool schwelleErreicht = totalMinuten >= ersteSchwelle &&
+                (totalMinuten - ersteSchwelle) % wiederholen < 1.5;
+
+            if (!schwelleErreicht) return;
+
+            // Pause bereits vorhanden? (Lücke > 5 min zwischen zwei Einträgen)
+            var abgeschlossene = today.Where(e => e.EndTime != null)
+                                      .OrderBy(e => e.StartTime)
+                                      .ToList();
+            bool hatPause = false;
+            for (int i = 1; i < abgeschlossene.Count; i++)
+            {
+                var luecke = abgeschlossene[i].StartTime - abgeschlossene[i - 1].EndTime!.Value;
+                if (luecke.TotalMinutes >= 5)
+                {
+                    hatPause = true;
+                    break;
+                }
+            }
+
+            if (!hatPause)
+            {
+                var h = (int)(totalMinuten / 60);
+                var m = (int)(totalMinuten % 60);
+                PausenVorschlagText = $"\u2615 Du arbeitest seit {h}h {m:D2}m – Zeit f\u00fcr eine kurze Pause!";
+                PausenVorschlagSichtbar = true;
+            }
         }
 
         private async Task RefreshStatsAsync()
@@ -292,6 +426,45 @@ namespace VERA.ViewModels
             RecentEntries.Clear();
             foreach (var entry in all.Take(5))
                 RecentEntries.Add(entry);
+
+            // ── Wochenübersicht (letzte 7 Tage inkl. heute) ─────────────────
+            var sevenDaysAgo = DateTime.Today.AddDays(-6);
+            var weekEntries = all.Where(e => e.StartTime.Date >= sevenDaysAgo).ToList();
+
+            // Ziel: 5 Werktage × Sollzeit (Mo–Fr; Wochenende zählt nicht als Pflicht)
+            // Wir zählen einfach alle 7 Tage vs. 5 × Sollzeit – passt für Vertrauensarbeitszeit
+            double wochenZielMinuten = 5.0 * sollMinuten;
+            double wochenTotalMinuten = 0;
+            foreach (var e in weekEntries)
+            {
+                if (e.Type == EntryType.UrlaubGanztag || e.Type == EntryType.Feiertag)
+                    wochenTotalMinuten += sollMinuten;
+                else if (e.Type == EntryType.UrlaubHalbtag)
+                    wochenTotalMinuten += sollMinuten / 2;
+                else if (e.EndTime != null)
+                    wochenTotalMinuten += (e.EndTime.Value - e.StartTime).TotalMinutes;
+            }
+
+            var wh = (int)(wochenTotalMinuten / 60);
+            var wm = (int)(wochenTotalMinuten % 60);
+            WochenStundenDisplay = $"{wh}h {wm:D2}m";
+
+            var wzh = (int)(wochenZielMinuten / 60);
+            WochenZielDisplay = $"{wzh}h";
+
+            WochenProgress = wochenZielMinuten > 0
+                ? Math.Min(1.0, wochenTotalMinuten / wochenZielMinuten)
+                : 0;
+
+            var wochenPuffer = wochenTotalMinuten - wochenZielMinuten;
+            var wph = (int)(Math.Abs(wochenPuffer) / 60);
+            var wpm = (int)(Math.Abs(wochenPuffer) % 60);
+            WochenPufferDisplay = wochenPuffer >= 0
+                ? $"+{wph}h {wpm:D2}m"
+                : $"-{wph}h {wpm:D2}m";
+            WochenPufferFarbe = wochenPuffer >= 0
+                ? Color.FromArgb("#4ECCA3")
+                : Color.FromArgb("#8240CE");
         }
 
         private static string GenerateTitle(DateTime date)
