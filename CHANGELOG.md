@@ -11,7 +11,16 @@ dieses Projekt hält sich an [Semantic Versioning](https://semver.org/lang/de/).
 
 ---
 
-## [1.0.5] - 2025-07-06
+## [1.0.6] - 2025-07-06
+
+### Fixed
+- Pelican Egg Installationsskript: `mv vera-server/* .` bleibt in `/mnt/server` (während Installation existiert `/home/container` noch nicht — das ist ein Laufzeit-Mount)
+- Überflüssiges `chmod +x` entfernt (`.dll`-Dateien brauchen kein Execute-Bit für `dotnet`)
+- Startup-Befehl `dotnet /home/container/VERA.Server.dll` korrekt — zur Laufzeit ist `/mnt/server` als `/home/container` gemountet
+
+---
+
+## [1.0.5]
 
 ### Fixed
 - Pelican Egg: Startup-Befehl von `dotnet VERA.Server.dll` auf `dotnet /home/container/VERA.Server.dll` geändert (DLL liegt in `/home/container/`, Prozess startet von `/` aus)
