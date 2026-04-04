@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using VERA.Services;
+using VERA.Shared;
 using VERA.Views;
 
 namespace VERA
@@ -27,7 +28,9 @@ namespace VERA
                 return new Window(new NavigationPage(new LoginPage(api, auth)));
 
             // Sitzung vorhanden → direkt zur App (Token wird beim ersten API-Call erneuert)
-            return new Window(new AppShell());
+            var window = new Window(new AppShell());
+            _ = CheckForUpdateAsync();
+            return window;
         }
 
         protected override void OnSleep()
@@ -46,6 +49,32 @@ namespace VERA
             var auth = MauiProgram.Services.GetRequiredService<IAuthService>();
             if (Windows.Count > 0)
                 Windows[0].Page = new NavigationPage(new LoginPage(api, auth));
+        }
+
+        private static async Task CheckForUpdateAsync()
+        {
+            await Task.Delay(TimeSpan.FromSeconds(3));
+            try
+            {
+                var svc  = MauiProgram.Services.GetRequiredService<UpdateService>();
+                var info = await svc.CheckAsync();
+                if (info is not { IsNewer: true }) return;
+
+                await MainThread.InvokeOnMainThreadAsync(async () =>
+                {
+                    var page = Application.Current?.Windows.FirstOrDefault()?.Page;
+                    if (page is null) return;
+
+                    var ok = await page.DisplayAlert(
+                        "Update verfügbar 🆕",
+                        $"Version {info.LatestVersion} ist verfügbar (du hast {AppVersion.Current}).\nJetzt herunterladen?",
+                        "Herunterladen", "Später");
+
+                    if (ok)
+                        await Launcher.OpenAsync(new Uri(info.DownloadUrl));
+                });
+            }
+            catch { /* Update-Check ist nicht kritisch */ }
         }
     }
 }

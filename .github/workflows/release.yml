@@ -1,4 +1,4 @@
-name: Release VERA Server
+﻿name: Release VERA
 
 on:
   push:
@@ -7,71 +7,117 @@ on:
       - main
 
 jobs:
-  build-and-release:
+  read-version:
     runs-on: ubuntu-latest
-    permissions:
-      contents: write    # Releases, Tags und Uploads
-      actions: read      # Workflow-Metadaten lesen
-
+    outputs:
+      version: ${{ steps.v.outputs.version }}
+      tag:     ${{ steps.v.outputs.tag }}
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Version aus VERA.Client.csproj auslesen
-        id: version
+      - uses: actions/checkout@v4
+      - name: Version auslesen
+        id: v
         run: |
           VERSION=$(grep -oP '(?<=<ApplicationDisplayVersion>)[^<]+' VERA.Client/VERA.Client.csproj)
           echo "version=$VERSION" >> $GITHUB_OUTPUT
-          echo "tag=v$VERSION" >> $GITHUB_OUTPUT
-          echo "Detected version: $VERSION"
+          echo "tag=v$VERSION"    >> $GITHUB_OUTPUT
 
-      - name: Setup .NET 10
-        uses: actions/setup-dotnet@v4
+  build-server:
+    needs: read-version
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
         with:
           dotnet-version: "10.0.x"
+      - name: Publish VERA.Server
+        run: dotnet publish VERA.Server/VERA.Server.csproj -c Release -r linux-x64 --no-self-contained -o ./publish/vera-server
+      - name: ZIP erstellen
+        run: cd publish && zip -r ../vera-server.zip vera-server/
+      - uses: actions/upload-artifact@v4
+        with:
+          name: vera-server
+          path: vera-server.zip
 
-      - name: Publish VERA.Server (linux-x64, self-contained=false)
+  build-android:
+    needs: read-version
+    runs-on: ubuntu-latest
+    env:
+      ANDROID_SDK_ROOT: /usr/local/lib/android/sdk
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          java-version: "17"
+          distribution: microsoft
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "10.0.x"
+      - name: MAUI Android Workload installieren
+        run: dotnet workload install maui-android
+      - name: Keystore dekodieren
+        run: echo "${{ secrets.ANDROID_KEYSTORE_BASE64 }}" | base64 -d > vera.keystore
+      - name: Android APK bauen und signieren
         run: |
-          dotnet publish VERA.Server/VERA.Server.csproj \
-            -c Release \
-            -r linux-x64 \
-            --no-self-contained \
-            -o ./publish/vera-server
+          dotnet publish VERA.Client/VERA.Client.csproj \
+            -f net10.0-android -c Release \
+            -p:AndroidKeyStore=true \
+            -p:AndroidSigningKeyStore=${{ github.workspace }}/vera.keystore \
+            -p:AndroidSigningKeyAlias=${{ secrets.ANDROID_KEY_ALIAS }} \
+            -p:AndroidSigningKeyPass=${{ secrets.ANDROID_KEY_PASSWORD }} \
+            -p:AndroidSigningStorePass=${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+      - name: APK kopieren
+        run: |
+          APK=$(find VERA.Client/bin/Release/net10.0-android -name "*-Signed.apk" | head -1)
+          [ -z "$APK" ] && APK=$(find VERA.Client/bin/Release/net10.0-android -name "*.apk" | head -1)
+          cp "$APK" vera-android.apk
+      - uses: actions/upload-artifact@v4
+        with:
+          name: vera-android
+          path: vera-android.apk
 
-      - name: Zip Artefakt
+  release:
+    needs: [read-version, build-server, build-android]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      actions:  read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: vera-server
+      - uses: actions/download-artifact@v4
+        with:
+          name: vera-android
+      - name: Git-Tag setzen
         run: |
-          cd publish
-          zip -r ../vera-server.zip vera-server/
-
-      - name: Git-Tag setzen (falls noch nicht vorhanden)
-        run: |
-          git config user.name "github-actions[bot]"
+          git config user.name  "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git tag ${{ steps.version.outputs.tag }} || echo "Tag existiert bereits, wird überschrieben"
-          git push origin ${{ steps.version.outputs.tag }} --force
-
-      - name: GitHub Release erstellen & ZIP hochladen
+          git tag ${{ needs.read-version.outputs.tag }} || echo "Tag existiert bereits"
+          git push origin ${{ needs.read-version.outputs.tag }} --force
+      - name: GitHub Release erstellen
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: ${{ steps.version.outputs.tag }}
-          files: vera-server.zip
-          name: "VERA ${{ steps.version.outputs.version }}"
+          tag_name: ${{ needs.read-version.outputs.tag }}
+          name:     "VERA ${{ needs.read-version.outputs.version }}"
+          files: |
+            vera-server.zip
+            vera-android.apk
           body: |
-            ## VERA Server ${{ steps.version.outputs.version }}
+            ## VERA ${{ needs.read-version.outputs.version }}
 
-            Automatisch gebaut aus Branch `${{ github.ref_name }}` — Commit `${{ github.sha }}`
+            Automatisch gebaut aus Branch `${{ github.ref_name }}` - Commit `${{ github.sha }}`
 
-            ### Installation (Pelican/Pterodactyl)
-            Das Egg (`pelican-egg.json`) lädt diese ZIP automatisch beim Server-Start herunter.
+            ### Android App installieren
+            1. `vera-android.apk` unten herunterladen
+            2. Auf dem Android-Geraet oeffnen (Unbekannte Quellen erlauben)
+            3. Installieren - die App prueft automatisch auf neue Versionen
 
-            ### Manuell installieren
-            ```bash
-            wget https://github.com/Chaosnico9000/VERA/releases/latest/download/vera-server.zip
-            unzip vera-server.zip
-            dotnet VERA.Server.dll
-            ```
+            ### Server installieren (Pelican)
+            Das Egg laedt `vera-server.zip` beim Server-Start herunter.
 
-            Siehe [Deployment-Guide](https://github.com/Chaosnico9000/VERA/blob/master/docs/DEPLOYMENT.md) für Details.
-          make_latest: true
-          draft: false
-          prerelease: false
+            ### Server-URL
+            Standard: `http://panel.chaosfritten.de:27022`
+          make_latest:  true
+          draft:        false
+          prerelease:   false

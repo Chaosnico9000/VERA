@@ -29,6 +29,7 @@ VERA.Client/                 ← .NET 10 MAUI App (Android primär)
   Services/
     ApiClient.cs             ← HTTP-Client, JWT-Refresh transparent, X-Client-Version Header, CheckServerAsync()
     AccountService.cs        ← Lokale Accounts (PBKDF2, nur Fallback)
+    UpdateService.cs         ← GitHub Releases API, Update-Check beim Start
     GamificationService.cs   ← 30 Level, exponentielle XP, 18 Achievements, 5 Ränge
     TimeTrackingService.cs   ← Lokaler JSON-Speicher, atomare Schreiboperationen
   Views/
@@ -94,7 +95,7 @@ Format: **`MAJOR.MINOR.PATCH`**
 
 > Kein manuelles `git tag` nötig.
 
-**Aktuelle Version: `1.1.0`**
+**Aktuelle Version: `1.2.0`**
 
 ---
 

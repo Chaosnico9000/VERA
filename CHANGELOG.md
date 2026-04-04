@@ -11,6 +11,22 @@ dieses Projekt hält sich an [Semantic Versioning](https://semver.org/lang/de/).
 
 ---
 
+## [1.2.0] - 2026-04-04
+
+### Added
+- GitHub Actions Workflow: Android APK wird jetzt parallel zum Server-ZIP gebaut und als `vera-android.apk` ins GitHub Release hochgeladen
+- Workflow: drei Jobs (`read-version` → `build-server` + `build-android` parallel → `release`)
+- Workflow: APK-Signierung via GitHub Secrets (`ANDROID_KEYSTORE_BASE64`, `ANDROID_KEY_ALIAS`, `ANDROID_KEY_PASSWORD`, `ANDROID_KEYSTORE_PASSWORD`)
+- `UpdateService` — prüft GitHub Releases API auf neue Versionen (`https://api.github.com/repos/Chaosnico9000/VERA/releases/latest`)
+- Automatischer Update-Check beim App-Start: 3 Sekunden nach Start → Alert mit Download-Link wenn neuere Version verfügbar
+- `UpdateInfo`-Record (`LatestVersion`, `DownloadUrl`, `IsNewer`)
+
+### Changed
+- Workflow umbenannt von „Release VERA Server" zu „Release VERA"
+- `AGENTS.md` aktualisiert: `UpdateService`, Workflow-Struktur, Keystore-Secrets
+
+---
+
 ## [1.1.0] - 2026-04-04
 
 ### Added
