@@ -2,6 +2,7 @@ using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using VERA.Shared;
 using VERA.Shared.Dto;
+using VERA.Views;
 
 namespace VERA.Services
 {
@@ -27,6 +28,10 @@ namespace VERA.Services
             // Refresh-Token aus sicherem Speicher laden
             _refreshToken = Preferences.Default.Get(PrefKeyRefresh, string.Empty);
             if (string.IsNullOrEmpty(_refreshToken)) _refreshToken = null;
+            // Server-URL wiederherstellen damit Token-Refresh nach App-Start funktioniert
+            var savedUrl = Preferences.Default.Get("server_url", string.Empty);
+            if (!string.IsNullOrEmpty(savedUrl))
+                _http.BaseAddress = new Uri(savedUrl.TrimEnd('/') + '/');
         }
 
         public void SetBaseUrl(string url)
@@ -79,7 +84,7 @@ namespace VERA.Services
             try
             {
                 var resp = await _http.PostAsJsonAsync("api/auth/login",
-                    new LoginRequest(username, password));
+                    new LoginRequest(username.Trim(), password));
                 if (resp.IsSuccessStatusCode)
                 {
                     var auth = await resp.Content.ReadFromJsonAsync<AuthResponse>();
@@ -90,9 +95,11 @@ namespace VERA.Services
                 if ((int)resp.StatusCode == 429) return (LoginResult.AccountLocked, "Account gesperrt.");
                 if (resp.StatusCode == System.Net.HttpStatusCode.Unauthorized)
                     return (LoginResult.InvalidPassword, "Falsches Passwort.");
-                return (LoginResult.NoAccountFound, "Benutzer nicht gefunden.");
+                if (resp.StatusCode == System.Net.HttpStatusCode.NotFound)
+                    return (LoginResult.NoAccountFound, "Benutzer nicht gefunden.");
+                return (LoginResult.InvalidPassword, $"Server-Fehler: {(int)resp.StatusCode}");
             }
-            catch (Exception ex) { return (LoginResult.NoAccountFound, $"Verbindungsfehler: {ex.Message}"); }
+            catch (Exception ex) { return (LoginResult.InvalidPassword, $"Verbindungsfehler: {ex.Message}"); }
         }
 
         public async Task<bool> RefreshTokenAsync()
@@ -217,6 +224,22 @@ namespace VERA.Services
             _refreshToken = null;
             Preferences.Default.Remove(PrefKeyRefresh);
             _http.DefaultRequestHeaders.Authorization = null;
+            // Sitzung abgelaufen → zurück zur LoginPage
+            MainThread.BeginInvokeOnMainThread(() =>
+            {
+                try
+                {
+                    var app = Application.Current;
+                    if (app?.Windows.Count > 0 && app.Windows[0].Page is not NavigationPage nav
+                        || (app?.Windows[0].Page is NavigationPage np && np.CurrentPage is not LoginPage))
+                    {
+                        var svc  = MauiProgram.Services.GetRequiredService<IAuthService>();
+                        var self = MauiProgram.Services.GetRequiredService<ApiClient>();
+                        app!.Windows[0].Page = new NavigationPage(new LoginPage(self, svc));
+                    }
+                }
+                catch { /* App noch nicht bereit */ }
+            });
         }
     }
 }

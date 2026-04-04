@@ -36,7 +36,12 @@ namespace VERA
         protected override void OnSleep()
         {
             base.OnSleep();
-            _lockOnResume = true;
+            // Nur sperren wenn Nutzer bereits in der App ist (nicht wenn er gerade einloggt)
+            var currentPage = Windows.FirstOrDefault()?.Page;
+            bool onAuthPage = currentPage is NavigationPage nav &&
+                              (nav.CurrentPage is LoginPage || nav.CurrentPage is RegisterPage);
+            if (!onAuthPage)
+                _lockOnResume = true;
         }
 
         protected override void OnResume()

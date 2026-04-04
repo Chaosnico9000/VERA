@@ -11,6 +11,32 @@ dieses Projekt hält sich an [Semantic Versioning](https://semver.org/lang/de/).
 
 ---
 
+## [1.4.1] - 2026-04-04
+
+### Fixed
+- **App-Crash beim Login:** `OnSleep` leitete zur LoginPage weiter auch wenn der Nutzer sich gerade einloggte (z.B. während Biometrie-Dialog oder Screen-Off). Fix: OnSleep prüft jetzt ob die aktuelle Page bereits eine Auth-Page (Login/Register) ist — kein Redirect in diesem Fall
+- **„Benutzer nicht gefunden" bei Netzwerkfehlern:** `LoginAsync` gab `NoAccountFound` auch bei Verbindungsfehlern zurück. Fix: catch-Block gibt `InvalidPassword` + Verbindungsfehler-Meldung zurück; `NotFound (404)` ist jetzt der einzige Weg zu `NoAccountFound`
+- **Server-URL nach App-Neustart:** `ApiClient` lud die gespeicherte Server-URL nicht im Konstruktor — Token-Refresh schlug nach App-Neustart fehl weil `BaseAddress` null war
+- **Sitzung abgelaufen ohne Weiterleitung:** Wenn der Refresh-Token abläuft (`ClearTokens`), wird der Nutzer jetzt automatisch zur LoginPage weitergeleitet statt leere AppShell zu sehen
+- **Username nicht getrimmt:** `LoginAsync` sendet `username.Trim()` an den Server (führende/nachfolgende Leerzeichen werden entfernt)
+
+---
+
+## [1.4.0] - 2026-04-04
+
+### Added
+- GitHub Actions: `build-ios`-Job (macOS-Runner) — baut `vera-ios.ipa` wenn Apple-Secrets gesetzt sind (`APPLE_CERTIFICATE_P12_BASE64`, `APPLE_PROVISIONING_PROFILE_BASE64`, `APPLE_TEAM_ID`)
+- Workflow: iOS-Job wird still übersprungen (kein Fehler) wenn Apple-Secrets fehlen
+- Workflow: Release-Job erkennt automatisch vorhandene Assets (IPA wird hinzugefügt wenn vorhanden)
+- Release-Notizen: iOS-Installationsanleitung (AltStore, Sideloadly) direkt im GitHub Release
+
+### Changed
+- `release` Job: läuft auch wenn `build-ios` übersprungen oder fehlgeschlagen ist (`always()` + Bedingung)
+- README: vollständig überarbeitet — iOS/macOS Installationsanleitungen (AltStore, Sideloadly, TestFlight), GitHub-Secrets-Tabellen, plattformübergreifende Build-Befehle
+- `AGENTS.md`: iOS-Build-Secrets dokumentiert, Workflow-Struktur auf 4 Jobs aktualisiert
+
+---
+
 ## [1.3.0] - 2026-04-04
 
 ### Added

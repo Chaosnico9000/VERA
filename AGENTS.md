@@ -113,7 +113,7 @@ Pflichten bei jeder Versionsaenderung:
 
 Kein manuelles git tag noetig.
 
-**Aktuelle Version: 1.3.0**
+**Aktuelle Version: 1.4.0**
 
 ---
 
@@ -246,5 +246,6 @@ Bei jeder Session, die neue Features hinzufuegt oder bestehende aendert:
 | Backend | ASP.NET Core | .NET 10, HTTP hinter Pelican-Proxy |
 | Datenbank | SQLite + EF Core | 9.0.x, Migrations auto-apply |
 | Auth | JWT Bearer | HmacSha256, 15min/7d Rotation |
-| CI/CD | GitHub Actions | 3-Job Workflow: read-version + build-server + build-android -> release |
+| CI/CD | GitHub Actions | 4-Job Workflow: read-version + build-server + build-android + build-ios (optional, macOS) -> release |
 | Hosting | Pelican / Docker | panel.chaosfritten.de, Port 27022 |
+
