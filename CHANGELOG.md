@@ -11,7 +11,14 @@ dieses Projekt hält sich an [Semantic Versioning](https://semver.org/lang/de/).
 
 ---
 
-## [1.4.2] - 2026-04-04
+## [1.4.3] - 2026-04-05
+
+### Fixed
+- **App-Crash beim Registrieren:** `ApiClient.SetBaseUrl` warf `InvalidOperationException` wenn `HttpClient.BaseAddress` nach dem ersten Request neu gesetzt wurde (Singleton-Instanz). Fix: `SetBaseUrl` erkennt URL-Änderungen, erstellt einen neuen `HttpClient` (Timeout, `X-Client-Version`-Header und Bearer-Token werden übertragen) und disposed den alten — bei unveränderter URL ist die Methode ein No-op.
+
+---
+
+## [1.4.2]
 
 ### Fixed
 - GitHub Actions: `build-ios`-Job und alle iOS-bezogenen Schritte aus `release.yml` entfernt — verursachte fehlgeschlagene Releases weil das `vera-ios`-Artefakt nicht existierte und der `release`-Job dadurch keine `vera-server.zip` und `vera-android.apk` hochlud

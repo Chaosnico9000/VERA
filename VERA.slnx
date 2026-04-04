@@ -1,5 +1,10 @@
 <Solution>
-  <Project Path="VERA.Client/VERA.Client.csproj" />
+  <Folder Name="/Solution Items/">
+    <File Path="AGENTS.md" />
+  </Folder>
+  <Project Path="VERA.Client/VERA.Client.csproj">
+    <Deploy Solution="Debug|*" />
+  </Project>
   <Project Path="VERA.Server/VERA.Server.csproj" />
   <Project Path="VERA.Shared/VERA.Shared.csproj" />
 </Solution>

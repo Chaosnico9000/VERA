@@ -10,7 +10,7 @@ namespace VERA.Services
 
     public class ApiClient
     {
-        private readonly HttpClient _http;
+        private HttpClient _http;
         private string? _accessToken;
         private string? _refreshToken;
         private DateTime _accessTokenExpiry;
@@ -36,7 +36,19 @@ namespace VERA.Services
 
         public void SetBaseUrl(string url)
         {
-            _http.BaseAddress = new Uri(url.TrimEnd('/') + '/');
+            var newUri = new Uri(url.TrimEnd('/') + '/');
+            if (_http.BaseAddress == newUri) return;
+
+            // HttpClient does not allow changing BaseAddress after the first request.
+            // Recreate it, preserving timeout and current auth headers.
+            var old = _http;
+            _http = new HttpClient { Timeout = old.Timeout };
+            _http.DefaultRequestHeaders.Add("X-Client-Version", AppVersion.Current);
+            if (_accessToken != null)
+                _http.DefaultRequestHeaders.Authorization =
+                    new AuthenticationHeaderValue("Bearer", _accessToken);
+            _http.BaseAddress = newUri;
+            old.Dispose();
         }
 
         public bool HasSession => _refreshToken != null;
