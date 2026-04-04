@@ -11,7 +11,16 @@ dieses Projekt hält sich an [Semantic Versioning](https://semver.org/lang/de/).
 
 ---
 
-## [1.0.6] - 2025-07-06
+## [1.0.7] - 2025-07-06
+
+### Fixed
+- Pelican Egg: `set -e` hinzugefügt — Skript bricht bei jedem Fehler sofort ab statt mit Exit 0 weiterzulaufen
+- `exit 0` explizit am Ende des Installationsskripts — Pelican erkennt erfolgreiche Installation zuverlässig und schaltet auf "installed"
+- `echo "Installation abgeschlossen."` als finales Signal im Install-Log
+
+---
+
+## [1.0.6]
 
 ### Fixed
 - Pelican Egg Installationsskript: `mv vera-server/* .` bleibt in `/mnt/server` (während Installation existiert `/home/container` noch nicht — das ist ein Laufzeit-Mount)

@@ -22,7 +22,7 @@
   },
   "scripts": {
     "installation": {
-      "script": "#!/bin/bash\napt-get update -y\napt-get install -y wget unzip\ncd /mnt/server\nwget -q https://github.com/Chaosnico9000/VERA/releases/latest/download/vera-server.zip -O server.zip\nunzip -o server.zip\nrm server.zip\nmv vera-server/* .\nrm -rf vera-server",
+      "script": "#!/bin/bash\nset -e\napt-get update -y\napt-get install -y wget unzip\ncd /mnt/server\nwget -q https://github.com/Chaosnico9000/VERA/releases/latest/download/vera-server.zip -O server.zip\nunzip -o server.zip\nrm server.zip\nmv vera-server/* .\nrm -rf vera-server\necho \"Installation abgeschlossen.\"\nexit 0",
       "container": "mcr.microsoft.com/dotnet/sdk:10.0",
       "entrypoint": "bash"
     }
