@@ -11,7 +11,15 @@ dieses Projekt hält sich an [Semantic Versioning](https://semver.org/lang/de/).
 
 ---
 
-## [1.0.1] - 2025-07-06
+## [1.0.2] - 2025-07-06
+
+### Fixed
+- GitHub Actions 403-Fehler beim Release-Erstellen: `actions: read`-Permission ergänzt
+- GitHub Repository muss unter Settings → Actions → General auf "Read and write permissions" gestellt sein
+
+---
+
+## [1.0.1]
 
 ### Added
 - GitHub Actions Workflow (`.github/workflows/release.yml`) — automatischer Build und Release von `vera-server.zip` bei jedem `v*.*.*`-Tag

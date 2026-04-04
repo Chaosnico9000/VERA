@@ -10,7 +10,8 @@ jobs:
   build-and-release:
     runs-on: ubuntu-latest
     permissions:
-      contents: write   # Nötig um Releases und Tags anzulegen
+      contents: write    # Releases, Tags und Uploads
+      actions: read      # Workflow-Metadaten lesen
 
     steps:
       - name: Checkout
