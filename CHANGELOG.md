@@ -11,6 +11,23 @@ dieses Projekt hält sich an [Semantic Versioning](https://semver.org/lang/de/).
 
 ---
 
+## [1.3.0] - 2026-04-04
+
+### Added
+- iOS / macOS Catalyst Support: `NSAppTransportSecurity` in `Info.plist` (iOS + macCatalyst) — erlaubt HTTP-Verbindungen zu user-konfigurierten Servern (`NSAllowsArbitraryLoads=true`, `NSAllowsLocalNetworking=true`)
+- Server: `UseForwardedHeaders`-Middleware für korrektes X-Forwarded-For / X-Forwarded-Proto hinter Pelican-Reverse-Proxy
+
+### Changed
+- Android `network_security_config.xml`: `cleartextTrafficPermitted` auf `true` geändert — HTTP-Verbindungen werden toleriert, da die Server-URL vom Nutzer konfiguriert wird (HTTP und HTTPS)
+- Server: `UseHsts()` und `UseHttpsRedirection()` entfernt — HTTPS wird am Pelican-Reverse-Proxy terminiert, nicht im Container
+- `AGENTS.md`: Pflicht-Lesepflicht pro Session, iOS/macOS Plattform-Sektion, HTTPS-Policy, Build-Befehle für iOS/macOS, Technologie-Stack erweitert
+
+### Fixed
+- Login/Registrierung schlug auf Android fehl, weil `cleartextTrafficPermitted=false` alle HTTP-Verbindungen blockierte
+- iOS/macOS: App Transport Security blockierte HTTP-Verbindungen mangels `NSAppTransportSecurity`-Konfiguration
+
+---
+
 ## [1.2.0] - 2026-04-04
 
 ### Added

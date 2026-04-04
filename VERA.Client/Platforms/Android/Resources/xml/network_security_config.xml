@@ -1,18 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
     VERA Netzwerk-Sicherheitskonfiguration
-    Nur HTTPS-Verbindungen zum VERA-Backend erlaubt.
-    Kein HTTP (Cleartext), keine anderen externen Hosts.
+    Die Server-URL ist nutzerkonfiguriert (HTTP oder HTTPS).
+    HTTPS wird empfohlen – HTTP wird toleriert damit selbst-gehostete Server ohne
+    Reverse-Proxy erreichbar bleiben.
 -->
 <network-security-config>
-    <!-- Kein Cleartext-Traffic (HTTP) – nur HTTPS -->
-    <base-config cleartextTrafficPermitted="false">
+    <!-- Cleartext (HTTP) erlaubt, da Server-URL vom Nutzer konfiguriert wird -->
+    <base-config cleartextTrafficPermitted="true">
         <trust-anchors>
-            <!-- Nur System-CAs vertrauen (kein Pinning, damit Let's Encrypt etc. funktioniert) -->
+            <!-- System-CAs: akzeptiert Let's Encrypt, ZeroSSL etc. -->
             <certificates src="system" />
         </trust-anchors>
     </base-config>
-    <!-- Debug: auch User-CAs erlauben (für lokale Testserver mit selbst-signiertem Zertifikat) -->
+    <!-- Debug: zusaetzlich User-CAs erlauben (selbst-signierte Zertifikate) -->
     <debug-overrides>
         <trust-anchors>
             <certificates src="system" />

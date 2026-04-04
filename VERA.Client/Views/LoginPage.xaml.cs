@@ -18,6 +18,16 @@ namespace VERA.Views
         protected override async void OnAppearing()
         {
             base.OnAppearing();
+
+            // Gespeicherte URL laden und anzeigen
+            var saved = Preferences.Default.Get("server_url", string.Empty);
+            if (!string.IsNullOrEmpty(saved))
+            {
+                ServerUrlEntry.Text = saved;
+                _api.SetBaseUrl(saved);
+                _ = CheckConnectionAsync();
+            }
+
             var name = _api.Username;
             if (!string.IsNullOrEmpty(name))
                 WelcomeLabel.Text = $"Willkommen zurück, {name} 👋";
@@ -27,6 +37,43 @@ namespace VERA.Views
             if (_auth.IsAvailable && _api.HasSession)
                 await TryBiometricAsync();
         }
+
+        private void OnServerUrlCompleted(object? sender, EventArgs e) => ApplyAndCheckUrl();
+        private void OnServerUrlUnfocused(object? sender, FocusEventArgs e) => ApplyAndCheckUrl();
+
+        private void ApplyAndCheckUrl()
+        {
+            var url = ServerUrlEntry.Text?.Trim() ?? string.Empty;
+            if (string.IsNullOrEmpty(url)) return;
+            Preferences.Default.Set("server_url", url);
+            _api.SetBaseUrl(url);
+            _ = CheckConnectionAsync();
+        }
+
+        private async Task CheckConnectionAsync()
+        {
+            SetStatus("Prüfe Verbindung...", "#424F8A");
+            var result = await _api.CheckServerAsync();
+            SetStatus(result switch
+            {
+                ServerCompatibility.Ok           => ("Verbunden ✓",                          "#4ECCA3"),
+                ServerCompatibility.Unreachable  => ("Server nicht erreichbar",               "#E55353"),
+                ServerCompatibility.ClientTooOld => ("App veraltet – bitte aktualisieren",    "#FFB347"),
+                ServerCompatibility.ServerTooOld => ("Server veraltet – bitte aktualisieren", "#FFB347"),
+                _                                => ("Unbekannter Fehler",                    "#E55353"),
+            });
+        }
+
+        private void SetStatus(string text, string hex) =>
+            MainThread.BeginInvokeOnMainThread(() =>
+            {
+                var c = Color.FromArgb(hex);
+                StatusDot.TextColor   = c;
+                StatusLabel.Text      = text;
+                StatusLabel.TextColor = c;
+            });
+
+        private void SetStatus((string text, string hex) t) => SetStatus(t.text, t.hex);
 
         private async void OnLoginClicked(object? sender, EventArgs e)
         {
@@ -42,14 +89,13 @@ namespace VERA.Views
             var compat = await _api.CheckServerAsync();
             if (compat != ServerCompatibility.Ok)
             {
-                var msg = compat switch
+                ShowError(compat switch
                 {
-                    ServerCompatibility.Unreachable  => "Server nicht erreichbar. Bitte Server-URL in den Einstellungen prüfen.",
-                    ServerCompatibility.ClientTooOld => "Diese App-Version wird vom Server nicht mehr unterstützt. Bitte aktualisieren.",
+                    ServerCompatibility.Unreachable  => "Server nicht erreichbar. Bitte URL oben prüfen.",
+                    ServerCompatibility.ClientTooOld => "Diese App-Version wird nicht mehr unterstützt. Bitte aktualisieren.",
                     ServerCompatibility.ServerTooOld => "Der Server ist veraltet. Bitte den Server aktualisieren.",
                     _                                => "Verbindungsfehler."
-                };
-                ShowError(msg);
+                });
                 LoginButton.IsEnabled = true;
                 return;
             }
@@ -59,7 +105,7 @@ namespace VERA.Views
             {
                 case LoginResult.Success:
                     PasswordEntry.Text = string.Empty;
-                    await NavigateToAppAsync();
+                    Application.Current!.Windows[0].Page = new AppShell();
                     break;
                 case LoginResult.AccountLocked:
                     LockoutBanner.IsVisible = true;
@@ -88,17 +134,11 @@ namespace VERA.Views
             if (result == AuthResult.Success)
             {
                 var ok = await _api.RefreshTokenAsync();
-                if (ok) await NavigateToAppAsync();
+                if (ok) Application.Current!.Windows[0].Page = new AppShell();
                 else ShowError("Sitzung abgelaufen. Bitte neu anmelden.");
             }
         }
 
         private void ShowError(string msg) { ErrorLabel.Text = msg; ErrorLabel.IsVisible = true; }
-
-        private static Task NavigateToAppAsync()
-        {
-            Application.Current!.Windows[0].Page = new AppShell();
-            return Task.CompletedTask;
-        }
     }
 }

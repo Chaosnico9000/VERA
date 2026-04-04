@@ -7,134 +7,173 @@
              NavigationPage.HasNavigationBar="False">
 
     <Grid RowDefinitions="*,Auto,*">
-        <VerticalStackLayout Grid.Row="1"
-                             HorizontalOptions="Center"
-                             MaximumWidthRequest="400"
-                             Spacing="0"
-                             Padding="32,0">
+        <ScrollView Grid.Row="1">
+            <VerticalStackLayout HorizontalOptions="Center"
+                                 MaximumWidthRequest="400"
+                                 Spacing="0"
+                                 Padding="32,0">
 
-            <!-- Logo -->
-            <VerticalStackLayout HorizontalOptions="Center" Spacing="8" Margin="0,0,0,40">
-                <Border BackgroundColor="{StaticResource CardColor}"
-                        Stroke="{StaticResource Primary}"
-                        StrokeThickness="2"
-                        StrokeShape="RoundRectangle 28"
-                        WidthRequest="88" HeightRequest="88"
-                        HorizontalOptions="Center">
-                    <Label Text="V" FontSize="44" FontAttributes="Bold"
-                           TextColor="{StaticResource Primary}"
-                           HorizontalOptions="Center" VerticalOptions="Center" />
-                </Border>
-                <Label Text="VERA" FontSize="28" FontAttributes="Bold"
-                       TextColor="{StaticResource TextPrimary}"
-                       HorizontalOptions="Center" CharacterSpacing="4" />
-                <Label x:Name="WelcomeLabel"
-                       Text="Willkommen zurück"
-                       FontSize="13" TextColor="{StaticResource TextMuted}"
-                       HorizontalOptions="Center" />
-            </VerticalStackLayout>
-
-            <!-- Formular -->
-            <VerticalStackLayout Spacing="14">
-
-                <!-- Benutzername -->
-                <VerticalStackLayout Spacing="6">
-                    <Label Text="BENUTZERNAME"
-                           FontSize="11" FontAttributes="Bold"
-                           TextColor="{StaticResource TextMuted}"
-                           CharacterSpacing="1.2" />
+                <!-- Logo -->
+                <VerticalStackLayout HorizontalOptions="Center" Spacing="8" Margin="0,0,0,36">
                     <Border BackgroundColor="{StaticResource CardColor}"
-                            Stroke="{StaticResource BorderColor}" StrokeThickness="1"
-                            StrokeShape="RoundRectangle 14" Padding="16,0">
-                        <Entry x:Name="UsernameEntry"
-                               Placeholder="Benutzername"
-                               PlaceholderColor="{StaticResource TextMuted}"
-                               TextColor="{StaticResource TextPrimary}"
-                               FontSize="15"
-                               HeightRequest="50"
-                               BackgroundColor="Transparent"
-                               ReturnType="Next"
-                               Keyboard="Text" />
+                            Stroke="{StaticResource Primary}"
+                            StrokeThickness="2"
+                            StrokeShape="RoundRectangle 28"
+                            WidthRequest="88" HeightRequest="88"
+                            HorizontalOptions="Center">
+                        <Label Text="V" FontSize="44" FontAttributes="Bold"
+                               TextColor="{StaticResource Primary}"
+                               HorizontalOptions="Center" VerticalOptions="Center" />
                     </Border>
+                    <Label Text="VERA" FontSize="28" FontAttributes="Bold"
+                           TextColor="{StaticResource TextPrimary}"
+                           HorizontalOptions="Center" CharacterSpacing="4" />
+                    <Label x:Name="WelcomeLabel"
+                           Text="Willkommen zurück"
+                           FontSize="13" TextColor="{StaticResource TextMuted}"
+                           HorizontalOptions="Center" />
                 </VerticalStackLayout>
 
-                <!-- Passwort -->
-                <VerticalStackLayout Spacing="6">
-                    <Label Text="PASSWORT"
-                           FontSize="11" FontAttributes="Bold"
-                           TextColor="{StaticResource TextMuted}"
-                           CharacterSpacing="1.2" />
-                    <Border BackgroundColor="{StaticResource CardColor}"
+                <!-- Formular -->
+                <VerticalStackLayout Spacing="14">
+
+                    <!-- Server-URL -->
+                    <VerticalStackLayout Spacing="6">
+                        <Label Text="SERVER-URL"
+                               FontSize="11" FontAttributes="Bold"
+                               TextColor="{StaticResource TextMuted}"
+                               CharacterSpacing="1.2" />
+                        <Border BackgroundColor="{StaticResource CardColor}"
+                                Stroke="{StaticResource BorderColor}" StrokeThickness="1"
+                                StrokeShape="RoundRectangle 14" Padding="16,0">
+                            <Entry x:Name="ServerUrlEntry"
+                                   Placeholder="https://dein-server:8080"
+                                   PlaceholderColor="{StaticResource TextMuted}"
+                                   TextColor="{StaticResource TextPrimary}"
+                                   FontSize="14"
+                                   HeightRequest="50"
+                                   BackgroundColor="Transparent"
+                                   Keyboard="Url"
+                                   ReturnType="Next"
+                                   Completed="OnServerUrlCompleted"
+                                   Unfocused="OnServerUrlUnfocused" />
+                        </Border>
+                    </VerticalStackLayout>
+
+                    <!-- Verbindungsstatus -->
+                    <Border x:Name="StatusBorder"
+                            BackgroundColor="{StaticResource SurfaceColor}"
                             Stroke="{StaticResource BorderColor}" StrokeThickness="1"
-                            StrokeShape="RoundRectangle 14" Padding="16,0">
-                        <Entry x:Name="PasswordEntry"
-                               Placeholder="Dein Passwort"
-                               PlaceholderColor="{StaticResource TextMuted}"
-                               TextColor="{StaticResource TextPrimary}"
-                               FontSize="15"
-                               HeightRequest="50"
-                               BackgroundColor="Transparent"
-                               IsPassword="True"
-                               ReturnType="Done" />
+                            StrokeShape="RoundRectangle 12" Padding="14,10">
+                        <HorizontalStackLayout Spacing="8" HorizontalOptions="Center">
+                            <Label x:Name="StatusDot" Text="●" FontSize="11"
+                                   TextColor="{StaticResource TextMuted}"
+                                   VerticalOptions="Center" />
+                            <Label x:Name="StatusLabel" Text="Bitte Server-URL eingeben"
+                                   FontSize="13" TextColor="{StaticResource TextMuted}"
+                                   VerticalOptions="Center" />
+                        </HorizontalStackLayout>
                     </Border>
+
+                    <!-- Benutzername -->
+                    <VerticalStackLayout Spacing="6">
+                        <Label Text="BENUTZERNAME"
+                               FontSize="11" FontAttributes="Bold"
+                               TextColor="{StaticResource TextMuted}"
+                               CharacterSpacing="1.2" />
+                        <Border BackgroundColor="{StaticResource CardColor}"
+                                Stroke="{StaticResource BorderColor}" StrokeThickness="1"
+                                StrokeShape="RoundRectangle 14" Padding="16,0">
+                            <Entry x:Name="UsernameEntry"
+                                   Placeholder="Benutzername"
+                                   PlaceholderColor="{StaticResource TextMuted}"
+                                   TextColor="{StaticResource TextPrimary}"
+                                   FontSize="15"
+                                   HeightRequest="50"
+                                   BackgroundColor="Transparent"
+                                   ReturnType="Next"
+                                   Keyboard="Text" />
+                        </Border>
+                    </VerticalStackLayout>
+
+                    <!-- Passwort -->
+                    <VerticalStackLayout Spacing="6">
+                        <Label Text="PASSWORT"
+                               FontSize="11" FontAttributes="Bold"
+                               TextColor="{StaticResource TextMuted}"
+                               CharacterSpacing="1.2" />
+                        <Border BackgroundColor="{StaticResource CardColor}"
+                                Stroke="{StaticResource BorderColor}" StrokeThickness="1"
+                                StrokeShape="RoundRectangle 14" Padding="16,0">
+                            <Entry x:Name="PasswordEntry"
+                                   Placeholder="Dein Passwort"
+                                   PlaceholderColor="{StaticResource TextMuted}"
+                                   TextColor="{StaticResource TextPrimary}"
+                                   FontSize="15"
+                                   HeightRequest="50"
+                                   BackgroundColor="Transparent"
+                                   IsPassword="True"
+                                   ReturnType="Done" />
+                        </Border>
+                    </VerticalStackLayout>
+
+                    <!-- Lockout-Anzeige -->
+                    <Border x:Name="LockoutBanner"
+                            BackgroundColor="#2A1515"
+                            Stroke="{StaticResource Accent}"
+                            StrokeThickness="1"
+                            StrokeShape="RoundRectangle 12"
+                            Padding="14,10"
+                            IsVisible="False">
+                        <HorizontalStackLayout Spacing="10" HorizontalOptions="Center">
+                            <Label Text="🔒" FontSize="18" VerticalOptions="Center"/>
+                            <VerticalStackLayout Spacing="2" VerticalOptions="Center">
+                                <Label Text="Zu viele Fehlversuche"
+                                       FontSize="13" FontAttributes="Bold"
+                                       TextColor="{StaticResource Accent}" />
+                                <Label x:Name="LockoutLabel"
+                                       Text=""
+                                       FontSize="12"
+                                       TextColor="{StaticResource TextSecondary}" />
+                            </VerticalStackLayout>
+                        </HorizontalStackLayout>
+                    </Border>
+
+                    <!-- Fehler -->
+                    <Label x:Name="ErrorLabel"
+                           Text=""
+                           FontSize="13"
+                           TextColor="{StaticResource Accent}"
+                           HorizontalOptions="Center"
+                           HorizontalTextAlignment="Center"
+                           IsVisible="False" />
+
+                    <!-- Login-Button -->
+                    <Button x:Name="LoginButton"
+                            Text="🔓  Anmelden"
+                            Clicked="OnLoginClicked"
+                            BackgroundColor="{StaticResource Primary}"
+                            TextColor="{StaticResource TextPrimary}"
+                            FontSize="16" FontAttributes="Bold"
+                            HeightRequest="54" CornerRadius="16"
+                            HorizontalOptions="Fill"
+                            Margin="0,8,0,0" />
+
+                    <!-- Biometrie-Button -->
+                    <Button x:Name="BiometricButton"
+                            Text="🔐  Mit Biometrie entsperren"
+                            Clicked="OnBiometricClicked"
+                            BackgroundColor="{StaticResource CardColor}"
+                            TextColor="{StaticResource TextSecondary}"
+                            FontSize="14"
+                            HeightRequest="48" CornerRadius="16"
+                            BorderColor="{StaticResource BorderColor}"
+                            BorderWidth="1"
+                            HorizontalOptions="Fill"
+                            IsVisible="False" />
+
                 </VerticalStackLayout>
-
-                <!-- Lockout-Anzeige -->
-                <Border x:Name="LockoutBanner"
-                        BackgroundColor="#2A1515"
-                        Stroke="{StaticResource Accent}"
-                        StrokeThickness="1"
-                        StrokeShape="RoundRectangle 12"
-                        Padding="14,10"
-                        IsVisible="False">
-                    <HorizontalStackLayout Spacing="10" HorizontalOptions="Center">
-                        <Label Text="🔒" FontSize="18" VerticalOptions="Center"/>
-                        <VerticalStackLayout Spacing="2" VerticalOptions="Center">
-                            <Label Text="Zu viele Fehlversuche"
-                                   FontSize="13" FontAttributes="Bold"
-                                   TextColor="{StaticResource Accent}" />
-                            <Label x:Name="LockoutLabel"
-                                   Text=""
-                                   FontSize="12"
-                                   TextColor="{StaticResource TextSecondary}" />
-                        </VerticalStackLayout>
-                    </HorizontalStackLayout>
-                </Border>
-
-                <!-- Fehler -->
-                <Label x:Name="ErrorLabel"
-                       Text=""
-                       FontSize="13"
-                       TextColor="{StaticResource Accent}"
-                       HorizontalOptions="Center"
-                       HorizontalTextAlignment="Center"
-                       IsVisible="False" />
-
-                <!-- Login-Button -->
-                <Button x:Name="LoginButton"
-                        Text="🔓  Anmelden"
-                        Clicked="OnLoginClicked"
-                        BackgroundColor="{StaticResource Primary}"
-                        TextColor="{StaticResource TextPrimary}"
-                        FontSize="16" FontAttributes="Bold"
-                        HeightRequest="54" CornerRadius="16"
-                        HorizontalOptions="Fill"
-                        Margin="0,8,0,0" />
-
-                <!-- Biometrie-Button -->
-                <Button x:Name="BiometricButton"
-                        Text="🔐  Mit Biometrie entsperren"
-                        Clicked="OnBiometricClicked"
-                        BackgroundColor="{StaticResource CardColor}"
-                        TextColor="{StaticResource TextSecondary}"
-                        FontSize="14"
-                        HeightRequest="48" CornerRadius="16"
-                        BorderColor="{StaticResource BorderColor}"
-                        BorderWidth="1"
-                        HorizontalOptions="Fill"
-                        IsVisible="False" />
-
             </VerticalStackLayout>
-        </VerticalStackLayout>
+        </ScrollView>
     </Grid>
 </ContentPage>

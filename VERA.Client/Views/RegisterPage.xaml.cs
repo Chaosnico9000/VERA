@@ -13,6 +13,18 @@ namespace VERA.Views
             _api = api;
         }
 
+        protected override void OnAppearing()
+        {
+            base.OnAppearing();
+            var saved = Preferences.Default.Get("server_url", string.Empty);
+            if (!string.IsNullOrEmpty(saved))
+            {
+                ServerUrlEntry.Text = saved;
+                _api.SetBaseUrl(saved);
+                _ = CheckConnectionAsync();
+            }
+        }
+
         private void OnPasswordChanged(object? sender, TextChangedEventArgs e)
         {
             var pw = e.NewTextValue ?? string.Empty;
@@ -23,6 +35,43 @@ namespace VERA.Views
             StrengthLabel.TextColor   = Color.FromArgb(color);
         }
 
+        private void OnServerUrlCompleted(object? sender, EventArgs e) => ApplyAndCheckUrl();
+        private void OnServerUrlUnfocused(object? sender, FocusEventArgs e) => ApplyAndCheckUrl();
+
+        private void ApplyAndCheckUrl()
+        {
+            var url = ServerUrlEntry.Text?.Trim() ?? string.Empty;
+            if (string.IsNullOrEmpty(url)) return;
+            Preferences.Default.Set("server_url", url);
+            _api.SetBaseUrl(url);
+            _ = CheckConnectionAsync();
+        }
+
+        private async Task CheckConnectionAsync()
+        {
+            SetStatus("Prüfe Verbindung...", "#424F8A");
+            var result = await _api.CheckServerAsync();
+            SetStatus(result switch
+            {
+                ServerCompatibility.Ok           => ("Verbunden ✓",                        "#4ECCA3"),
+                ServerCompatibility.Unreachable  => ("Server nicht erreichbar",             "#E55353"),
+                ServerCompatibility.ClientTooOld => ("App veraltet – bitte aktualisieren",  "#FFB347"),
+                ServerCompatibility.ServerTooOld => ("Server veraltet – bitte aktualisieren", "#FFB347"),
+                _                                => ("Unbekannter Fehler",                  "#E55353"),
+            });
+        }
+
+        private void SetStatus(string text, string hex) =>
+            MainThread.BeginInvokeOnMainThread(() =>
+            {
+                var c = Color.FromArgb(hex);
+                StatusDot.TextColor   = c;
+                StatusLabel.Text      = text;
+                StatusLabel.TextColor = c;
+            });
+
+        private void SetStatus((string text, string hex) t) => SetStatus(t.text, t.hex);
+
         private async void OnRegisterClicked(object? sender, EventArgs e)
         {
             ErrorLabel.IsVisible = false;
@@ -32,10 +81,10 @@ namespace VERA.Views
             var password = PasswordEntry.Text          ?? string.Empty;
             var confirm  = ConfirmEntry.Text           ?? string.Empty;
 
-            if (string.IsNullOrEmpty(url))     { ShowError("Bitte die Server-URL eingeben."); return; }
-            if (username.Length < 2)            { ShowError("Benutzername muss mind. 2 Zeichen haben."); return; }
-            if (password.Length < 8)            { ShowError("Passwort muss mind. 8 Zeichen lang sein."); return; }
-            if (password != confirm)            { ShowError("Die Passwörter stimmen nicht überein."); return; }
+            if (string.IsNullOrEmpty(url))  { ShowError("Bitte die Server-URL eingeben.");             return; }
+            if (username.Length < 2)         { ShowError("Benutzername muss mind. 2 Zeichen haben.");  return; }
+            if (password.Length < 8)         { ShowError("Passwort muss mind. 8 Zeichen lang sein.");  return; }
+            if (password != confirm)          { ShowError("Die Passwörter stimmen nicht überein.");     return; }
 
             var (score, _, _) = EvaluateStrength(password);
             if (score < 0.4) { ShowError("Passwort ist zu schwach."); return; }
@@ -46,6 +95,20 @@ namespace VERA.Views
 
             Preferences.Default.Set("server_url", url);
             _api.SetBaseUrl(url);
+
+            var compat = await _api.CheckServerAsync();
+            if (compat != ServerCompatibility.Ok)
+            {
+                ShowError(compat switch
+                {
+                    ServerCompatibility.Unreachable  => "Server nicht erreichbar.",
+                    ServerCompatibility.ClientTooOld => "App veraltet – bitte aktualisieren.",
+                    ServerCompatibility.ServerTooOld => "Server veraltet – bitte aktualisieren.",
+                    _                                => "Verbindungsfehler."
+                });
+                RegisterButton.IsEnabled = true;
+                return;
+            }
 
             var (ok, error) = await _api.RegisterAsync(username, password);
             if (!ok) { ShowError(error); RegisterButton.IsEnabled = true; return; }

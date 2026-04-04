@@ -1,6 +1,7 @@
 ﻿using System.Collections.Concurrent;
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using VERA.Server.Data;
@@ -41,10 +42,12 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 
 builder.Services.AddAuthorization();
 
-builder.Services.AddHsts(opt =>
+// Pelican/Docker: HTTPS wird am Reverse-Proxy terminiert – ForwardedHeaders weitergeben
+builder.Services.Configure<ForwardedHeadersOptions>(options =>
 {
-    opt.MaxAge            = TimeSpan.FromDays(365);
-    opt.IncludeSubDomains = true;
+    options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
+    options.KnownNetworks.Clear();
+    options.KnownProxies.Clear();
 });
 
 var app = builder.Build();
@@ -55,8 +58,7 @@ using (var scope = app.Services.CreateScope())
     db.Database.Migrate();
 }
 
-app.UseHsts();
-app.UseHttpsRedirection();
+app.UseForwardedHeaders();
 app.UseAuthentication();
 app.UseAuthorization();
 

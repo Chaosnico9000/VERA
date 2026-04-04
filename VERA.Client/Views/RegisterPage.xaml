@@ -53,9 +53,26 @@
                                    HeightRequest="50"
                                    BackgroundColor="Transparent"
                                    Keyboard="Url"
-                                   ReturnType="Next" />
+                                   ReturnType="Next"
+                                   Completed="OnServerUrlCompleted"
+                                   Unfocused="OnServerUrlUnfocused" />
                         </Border>
                     </VerticalStackLayout>
+
+                    <!-- Verbindungsstatus -->
+                    <Border x:Name="StatusBorder"
+                            BackgroundColor="{StaticResource SurfaceColor}"
+                            Stroke="{StaticResource BorderColor}" StrokeThickness="1"
+                            StrokeShape="RoundRectangle 12" Padding="14,10">
+                        <HorizontalStackLayout Spacing="8" HorizontalOptions="Center">
+                            <Label x:Name="StatusDot" Text="●" FontSize="11"
+                                   TextColor="{StaticResource TextMuted}"
+                                   VerticalOptions="Center" />
+                            <Label x:Name="StatusLabel" Text="Bitte Server-URL eingeben"
+                                   FontSize="13" TextColor="{StaticResource TextMuted}"
+                                   VerticalOptions="Center" />
+                        </HorizontalStackLayout>
+                    </Border>
 
                     <!-- Benutzername -->
                     <VerticalStackLayout Spacing="6">
@@ -154,7 +171,7 @@
                             Margin="0,8,0,0" />
 
                     <!-- Info -->
-                    <Label Text="Dein Account wird ausschließlich lokal auf diesem Gerät gespeichert. Es werden keine Daten übertragen."
+                    <Label Text="Dein Account wird auf dem verbundenen Server gespeichert."
                            FontSize="11"
                            TextColor="{StaticResource TextMuted}"
                            HorizontalTextAlignment="Center"
