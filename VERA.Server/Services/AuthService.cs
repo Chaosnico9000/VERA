@@ -110,6 +110,12 @@ namespace VERA.Server.Services
 
             token.Revoked = true; // Rotation: altes Token invalidieren
 
+            // Abgelaufene und revozierte Tokens für diesen User bereinigen
+            var stale = _db.RefreshTokens.Where(r =>
+                r.UserId == token.User.Id &&
+                (r.Revoked || r.ExpiresAt < DateTime.UtcNow));
+            _db.RefreshTokens.RemoveRange(stale);
+
             var (access, newRefresh, expiresAt) = await IssueTokensAsync(token.User, clientIp);
             await _db.SaveChangesAsync();
 

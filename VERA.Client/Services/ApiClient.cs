@@ -242,8 +242,8 @@ namespace VERA.Services
                 try
                 {
                     var app = Application.Current;
-                    if (app?.Windows.Count > 0 && app.Windows[0].Page is not NavigationPage nav
-                        || (app?.Windows[0].Page is NavigationPage np && np.CurrentPage is not LoginPage))
+                    if (app?.Windows.Count > 0 &&
+                        app.Windows[0].Page is not NavigationPage { CurrentPage: LoginPage })
                     {
                         var svc  = MauiProgram.Services.GetRequiredService<IAuthService>();
                         var self = MauiProgram.Services.GetRequiredService<ApiClient>();

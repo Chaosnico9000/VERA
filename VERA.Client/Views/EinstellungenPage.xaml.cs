@@ -6,11 +6,40 @@ namespace VERA.Views
 {
     public partial class EinstellungenPage : ContentPage
     {
+        private string? _updateUrl;
+
         public EinstellungenPage()
         {
             InitializeComponent();
             BindingContext = MauiProgram.Services.GetRequiredService<EinstellungenViewModel>();
             ServerUrlEntry.Text = Preferences.Default.Get("server_url", string.Empty);
+
+            VersionLabel.Text = $"v{AppVersion.Current}";
+            BuildLabel.Text   = AppInfo.BuildString;
+
+            _ = CheckUpdateAsync();
+        }
+
+        private async Task CheckUpdateAsync()
+        {
+            try
+            {
+                var svc  = MauiProgram.Services.GetRequiredService<UpdateService>();
+                var info = await svc.CheckAsync();
+                if (info is not { IsNewer: true }) return;
+
+                _updateUrl = info.DownloadUrl;
+                UpdateButton.Text        = $"🆕  Update auf v{info.LatestVersion} verfügbar";
+                UpdateButton.IsVisible   = true;
+                UpdateDivider.IsVisible  = true;
+            }
+            catch { /* Update-Check ist nicht kritisch */ }
+        }
+
+        private async void OnUpdateClicked(object? sender, EventArgs e)
+        {
+            if (_updateUrl is null) return;
+            await Launcher.OpenAsync(new Uri(_updateUrl));
         }
 
         private void OnMenuClicked(object? sender, EventArgs e)

@@ -103,6 +103,7 @@ app.Use(async (ctx, next) =>
         }
         else
             rateLimitStore[ip] = (count + 1, window);
+
     }
     await next();
 });

@@ -15,6 +15,10 @@ dieses Projekt hält sich an [Semantic Versioning](https://semver.org/lang/de/).
 
 ### Fixed
 - **App-Crash beim Registrieren:** `ApiClient.SetBaseUrl` warf `InvalidOperationException` wenn `HttpClient.BaseAddress` nach dem ersten Request neu gesetzt wurde (Singleton-Instanz). Fix: `SetBaseUrl` erkennt URL-Änderungen, erstellt einen neuen `HttpClient` (Timeout, `X-Client-Version`-Header und Bearer-Token werden übertragen) und disposed den alten — bei unveränderter URL ist die Methode ein No-op.
+- **Falsche Navigation nach Token-Ablauf:** `ClearTokens` navigierte durch einen Operator-Precedenz-Bug (`||` statt `&&`) fast immer zur LoginPage — auch wenn der Nutzer bereits dort war. Fix: Pattern Matching für korrekte Prüfung ob das aktuelle Fenster bereits eine LoginPage zeigt.
+- **Doppelter `CheckServerAsync`-Call beim Login:** `OnLoginClicked` rief `CheckServerAsync` nochmals auf, obwohl der Verbindungsstatus-Badge oben bereits aktuell war. Der redundante Aufruf wurde entfernt — `LoginAsync` gibt bei Verbindungsfehlern ohnehin einen Fehler zurück.
+- **Rate-Limit-Counter lief nach 429 weiter (Server):** Der Zähler wurde auch dann erhöht wenn bereits 429 zurückgegeben wurde. Fix: Zähler wird nur für tatsächlich weitergeleitete Requests erhöht.
+- **RefreshToken-Tabelle wuchs unbegrenzt (Server):** Bei jedem Token-Refresh wurden abgelaufene und revozierte Tokens nicht bereinigt. Fix: `RefreshAsync` löscht jetzt alle veralteten Tokens des Nutzers vor dem `SaveChanges`.
 
 ---
 
