@@ -11,7 +11,18 @@ dieses Projekt hält sich an [Semantic Versioning](https://semver.org/lang/de/).
 
 ---
 
-## [1.0.7] - 2025-07-06
+## [1.0.8] - 2025-07-06
+
+### Changed
+- MAUI-Projekt von `VERA/` nach `VERA.Client/` umbenannt (Ordner + `.csproj`)
+- `VERA.slnx` Solution-Referenz aktualisiert
+- GitHub Actions Workflow: Versionspfad auf `VERA.Client/VERA.Client.csproj` aktualisiert
+- `AGENTS.md` Build-Befehle und Projektstruktur aktualisiert
+- `RootNamespace` bleibt `VERA` (kein Breaking Change in bestehenden `.cs`-Dateien)
+
+---
+
+## [1.0.7]
 
 ### Fixed
 - Pelican Egg: `set -e` hinzugefügt — Skript bricht bei jedem Fehler sofort ab statt mit Exit 0 weiterzulaufen

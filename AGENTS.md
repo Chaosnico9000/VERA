@@ -22,8 +22,8 @@
 ## 2. Projektstruktur
 
 ```
-VERA/                        ← .NET 10 MAUI App (Android primär)
-  VERA.csproj                ← ApplicationDisplayVersion muss SemVer-konform sein
+VERA.Client/                 ← .NET 10 MAUI App (Android primär)
+  VERA.Client.csproj         ← ApplicationDisplayVersion muss SemVer-konform sein
   App.xaml.cs                ← Startup: Server-URL-Check → RegisterPage/LoginPage/AppShell
   MauiProgram.cs             ← DI: ApiClient, AccountService, GamificationService
   Services/
@@ -100,7 +100,7 @@ Format: **`MAJOR.MINOR.PATCH`**
 
 ```powershell
 # MAUI App (Android)
-dotnet build VERA\VERA.csproj -f net10.0-android
+dotnet build VERA.Client\VERA.Client.csproj -f net10.0-android
 
 # VERA.Server
 dotnet build VERA.Server\VERA.Server.csproj

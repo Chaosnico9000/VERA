@@ -17,10 +17,10 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Version aus VERA.csproj auslesen
+      - name: Version aus VERA.Client.csproj auslesen
         id: version
         run: |
-          VERSION=$(grep -oP '(?<=<ApplicationDisplayVersion>)[^<]+' VERA/VERA.csproj)
+          VERSION=$(grep -oP '(?<=<ApplicationDisplayVersion>)[^<]+' VERA.Client/VERA.Client.csproj)
           echo "version=$VERSION" >> $GITHUB_OUTPUT
           echo "tag=v$VERSION" >> $GITHUB_OUTPUT
           echo "Detected version: $VERSION"
