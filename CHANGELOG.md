@@ -11,6 +11,14 @@ dieses Projekt hält sich an [Semantic Versioning](https://semver.org/lang/de/).
 
 ---
 
+## [1.4.2] - 2026-04-04
+
+### Fixed
+- GitHub Actions: `build-ios`-Job und alle iOS-bezogenen Schritte aus `release.yml` entfernt — verursachte fehlgeschlagene Releases weil das `vera-ios`-Artefakt nicht existierte und der `release`-Job dadurch keine `vera-server.zip` und `vera-android.apk` hochlud
+- Workflow vereinfacht auf 3 Jobs: `read-version` → `build-server` + `build-android` (parallel) → `release`
+
+---
+
 ## [1.4.1] - 2026-04-04
 
 ### Fixed

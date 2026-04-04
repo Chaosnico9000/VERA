@@ -8,6 +8,7 @@ on:
 
 jobs:
 
+  # --- 1. Version aus csproj lesen -----------------------------------------
   read-version:
     runs-on: ubuntu-latest
     outputs:
@@ -22,6 +23,7 @@ jobs:
           echo "version=$VERSION" >> $GITHUB_OUTPUT
           echo "tag=v$VERSION"    >> $GITHUB_OUTPUT
 
+  # --- 2a. Server ZIP bauen -------------------------------------------------
   build-server:
     needs: read-version
     runs-on: ubuntu-latest
@@ -39,6 +41,7 @@ jobs:
           name: vera-server
           path: vera-server.zip
 
+  # --- 2b. Android APK bauen und signieren ----------------------------------
   build-android:
     needs: read-version
     runs-on: ubuntu-latest
@@ -76,153 +79,66 @@ jobs:
           name: vera-android
           path: vera-android.apk
 
-  build-ios:
-    needs: read-version
-    runs-on: macos-latest
-    continue-on-error: true
-    steps:
-      - uses: actions/checkout@v4
-      - name: Pruefen ob Apple-Secrets gesetzt sind
-        id: check
-        run: |
-          if [ -n "$APPLE_CERT" ] && [ -n "$APPLE_PROFILE" ] && [ -n "$APPLE_TEAM" ]; then
-            echo "enabled=true" >> $GITHUB_OUTPUT
-          else
-            echo "enabled=false" >> $GITHUB_OUTPUT
-            echo "::notice::iOS-Build uebersprungen: Apple-Secrets nicht gesetzt."
-          fi
-        env:
-          APPLE_CERT:    ${{ secrets.APPLE_CERTIFICATE_P12_BASE64 }}
-          APPLE_PROFILE: ${{ secrets.APPLE_PROVISIONING_PROFILE_BASE64 }}
-          APPLE_TEAM:    ${{ secrets.APPLE_TEAM_ID }}
-      - uses: actions/setup-dotnet@v4
-        if: steps.check.outputs.enabled == 'true'
-        with:
-          dotnet-version: "10.0.x"
-      - name: MAUI iOS Workload installieren
-        if: steps.check.outputs.enabled == 'true'
-        run: dotnet workload install maui-ios
-      - name: Signing-Zertifikat importieren
-        if: steps.check.outputs.enabled == 'true'
-        run: |
-          echo "${{ secrets.APPLE_CERTIFICATE_P12_BASE64 }}" | base64 --decode > certificate.p12
-          security create-keychain -p "temp123" build.keychain
-          security default-keychain -s build.keychain
-          security unlock-keychain -p "temp123" build.keychain
-          security import certificate.p12 -k build.keychain -P "${{ secrets.APPLE_CERTIFICATE_PASSWORD }}" -T /usr/bin/codesign
-          security set-key-partition-list -S apple-tool:,apple: -s -k "temp123" build.keychain
-      - name: Provisioning Profile installieren
-        if: steps.check.outputs.enabled == 'true'
-        run: |
-          echo "${{ secrets.APPLE_PROVISIONING_PROFILE_BASE64 }}" | base64 --decode > profile.mobileprovision
-          mkdir -p ~/Library/MobileDevice/Provisioning\ Profiles
-          cp profile.mobileprovision ~/Library/MobileDevice/Provisioning\ Profiles/
-      - name: iOS IPA bauen
-        if: steps.check.outputs.enabled == 'true'
-        run: |
-          dotnet publish VERA.Client/VERA.Client.csproj \
-            -f net10.0-ios -c Release \
-            -p:ArchiveOnBuild=true \
-            -p:CodesignKey="iPhone Distribution" \
-            -p:MtouchArch=ARM64
-      - name: IPA kopieren
-        if: steps.check.outputs.enabled == 'true'
-        run: |
-          IPA=$(find VERA.Client/bin/Release/net10.0-ios -name "*.ipa" | head -1)
-          [ -n "$IPA" ] && cp "$IPA" vera-ios.ipa || echo "Kein IPA gefunden"
-      - name: IPA als Artefakt hochladen
-        if: steps.check.outputs.enabled == 'true'
-        uses: actions/upload-artifact@v4
-        with:
-          name: vera-ios
-          path: vera-ios.ipa
-          if-no-files-found: warn
-
+  # --- 3. GitHub Release erstellen ------------------------------------------
   release:
-    needs: [read-version, build-server, build-android, build-ios]
-    if: always() && needs.build-server.result == 'success' && needs.build-android.result == 'success'
+    needs: [read-version, build-server, build-android]
     runs-on: ubuntu-latest
     permissions:
       contents: write
       actions:  read
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/download-artifact@v4
-        with:
-          name: vera-server
-      - uses: actions/download-artifact@v4
-        with:
-          name: vera-android
-      - name: iOS-Artefakt herunterladen (optional)
+
+      - name: Server-Artefakt herunterladen
         uses: actions/download-artifact@v4
         with:
-          name: vera-ios
-        continue-on-error: true
+          name: vera-server
+          path: .
+
+      - name: Android-Artefakt herunterladen
+        uses: actions/download-artifact@v4
+        with:
+          name: vera-android
+          path: .
+
+      - name: Assets pruefen
+        run: |
+          ls -la
+          [ -f vera-server.zip  ] || { echo "FEHLER: vera-server.zip fehlt!";  exit 1; }
+          [ -f vera-android.apk ] || { echo "FEHLER: vera-android.apk fehlt!"; exit 1; }
+
       - name: Git-Tag setzen
         run: |
           git config user.name  "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git tag ${{ needs.read-version.outputs.tag }} || echo "Tag existiert bereits"
           git push origin ${{ needs.read-version.outputs.tag }} --force
-      - name: Vorhandene Assets ermitteln
-        id: assets
-        run: |
-          FILES="vera-server.zip vera-android.apk"
-          if [ -f vera-ios.ipa ]; then
-            FILES="$FILES vera-ios.ipa"
-            echo "has_ios=true" >> $GITHUB_OUTPUT
-          else
-            echo "has_ios=false" >> $GITHUB_OUTPUT
-          fi
-          echo "files=$FILES" >> $GITHUB_OUTPUT
-      - name: Release-Notizen generieren
-        id: notes
-        run: |
-          HAS_IOS=${{ steps.assets.outputs.has_ios }}
-          if [ "$HAS_IOS" = "true" ]; then
-            IOS_STATUS="> ios IPA dieser Version vorhanden — vera-ios.ipa unten herunterladen."
-          else
-            IOS_STATUS="> Kein iOS-Build in diesem Release. Sideloading-Tools (AltStore/Sideloadly) benoetigen eine IPA-Datei. Fuer iOS-Builds siehe docs/DEPLOYMENT.md."
-          fi
-          cat >> release_notes.md << EOF
-          ## VERA ${{ needs.read-version.outputs.version }}
-          
-          Automatisch gebaut aus Branch \\\${{ github.ref_name }}\\\ Commit \\\${{ github.sha }}\\\
-          
-          ---
-          
-          ### Android installieren
-          1. vera-android.apk unten herunterladen
-          2. Auf dem Geraet oeffnen (Unbekannte Quellen erlauben)
-          3. Installieren - die App prueft automatisch auf neue Versionen
-          
-          ---
-          
-          ### iOS / iPadOS installieren
-          $IOS_STATUS
-          
-          Option A - AltStore (kostenlos, kein Developer-Account):
-          1. AltStore (https://altstore.io) auf Mac/PC installieren
-          2. vera-ios.ipa herunterladen
-          3. iPhone per USB verbinden, AltStore oeffnen, Eigene App laden
-          
-          Option B - Sideloadly (kostenlos, kein Developer-Account):
-          1. Sideloadly (https://sideloadly.io) herunterladen
-          2. vera-ios.ipa per Drag and Drop installieren
-          3. iPhone: Einstellungen > Allgemein > VPN Geraeteverwaltung > Apple-ID vertrauen
-          
-          ---
-          
-          ### Server installieren (Pelican)
-          Das Egg laedt vera-server.zip beim Start automatisch herunter.
-          EOF
+
       - name: GitHub Release erstellen
         uses: softprops/action-gh-release@v2
         with:
           tag_name:    ${{ needs.read-version.outputs.tag }}
           name:        "VERA ${{ needs.read-version.outputs.version }}"
-          body_path:   release_notes.md
-          files:       ${{ steps.assets.outputs.files }}
           make_latest: true
           draft:       false
           prerelease:  false
+          files: |
+            vera-server.zip
+            vera-android.apk
+          body: |
+            ## VERA ${{ needs.read-version.outputs.version }}
+
+            Automatisch gebaut aus Branch `${{ github.ref_name }}` - Commit `${{ github.sha }}`
+
+            ---
+
+            ### Android installieren
+            1. `vera-android.apk` herunterladen
+            2. Auf dem Geraet oeffnen (Unbekannte Quellen erlauben)
+            3. Installieren - die App prueft automatisch auf neue Versionen
+
+            ---
+
+            ### Server installieren (Pelican)
+            Das Egg laedt `vera-server.zip` beim Start automatisch herunter.
+            Standard-URL: `http://panel.chaosfritten.de:27022`
