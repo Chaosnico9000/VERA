@@ -13,7 +13,7 @@
     "mcr.microsoft.com/dotnet/aspnet:10.0": "mcr.microsoft.com/dotnet/aspnet:10.0"
   },
   "file_denylist": [],
-  "startup": "dotnet /home/container/VERA.Server.dll",
+  "startup": "/bin/bash /home/container/start.sh",
   "config": {
     "files": "{}",
     "startup": "{\"done\": \"Now listening on\"}",
@@ -22,7 +22,7 @@
   },
   "scripts": {
     "installation": {
-      "script": "#!/bin/bash\napt-get update -y\napt-get install -y wget unzip\ncd /mnt/server\nwget -q https://github.com/Chaosnico9000/VERA/releases/latest/download/vera-server.zip -O server.zip\nunzip -o server.zip\nmv vera-server/* .\nrm -rf vera-server server.zip\nchmod +x VERA.Server",
+      "script": "#!/bin/bash\napt-get update -y\napt-get install -y wget unzip\ncd /mnt/server\nwget -q https://github.com/Chaosnico9000/VERA/releases/latest/download/vera-server.zip -O server.zip\nunzip -o server.zip\nmv vera-server/* .\nrm -rf vera-server server.zip\nchmod +x VERA.Server\nprintf '#!/bin/bash\\nexec dotnet /home/container/VERA.Server.dll\\n' > /mnt/server/start.sh\nchmod +x /mnt/server/start.sh",
       "container": "mcr.microsoft.com/dotnet/sdk:10.0",
       "entrypoint": "bash"
     }
