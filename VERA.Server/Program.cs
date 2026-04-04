@@ -126,6 +126,17 @@ app.Lifetime.ApplicationStarted.Register(() =>
 
     logger.LogInformation("──────────── VERA Server v{Version} ────────────", AppVersion.Current);
     logger.LogInformation("  Min. Client-Version : {Min}", AppVersion.MinClientVersion);
+
+    var addresses = app.Urls.ToList();
+    if (addresses.Count == 0)
+    {
+        var port = builder.Configuration["ASPNETCORE_HTTP_PORTS"] ?? "8080";
+        addresses = [$"http://<server-ip>:{port}"];
+    }
+    logger.LogInformation("──────────── Server-URL für Clients ────────────");
+    foreach (var addr in addresses)
+        logger.LogInformation("  → {Url}", addr);
+    logger.LogInformation("─────────────────────────────────────────────────");
     logger.LogInformation("──────────── Registrierte Endpoints ────────────");
     foreach (var ep in endpoints)
     {
