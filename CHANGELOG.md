@@ -11,7 +11,16 @@ dieses Projekt hält sich an [Semantic Versioning](https://semver.org/lang/de/).
 
 ---
 
-## [1.0.4] - 2025-07-06
+## [1.0.5] - 2025-07-06
+
+### Fixed
+- Pelican Egg: Startup-Befehl von `dotnet VERA.Server.dll` auf `dotnet /home/container/VERA.Server.dll` geändert (DLL liegt in `/home/container/`, Prozess startet von `/` aus)
+- Installationsskript: Dateien werden jetzt direkt nach `/home/container/` verschoben statt in `/mnt/server/`
+- `chmod +x` ebenfalls auf absoluten Pfad `/home/container/VERA.Server.dll` korrigiert
+
+---
+
+## [1.0.4]
 
 ### Fixed
 - Datenbankpfad von `/data` (read-only im Pelican-Container) auf `/home/container/data` geändert
