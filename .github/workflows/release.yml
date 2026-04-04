@@ -1,0 +1,54 @@
+name: Release VERA Server
+
+on:
+  push:
+    tags:
+      - "v*.*.*"   # Trigger bei Tags wie v1.0.0, v1.1.0, ...
+
+jobs:
+  build-and-release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET 10
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "10.0.x"
+
+      - name: Publish VERA.Server (linux-x64, self-contained=false)
+        run: |
+          dotnet publish VERA.Server/VERA.Server.csproj \
+            -c Release \
+            -r linux-x64 \
+            --no-self-contained \
+            -o ./publish/vera-server
+
+      - name: Zip Artefakt
+        run: |
+          cd publish
+          zip -r ../vera-server.zip vera-server/
+
+      - name: GitHub Release erstellen & ZIP hochladen
+        uses: softprops/action-gh-release@v2
+        with:
+          files: vera-server.zip
+          name: "VERA ${{ github.ref_name }}"
+          body: |
+            ## VERA Server ${{ github.ref_name }}
+
+            ### Installation (Pelican/Pterodactyl)
+            Das Egg (`pelican-egg.json`) lädt diese ZIP automatisch beim Server-Start herunter.
+
+            ### Manuell installieren
+            ```bash
+            wget https://github.com/Chaosnico9000/VERA/releases/latest/download/vera-server.zip
+            unzip vera-server.zip
+            dotnet VERA.Server.dll
+            ```
+
+            Siehe [Deployment-Guide](https://github.com/Chaosnico9000/VERA/blob/master/docs/DEPLOYMENT.md) für Details.
+          draft: false
+          prerelease: false

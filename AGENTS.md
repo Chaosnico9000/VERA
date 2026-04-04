@@ -85,7 +85,13 @@ Format: **`MAJOR.MINOR.PATCH`**
 1. `VERA/VERA.csproj` → `ApplicationDisplayVersion` aktualisieren (z.B. `"1.1.0"`)
 2. `VERA/VERA.csproj` → `ApplicationVersion` erhöhen (Integer, Android-Build-Nummer)
 3. `CHANGELOG.md` → neuen Eintrag unter `## [X.Y.Z] - YYYY-MM-DD` hinzufügen
-4. Git-Tag erstellen: `git tag v1.1.0`
+4. Commit + Push, dann Git-Tag erstellen und pushen:
+   ```powershell
+   git tag v1.1.0
+   git push origin v1.1.0
+   ```
+5. GitHub Actions (`release.yml`) baut automatisch `vera-server.zip` und erstellt den Release.
+   → URL wird: `https://github.com/Chaosnico9000/VERA/releases/latest/download/vera-server.zip`
 
 **Aktuelle Version: `1.0.0`**
 

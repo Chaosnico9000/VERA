@@ -11,6 +11,24 @@ dieses Projekt hält sich an [Semantic Versioning](https://semver.org/lang/de/).
 
 ---
 
+## [1.0.1] - 2025-07-06
+
+### Added
+- GitHub Actions Workflow (`.github/workflows/release.yml`) — automatischer Build und Release von `vera-server.zip` bei jedem `v*.*.*`-Tag
+- DataAnnotations-Validierung auf allen VERA.Shared DTOs (`[Required]`, `[StringLength]`, `[Range]`)
+- `EndTime > StartTime`-Validierung im `TimeEntriesController.Upsert`
+- Leer-Prüfung im `TimeEntriesController.Sync`
+- Dokumentation: `AGENTS.md`, `CHANGELOG.md`, `README.md`, `docs/DEPLOYMENT.md`, `docs/SETUP.md`, `docs/ARCHITECTURE.md`
+
+### Changed
+- `ApplicationDisplayVersion` von `"1.0"` auf `"1.0.0"` (SemVer-konform)
+- Redundante manuelle Passwortlängen-Prüfung in `AuthController` entfernt (jetzt via DataAnnotations)
+
+### Fixed
+- `VERA.csproj.Backup.tmp` Build-Artefakt entfernt
+
+---
+
 ## [1.0.0] - 2025-07-01
 
 ### Added

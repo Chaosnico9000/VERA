@@ -13,6 +13,9 @@ Dieser Guide beschreibt das Deployment des VERA.Server-Backends auf:
 - Einen sicheren JWT-Secret (mind. 32 zufällige Zeichen)
 - Einen offenen Port (Standard: `8080`)
 
+> **Releases:** Die `vera-server.zip` wird automatisch via GitHub Actions erstellt, wenn ein Tag gepusht wird.  
+> Immer aktuell unter: `https://github.com/Chaosnico9000/VERA/releases/latest/download/vera-server.zip`
+
 ---
 
 ## Pelican / Pterodactyl
