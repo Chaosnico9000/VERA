@@ -113,12 +113,18 @@ namespace VERA.Views
             var (ok, error) = await _api.RegisterAsync(username, password);
             if (!ok) { ShowError(error); RegisterButton.IsEnabled = true; return; }
 
-            var (result, _) = await _api.LoginAsync(username, password);
+            // Registrierung erfolgreich → automatisch einloggen
+            var (result, loginError) = await _api.LoginAsync(username, password);
             if (result == LoginResult.Success)
+            {
                 Application.Current!.Windows[0].Page = new AppShell();
-            else
-                Application.Current!.Windows[0].Page = new NavigationPage(
-                    new LoginPage(_api, MauiProgram.Services.GetRequiredService<IAuthService>()));
+                return;
+            }
+
+            // Auto-Login fehlgeschlagen (sollte nicht passieren) → zur LoginPage mit prefill
+            var auth = MauiProgram.Services.GetRequiredService<IAuthService>();
+            Application.Current!.Windows[0].Page = new NavigationPage(
+                new LoginPage(_api, auth, prefillUsername: username));
         }
 
         private void ShowError(string msg) { ErrorLabel.Text = msg; ErrorLabel.IsVisible = true; }

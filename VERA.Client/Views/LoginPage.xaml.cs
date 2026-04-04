@@ -7,12 +7,14 @@ namespace VERA.Views
     {
         private readonly ApiClient    _api;
         private readonly IAuthService _auth;
+        private readonly string?      _prefillUsername;
 
-        public LoginPage(ApiClient api, IAuthService auth)
+        public LoginPage(ApiClient api, IAuthService auth, string? prefillUsername = null)
         {
             InitializeComponent();
-            _api  = api;
-            _auth = auth;
+            _api             = api;
+            _auth            = auth;
+            _prefillUsername = prefillUsername;
         }
 
         protected override async void OnAppearing()
@@ -28,9 +30,18 @@ namespace VERA.Views
                 _ = CheckConnectionAsync();
             }
 
-            var name = _api.Username;
-            if (!string.IsNullOrEmpty(name))
-                WelcomeLabel.Text = $"Willkommen zurück, {name} 👋";
+            // Benutzername vorausfüllen (z.B. nach Registrierung)
+            if (!string.IsNullOrEmpty(_prefillUsername))
+            {
+                UsernameEntry.Text    = _prefillUsername;
+                WelcomeLabel.Text     = $"Willkommen, {_prefillUsername}! Jetzt anmelden 😊";
+            }
+            else
+            {
+                var name = _api.Username;
+                if (!string.IsNullOrEmpty(name))
+                    WelcomeLabel.Text = $"Willkommen zurück, {name} 👋";
+            }
 
             BiometricButton.IsVisible = _auth.IsAvailable;
 

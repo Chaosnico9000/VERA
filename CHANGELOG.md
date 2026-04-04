@@ -16,6 +16,7 @@ dieses Projekt hält sich an [Semantic Versioning](https://semver.org/lang/de/).
 ### Added
 - **In-App Update-Installer (Android):** Die App lädt Updates jetzt direkt herunter und startet den Android-System-Installer automatisch — kein manueller Browser-Download mehr nötig. Fortschritt wird im Update-Button angezeigt. Funktioniert sowohl beim App-Start-Dialog als auch über Einstellungen → Über die App.
 - **Changelog in der App:** Einstellungen → Über die App → „📋 Changelog anzeigen" zeigt den vollständigen Changelog direkt in der App.
+- **Auto-Login nach Registrierung:** Nach erfolgreicher Registrierung wird der Nutzer automatisch eingeloggt und landet direkt in der App. Schlägt der Auto-Login wider Erwarten fehl, wird die LoginPage mit vorausgefülltem Benutzernamen geöffnet.
 
 ### Fixed
 - **App-Crash beim Registrieren:** `ApiClient.SetBaseUrl` warf `InvalidOperationException` wenn `HttpClient.BaseAddress` nach dem ersten Request neu gesetzt wurde (Singleton-Instanz). Fix: `SetBaseUrl` erkennt URL-Änderungen, erstellt einen neuen `HttpClient` (Timeout, `X-Client-Version`-Header und Bearer-Token werden übertragen) und disposed den alten — bei unveränderter URL ist die Methode ein No-op.
