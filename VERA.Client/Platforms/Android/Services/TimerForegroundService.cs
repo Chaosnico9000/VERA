@@ -72,10 +72,12 @@ namespace VERA.Platforms.Android.Services
                 .SetPriority(NotificationCompat.PriorityHigh)
                 .SetVisibility(NotificationCompat.VisibilityPublic)
                 .SetColor(unchecked((int)0xFF00C8F0))
-                .Build()!;
+                .Build();
+
+            if (notification is null) return;
 
             var manager = NotificationManagerCompat.From(context);
-            manager!.Notify(ReminderId, notification);
+            manager.Notify(ReminderId, notification);
         }
 
         private void EnsureTimerChannel()
@@ -127,7 +129,7 @@ namespace VERA.Platforms.Android.Services
                 .SetVisibility(NotificationCompat.VisibilityPublic)
                 .SetColor(unchecked((int)0xFF3566E5))
                 .SetColorized(true)
-                .Build()!;
+                .Build() ?? throw new InvalidOperationException("Notification build failed.");
         }
     }
 }

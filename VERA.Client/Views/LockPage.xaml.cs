@@ -39,8 +39,8 @@ namespace VERA.Views
             }
 
             // Button-Animation
-            await UnlockButton.ScaleTo(0.95, 80);
-            await UnlockButton.ScaleTo(1.0, 80);
+            await UnlockButton.ScaleToAsync(0.95, 80);
+            await UnlockButton.ScaleToAsync(1.0, 80);
 
             var result = await _auth.AuthenticateAsync("Zugriff auf deine Zeiteinträge");
 
@@ -65,7 +65,7 @@ namespace VERA.Views
                 case AuthResult.NotAvailable:
                     ErrorLabel.Text = "Authentifizierung fehlgeschlagen. Bitte erneut versuchen.";
                     ErrorLabel.IsVisible = true;
-                    await ErrorLabel.FadeTo(0, 3000);
+                    await ErrorLabel.FadeToAsync(0, 3000);
                     ErrorLabel.IsVisible = false;
                     ErrorLabel.Opacity = 1;
                     UnlockButton.IsEnabled = true;

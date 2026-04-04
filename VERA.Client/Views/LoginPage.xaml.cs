@@ -83,8 +83,8 @@ namespace VERA.Views
 
             LoginButton.IsEnabled = false;
             ErrorLabel.IsVisible  = false;
-            await LoginButton.ScaleTo(0.96, 80);
-            await LoginButton.ScaleTo(1.0,  80);
+            await LoginButton.ScaleToAsync(0.96, 80);
+            await LoginButton.ScaleToAsync(1.0,  80);
 
             var (result, error) = await _api.LoginAsync(username, password);
             switch (result)

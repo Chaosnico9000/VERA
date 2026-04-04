@@ -32,8 +32,8 @@ namespace VERA.Views
             await XpProgressBar.ProgressTo(_gamification.LevelProgress, 900, Easing.CubicOut);
 
             // Level-Emoji Puls-Animation
-            await LevelEmojiLabel.ScaleTo(1.35, 200, Easing.SpringOut);
-            await LevelEmojiLabel.ScaleTo(1.0, 200, Easing.SpringIn);
+            await LevelEmojiLabel.ScaleToAsync(1.35, 200, Easing.SpringOut);
+            await LevelEmojiLabel.ScaleToAsync(1.0, 200, Easing.SpringIn);
 
             // Level-Up Banner anzeigen wenn neues Level
             if (_gamification.NewLevelUp)
@@ -48,11 +48,11 @@ namespace VERA.Views
         {
             LevelUpLabel.Text = _gamification.LevelUpText;
             LevelUpBanner.IsVisible = true;
-            await LevelUpBanner.FadeTo(1.0, 350);
-            await LevelUpBanner.ScaleTo(1.04, 200, Easing.SpringOut);
-            await LevelUpBanner.ScaleTo(1.0, 150);
+            await LevelUpBanner.FadeToAsync(1.0, 350);
+            await LevelUpBanner.ScaleToAsync(1.04, 200, Easing.SpringOut);
+            await LevelUpBanner.ScaleToAsync(1.0, 150);
             await Task.Delay(3500);
-            await LevelUpBanner.FadeTo(0.0, 500);
+            await LevelUpBanner.FadeToAsync(0.0, 500);
             LevelUpBanner.IsVisible = false;
         }
 
@@ -60,9 +60,9 @@ namespace VERA.Views
         {
             LevelUpLabel.Text = _gamification.LevelUpText;
             LevelUpBanner.IsVisible = true;
-            await LevelUpBanner.FadeTo(1.0, 350);
+            await LevelUpBanner.FadeToAsync(1.0, 350);
             await Task.Delay(3000);
-            await LevelUpBanner.FadeTo(0.0, 500);
+            await LevelUpBanner.FadeToAsync(0.0, 500);
             LevelUpBanner.IsVisible = false;
         }
 

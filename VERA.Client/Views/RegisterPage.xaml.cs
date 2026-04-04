@@ -90,8 +90,8 @@ namespace VERA.Views
             if (score < 0.4) { ShowError("Passwort ist zu schwach."); return; }
 
             RegisterButton.IsEnabled = false;
-            await RegisterButton.ScaleTo(0.96, 80);
-            await RegisterButton.ScaleTo(1.0,  80);
+            await RegisterButton.ScaleToAsync(0.96, 80);
+            await RegisterButton.ScaleToAsync(1.0,  80);
 
             Preferences.Default.Set("server_url", url);
             _api.SetBaseUrl(url);

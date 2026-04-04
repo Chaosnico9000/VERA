@@ -35,6 +35,11 @@ namespace VERA.Platforms.Android.Services
             }
 
             var executor = ContextCompat.GetMainExecutor(activity);
+            if (executor is null)
+            {
+                tcs.TrySetResult(AuthResult.NotAvailable);
+                return tcs.Task;
+            }
 
             var promptInfo = new BiometricPrompt.PromptInfo.Builder()
                 .SetTitle("VERA – Entsperren")

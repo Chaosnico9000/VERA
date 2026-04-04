@@ -70,13 +70,14 @@ namespace VERA
                     var page = Application.Current?.Windows.FirstOrDefault()?.Page;
                     if (page is null) return;
 
-                    var ok = await page.DisplayAlert(
+                    var ok = await page.DisplayAlertAsync(
                         "Update verfügbar 🆕",
-                        $"Version {info.LatestVersion} ist verfügbar (du hast {AppVersion.Current}).\nJetzt herunterladen?",
-                        "Herunterladen", "Später");
+                        $"Version {info.LatestVersion} ist verfügbar (du hast {AppVersion.Current}).\nJetzt herunterladen und installieren?",
+                        "Installieren", "Später");
 
-                    if (ok)
-                        await Launcher.OpenAsync(new Uri(info.DownloadUrl));
+                    if (!ok) return;
+
+                    await svc.DownloadAndInstallAsync(info.DownloadUrl);
                 });
             }
             catch { /* Update-Check ist nicht kritisch */ }
