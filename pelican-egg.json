@@ -67,6 +67,16 @@
       "user_editable": true,
       "rules": "required|numeric|between:1024,65535",
       "field_type": "text"
+    },
+    {
+      "name": "Datenbankverzeichnis",
+      "description": "Pfad zum Verzeichnis, in dem vera.db gespeichert wird. Pelican: /home/container/data",
+      "env_variable": "DataDirectory",
+      "default_value": "/home/container/data",
+      "user_viewable": true,
+      "user_editable": true,
+      "rules": "required|string",
+      "field_type": "text"
     }
   ]
 }

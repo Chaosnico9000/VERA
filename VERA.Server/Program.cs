@@ -8,7 +8,7 @@ using VERA.Server.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
-var dataDir = builder.Configuration["DataDirectory"] ?? "/data";
+var dataDir = builder.Configuration["DataDirectory"] ?? "/home/container/data";
 Directory.CreateDirectory(dataDir);
 var dbPath = Path.Combine(dataDir, "vera.db");
 

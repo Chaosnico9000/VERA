@@ -11,7 +11,16 @@ dieses Projekt hält sich an [Semantic Versioning](https://semver.org/lang/de/).
 
 ---
 
-## [1.0.3] - 2025-07-06
+## [1.0.4] - 2025-07-06
+
+### Fixed
+- Datenbankpfad von `/data` (read-only im Pelican-Container) auf `/home/container/data` geändert
+- `appsettings.json` und `Program.cs` Fallback-Wert aktualisiert
+- Pelican Egg: neue Umgebungsvariable `DataDirectory` (Standard: `/home/container/data`) — ermöglicht flexiblen Pfad je nach Hosting-Umgebung
+
+---
+
+## [1.0.3]
 
 ### Fixed
 - Pelican Egg Installationsskript: `mv vera-server/* .` hinzugefügt, damit Dateien direkt in `/mnt/server/` liegen statt im Unterordner `vera-server/`
