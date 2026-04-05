@@ -11,7 +11,15 @@ dieses Projekt hält sich an [Semantic Versioning](https://semver.org/lang/de/).
 
 ---
 
-## [1.8.0] - 2026-04-07
+## [1.8.1] - 2026-04-07
+
+### Fixed
+- **App-Icon weißer Rand entfernt** — `MauiIcon` nutzt jetzt `appicon.svg` als Hintergrund und `appiconfg.svg` als `ForegroundFile`, sodass Android Adaptive Icons korrekt gerendert werden ohne weißen Rand
+- **Update-Download läuft im Hintergrund weiter** — Download läuft jetzt als Android Foreground Service (`UpdateDownloadService`) und wird nicht mehr abgebrochen wenn die App minimiert oder gewechselt wird; Fortschrittsbalken in der Statusleiste; Installer öffnet sich nach Abschluss automatisch
+
+---
+
+## [1.8.0]
 
 ### Added
 - **Darts Assistent** — Vollständige neue Seite für Darts-Spiele (`🎯 Darts` im Navigationsmenü):
