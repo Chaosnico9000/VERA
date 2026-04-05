@@ -35,8 +35,8 @@
 		<ApplicationId>com.companyname.vera</ApplicationId>
 
 		<!-- Versions -->
-		<ApplicationDisplayVersion>1.7.1</ApplicationDisplayVersion>
-		<ApplicationVersion>25</ApplicationVersion>
+		<ApplicationDisplayVersion>1.8.0</ApplicationDisplayVersion>
+		<ApplicationVersion>26</ApplicationVersion>
 
 		<!-- To develop, package, and publish an app to the Microsoft Store, see: https://aka.ms/MauiTemplateUnpackaged -->
 		<WindowsPackageType>None</WindowsPackageType>
@@ -83,6 +83,9 @@
 
 	<ItemGroup>
 	  <MauiXaml Update="Views\ChangelogPage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Views\DartsPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	  <MauiXaml Update="Views\EditEntryPage.xaml">

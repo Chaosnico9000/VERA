@@ -1,0 +1,708 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="VERA.Views.DartsPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:vm="clr-namespace:VERA.ViewModels"
+    xmlns:models="clr-namespace:VERA.Models"
+    x:DataType="vm:DartsViewModel"
+    BackgroundColor="{DynamicResource AppBackground}">
+
+    <ScrollView>
+        <VerticalStackLayout Spacing="0">
+
+            <!-- ── Header ───────────────────────────────────────────────── -->
+            <Grid BackgroundColor="{DynamicResource SurfaceColor}"
+                  Padding="16,44,16,12"
+                  ColumnDefinitions="Auto,*,Auto">
+                <Button Grid.Column="0"
+                        Text="☰"
+                        FontSize="22"
+                        BackgroundColor="Transparent"
+                        TextColor="{DynamicResource TextPrimary}"
+                        Padding="4"
+                        WidthRequest="44"
+                        Clicked="OnMenuClicked" />
+                <VerticalStackLayout Grid.Column="1"
+                                     VerticalOptions="Center"
+                                     HorizontalOptions="Center">
+                    <Label Text="🎯 Darts"
+                           FontSize="20"
+                           FontFamily="OpenSansSemibold"
+                           TextColor="{DynamicResource TextPrimary}"
+                           HorizontalOptions="Center" />
+                    <Label Text="{Binding TurnMessage}"
+                           FontSize="13"
+                           TextColor="{StaticResource CyanColor}"
+                           HorizontalOptions="Center"
+                           IsVisible="{Binding IsPlaying}" />
+                </VerticalStackLayout>
+            </Grid>
+
+            <!-- ══════════════════════════════════════════════════════════ -->
+            <!-- SETUP SECTION                                              -->
+            <!-- ══════════════════════════════════════════════════════════ -->
+            <VerticalStackLayout IsVisible="{Binding IsSetup}"
+                                 Padding="16,12"
+                                 Spacing="12">
+
+                <!-- Modus-Karten -->
+                <Label Text="Spielmodus"
+                       FontSize="13"
+                       FontFamily="OpenSansSemibold"
+                       TextColor="{DynamicResource TextMuted}" />
+
+                <Grid ColumnDefinitions="*,*,*" ColumnSpacing="8">
+                    <Border Grid.Column="0"
+                            BackgroundColor="{Binding IsMode301, Converter={StaticResource BoolToCardConverter}}"
+                            Stroke="{DynamicResource BorderColor}" StrokeThickness="1"
+                            StrokeShape="RoundRectangle 10">
+                        <Label Text="301" TextColor="White" FontSize="16" FontFamily="OpenSansSemibold"
+                               HorizontalOptions="Center" Padding="0,12">
+                            <Label.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding SetModeCommand}" CommandParameter="X01_301" />
+                            </Label.GestureRecognizers>
+                        </Label>
+                    </Border>
+                    <Border Grid.Column="1"
+                            BackgroundColor="{Binding IsMode501, Converter={StaticResource BoolToCardConverter}}"
+                            Stroke="{DynamicResource BorderColor}" StrokeThickness="1"
+                            StrokeShape="RoundRectangle 10">
+                        <Label Text="501" TextColor="White" FontSize="16" FontFamily="OpenSansSemibold"
+                               HorizontalOptions="Center" Padding="0,12">
+                            <Label.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding SetModeCommand}" CommandParameter="X01_501" />
+                            </Label.GestureRecognizers>
+                        </Label>
+                    </Border>
+                    <Border Grid.Column="2"
+                            BackgroundColor="{Binding IsMode701, Converter={StaticResource BoolToCardConverter}}"
+                            Stroke="{DynamicResource BorderColor}" StrokeThickness="1"
+                            StrokeShape="RoundRectangle 10">
+                        <Label Text="701" TextColor="White" FontSize="16" FontFamily="OpenSansSemibold"
+                               HorizontalOptions="Center" Padding="0,12">
+                            <Label.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding SetModeCommand}" CommandParameter="X01_701" />
+                            </Label.GestureRecognizers>
+                        </Label>
+                    </Border>
+                </Grid>
+
+                <Grid ColumnDefinitions="*,*" ColumnSpacing="8">
+                    <Border Grid.Column="0"
+                            BackgroundColor="{Binding IsModeCricket, Converter={StaticResource BoolToCardConverter}}"
+                            Stroke="{DynamicResource BorderColor}" StrokeThickness="1"
+                            StrokeShape="RoundRectangle 10">
+                        <Label Text="Cricket" TextColor="White" FontSize="16" FontFamily="OpenSansSemibold"
+                               HorizontalOptions="Center" Padding="0,12">
+                            <Label.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding SetModeCommand}" CommandParameter="Cricket" />
+                            </Label.GestureRecognizers>
+                        </Label>
+                    </Border>
+                    <Border Grid.Column="1"
+                            BackgroundColor="{Binding IsModeAtc, Converter={StaticResource BoolToCardConverter}}"
+                            Stroke="{DynamicResource BorderColor}" StrokeThickness="1"
+                            StrokeShape="RoundRectangle 10">
+                        <Label Text="Around the Clock" TextColor="White" FontSize="14" FontFamily="OpenSansSemibold"
+                               HorizontalOptions="Center" Padding="0,12">
+                            <Label.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding SetModeCommand}" CommandParameter="AroundTheClock" />
+                            </Label.GestureRecognizers>
+                        </Label>
+                    </Border>
+                </Grid>
+
+                <!-- Legs -->
+                <BoxView HeightRequest="1" BackgroundColor="{DynamicResource DividerColor}" />
+                <Label Text="Legs zum Sieg"
+                       FontSize="13"
+                       FontFamily="OpenSansSemibold"
+                       TextColor="{DynamicResource TextMuted}" />
+                <Grid ColumnDefinitions="Auto,*,Auto" VerticalOptions="Center">
+                    <Button Grid.Column="0"
+                            Text="−"
+                            Command="{Binding DecrLegsCommand}"
+                            BackgroundColor="{DynamicResource CardColor}"
+                            TextColor="{DynamicResource TextPrimary}"
+                            FontSize="20"
+                            WidthRequest="48" HeightRequest="48"
+                            CornerRadius="24" Padding="0" />
+                    <Label Grid.Column="1"
+                           Text="{Binding LegsDisplay}"
+                           FontSize="18"
+                           FontFamily="OpenSansSemibold"
+                           TextColor="{DynamicResource TextPrimary}"
+                           HorizontalOptions="Center"
+                           VerticalOptions="Center" />
+                    <Button Grid.Column="2"
+                            Text="+"
+                            Command="{Binding IncrLegsCommand}"
+                            BackgroundColor="{DynamicResource CardColor}"
+                            TextColor="{DynamicResource TextPrimary}"
+                            FontSize="20"
+                            WidthRequest="48" HeightRequest="48"
+                            CornerRadius="24" Padding="0" />
+                </Grid>
+
+                <!-- Spielerliste -->
+                <BoxView HeightRequest="1" BackgroundColor="{DynamicResource DividerColor}" />
+                <Label Text="Spieler"
+                       FontSize="13"
+                       FontFamily="OpenSansSemibold"
+                       TextColor="{DynamicResource TextMuted}" />
+
+                <VerticalStackLayout BindableLayout.ItemsSource="{Binding SetupPlayers}" Spacing="8">
+                    <BindableLayout.ItemTemplate>
+                        <DataTemplate x:DataType="models:DartsPlayerSetup">
+                            <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8">
+                                <Border Grid.Column="0"
+                                        BackgroundColor="{DynamicResource CardColor}"
+                                        Stroke="{DynamicResource BorderColor}" StrokeThickness="1"
+                                        StrokeShape="RoundRectangle 10"
+                                        Padding="12,0">
+                                    <Entry Text="{Binding Name, Mode=TwoWay}"
+                                           FontSize="15"
+                                           TextColor="{DynamicResource TextPrimary}"
+                                           BackgroundColor="Transparent"
+                                           PlaceholderColor="{DynamicResource TextMuted}"
+                                           Placeholder="Name..."
+                                           HeightRequest="44" />
+                                </Border>
+                                <Button Grid.Column="1"
+                                        Text="✕"
+                                        BackgroundColor="{DynamicResource CardColor}"
+                                        TextColor="#E05252"
+                                        FontSize="16"
+                                        WidthRequest="44" HeightRequest="44"
+                                        CornerRadius="22" Padding="0"
+                                        Clicked="OnRemovePlayer" />
+                            </Grid>
+                        </DataTemplate>
+                    </BindableLayout.ItemTemplate>
+                </VerticalStackLayout>
+
+                <Button Text="+ Spieler hinzufügen"
+                        Command="{Binding AddPlayerCommand}"
+                        BackgroundColor="{DynamicResource CardColor}"
+                        TextColor="{StaticResource CyanColor}"
+                        FontSize="15"
+                        HeightRequest="48"
+                        CornerRadius="10" />
+
+                <Button Text="🎯  Spiel starten"
+                        Command="{Binding StartGameCommand}"
+                        BackgroundColor="{StaticResource Primary}"
+                        TextColor="White"
+                        FontFamily="OpenSansSemibold"
+                        FontSize="17"
+                        HeightRequest="54"
+                        CornerRadius="12"
+                        Margin="0,4,0,0" />
+            </VerticalStackLayout>
+
+            <!-- ══════════════════════════════════════════════════════════ -->
+            <!-- X01 SECTION                                                -->
+            <!-- ══════════════════════════════════════════════════════════ -->
+            <VerticalStackLayout IsVisible="{Binding IsX01Playing}"
+                                 Padding="16,12"
+                                 Spacing="12">
+
+                <!-- Aktiver Spieler - Hauptanzeige -->
+                <Border BackgroundColor="{DynamicResource CardColor}"
+                        Stroke="{StaticResource Primary}" StrokeThickness="2"
+                        StrokeShape="RoundRectangle 14"
+                        Padding="16,14">
+                    <VerticalStackLayout Spacing="4">
+                        <Label Text="{Binding CurrentPlayer.Name}"
+                               FontSize="15"
+                               TextColor="{DynamicResource TextMuted}" />
+                        <Label Text="{Binding CurrentPlayer.ScoreDisplay}"
+                               FontSize="52"
+                               FontFamily="OpenSansSemibold"
+                               TextColor="White" />
+                        <Label Text="{Binding CurrentPlayer.LegsDisplay}"
+                               FontSize="13"
+                               TextColor="{StaticResource CyanColor}"
+                               IsVisible="{Binding CurrentPlayer.HasLegs}" />
+                        <Label Text="{Binding CheckoutHint}"
+                               FontSize="14"
+                               TextColor="{StaticResource Accent}"
+                               IsVisible="{Binding HasCheckoutHint}" />
+                    </VerticalStackLayout>
+                </Border>
+
+                <!-- Scoreboard -->
+                <CollectionView ItemsSource="{Binding Players}"
+                                HeightRequest="60">
+                    <CollectionView.ItemsLayout>
+                        <LinearItemsLayout Orientation="Horizontal" ItemSpacing="8" />
+                    </CollectionView.ItemsLayout>
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate x:DataType="models:DartsPlayerVm">
+                            <Border BackgroundColor="{DynamicResource CardElevated}"
+                                    Stroke="{DynamicResource BorderColor}" StrokeThickness="1"
+                                    StrokeShape="RoundRectangle 10"
+                                    Padding="12,8"
+                                    WidthRequest="100">
+                                <VisualStateManager.VisualStateGroups>
+                                    <VisualStateGroupList>
+                                        <VisualStateGroup>
+                                            <VisualState x:Name="Normal" />
+                                            <VisualState x:Name="Selected" />
+                                        </VisualStateGroup>
+                                    </VisualStateGroupList>
+                                </VisualStateManager.VisualStateGroups>
+                                <VerticalStackLayout Spacing="2">
+                                    <Label Text="{Binding Name}"
+                                           FontSize="11"
+                                           TextColor="{DynamicResource TextMuted}"
+                                           LineBreakMode="TailTruncation" />
+                                    <Label Text="{Binding ScoreDisplay}"
+                                           FontSize="18"
+                                           FontFamily="OpenSansSemibold"
+                                           TextColor="White" />
+                                    <Label Text="{Binding LegsDisplay}"
+                                           FontSize="10"
+                                           TextColor="{DynamicResource TextMuted}"
+                                           IsVisible="{Binding HasLegs}" />
+                                </VerticalStackLayout>
+                                <Border.Triggers>
+                                    <DataTrigger TargetType="Border"
+                                                 Binding="{Binding IsActive}"
+                                                 Value="True">
+                                        <Setter Property="Stroke" Value="#3566E5" />
+                                        <Setter Property="StrokeThickness" Value="2" />
+                                        <Setter Property="BackgroundColor" Value="#1A2460" />
+                                    </DataTrigger>
+                                </Border.Triggers>
+                            </Border>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+
+                <!-- Eingabe-Anzeige -->
+                <Border BackgroundColor="{DynamicResource CardElevated}"
+                        Stroke="{DynamicResource BorderColor}" StrokeThickness="1"
+                        StrokeShape="RoundRectangle 10"
+                        Padding="16,12">
+                    <Grid ColumnDefinitions="*,Auto">
+                        <Label Grid.Column="0"
+                               Text="{Binding InputDisplay}"
+                               FontSize="36"
+                               FontFamily="OpenSansSemibold"
+                               TextColor="White"
+                               VerticalOptions="Center" />
+                        <Label Grid.Column="1"
+                               Text="{Binding DartCountDisplay}"
+                               FontSize="13"
+                               TextColor="{DynamicResource TextMuted}"
+                               VerticalOptions="Center" />
+                    </Grid>
+                </Border>
+
+                <!-- Numpad -->
+                <Grid RowDefinitions="Auto,Auto,Auto,Auto"
+                      ColumnDefinitions="*,*,*"
+                      RowSpacing="8" ColumnSpacing="8">
+                    <!-- Reihe 1 -->
+                    <Button Grid.Row="0" Grid.Column="0" Text="7" Command="{Binding NumpadCommand}" CommandParameter="7"
+                            BackgroundColor="{DynamicResource CardColor}" TextColor="White" FontSize="22" HeightRequest="60" CornerRadius="10" />
+                    <Button Grid.Row="0" Grid.Column="1" Text="8" Command="{Binding NumpadCommand}" CommandParameter="8"
+                            BackgroundColor="{DynamicResource CardColor}" TextColor="White" FontSize="22" HeightRequest="60" CornerRadius="10" />
+                    <Button Grid.Row="0" Grid.Column="2" Text="9" Command="{Binding NumpadCommand}" CommandParameter="9"
+                            BackgroundColor="{DynamicResource CardColor}" TextColor="White" FontSize="22" HeightRequest="60" CornerRadius="10" />
+                    <!-- Reihe 2 -->
+                    <Button Grid.Row="1" Grid.Column="0" Text="4" Command="{Binding NumpadCommand}" CommandParameter="4"
+                            BackgroundColor="{DynamicResource CardColor}" TextColor="White" FontSize="22" HeightRequest="60" CornerRadius="10" />
+                    <Button Grid.Row="1" Grid.Column="1" Text="5" Command="{Binding NumpadCommand}" CommandParameter="5"
+                            BackgroundColor="{DynamicResource CardColor}" TextColor="White" FontSize="22" HeightRequest="60" CornerRadius="10" />
+                    <Button Grid.Row="1" Grid.Column="2" Text="6" Command="{Binding NumpadCommand}" CommandParameter="6"
+                            BackgroundColor="{DynamicResource CardColor}" TextColor="White" FontSize="22" HeightRequest="60" CornerRadius="10" />
+                    <!-- Reihe 3 -->
+                    <Button Grid.Row="2" Grid.Column="0" Text="1" Command="{Binding NumpadCommand}" CommandParameter="1"
+                            BackgroundColor="{DynamicResource CardColor}" TextColor="White" FontSize="22" HeightRequest="60" CornerRadius="10" />
+                    <Button Grid.Row="2" Grid.Column="1" Text="2" Command="{Binding NumpadCommand}" CommandParameter="2"
+                            BackgroundColor="{DynamicResource CardColor}" TextColor="White" FontSize="22" HeightRequest="60" CornerRadius="10" />
+                    <Button Grid.Row="2" Grid.Column="2" Text="3" Command="{Binding NumpadCommand}" CommandParameter="3"
+                            BackgroundColor="{DynamicResource CardColor}" TextColor="White" FontSize="22" HeightRequest="60" CornerRadius="10" />
+                    <!-- Reihe 4 -->
+                    <Button Grid.Row="3" Grid.Column="0" Text="⌫" Command="{Binding NumpadCommand}" CommandParameter="DEL"
+                            BackgroundColor="{DynamicResource CardElevated}" TextColor="#E05252" FontSize="22" HeightRequest="60" CornerRadius="10" />
+                    <Button Grid.Row="3" Grid.Column="1" Text="0" Command="{Binding NumpadCommand}" CommandParameter="0"
+                            BackgroundColor="{DynamicResource CardColor}" TextColor="White" FontSize="22" HeightRequest="60" CornerRadius="10" />
+                    <Button Grid.Row="3" Grid.Column="2" Text="OK" Command="{Binding NumpadCommand}" CommandParameter="OK"
+                            BackgroundColor="{StaticResource Primary}" TextColor="White" FontFamily="OpenSansSemibold" FontSize="20" HeightRequest="60" CornerRadius="10" />
+                </Grid>
+
+                <!-- Quick-Score -->
+                <Label Text="Schnelleingabe"
+                       FontSize="12"
+                       TextColor="{DynamicResource TextMuted}" />
+                <Grid ColumnDefinitions="*,*,*,*,*" ColumnSpacing="6">
+                    <Button Grid.Column="0" Text="26" Command="{Binding QuickScoreCommand}" CommandParameter="26"
+                            BackgroundColor="{DynamicResource CardElevated}" TextColor="{DynamicResource TextPrimary}"
+                            FontSize="13" HeightRequest="40" CornerRadius="8" Padding="0" />
+                    <Button Grid.Column="1" Text="60" Command="{Binding QuickScoreCommand}" CommandParameter="60"
+                            BackgroundColor="{DynamicResource CardElevated}" TextColor="{DynamicResource TextPrimary}"
+                            FontSize="13" HeightRequest="40" CornerRadius="8" Padding="0" />
+                    <Button Grid.Column="2" Text="100" Command="{Binding QuickScoreCommand}" CommandParameter="100"
+                            BackgroundColor="{DynamicResource CardElevated}" TextColor="{DynamicResource TextPrimary}"
+                            FontSize="13" HeightRequest="40" CornerRadius="8" Padding="0" />
+                    <Button Grid.Column="3" Text="140" Command="{Binding QuickScoreCommand}" CommandParameter="140"
+                            BackgroundColor="{DynamicResource CardElevated}" TextColor="{DynamicResource TextPrimary}"
+                            FontSize="13" HeightRequest="40" CornerRadius="8" Padding="0" />
+                    <Button Grid.Column="4" Text="180" Command="{Binding QuickScoreCommand}" CommandParameter="180"
+                            BackgroundColor="{DynamicResource CardElevated}" TextColor="#FFD700"
+                            FontFamily="OpenSansSemibold" FontSize="13" HeightRequest="40" CornerRadius="8" Padding="0" />
+                </Grid>
+
+                <!-- Undo -->
+                <Button Text="↩ Rückgängig"
+                        Command="{Binding UndoCommand}"
+                        BackgroundColor="{DynamicResource CardElevated}"
+                        TextColor="{DynamicResource TextMuted}"
+                        FontSize="14"
+                        HeightRequest="44"
+                        CornerRadius="10" />
+            </VerticalStackLayout>
+
+            <!-- ══════════════════════════════════════════════════════════ -->
+            <!-- CRICKET SECTION                                            -->
+            <!-- ══════════════════════════════════════════════════════════ -->
+            <VerticalStackLayout IsVisible="{Binding IsCricketPlaying}"
+                                 Padding="16,12"
+                                 Spacing="12">
+
+                <Grid ColumnDefinitions="*,Auto">
+                    <Label Grid.Column="0"
+                           Text="{Binding TurnMessage}"
+                           FontSize="15"
+                           FontFamily="OpenSansSemibold"
+                           TextColor="{DynamicResource TextPrimary}"
+                           VerticalOptions="Center" />
+                    <Label Grid.Column="1"
+                           Text="{Binding DartCountDisplay}"
+                           FontSize="13"
+                           TextColor="{DynamicResource TextMuted}"
+                           VerticalOptions="Center" />
+                </Grid>
+
+                <!-- Cricket Board -->
+                <Border BackgroundColor="{DynamicResource CardColor}"
+                        Stroke="{DynamicResource BorderColor}" StrokeThickness="1"
+                        StrokeShape="RoundRectangle 12"
+                        Padding="10,8">
+                    <ScrollView Orientation="Horizontal">
+                        <VerticalStackLayout Spacing="0">
+                            <!-- Header: Nummern-Spalte + Spielernamen -->
+                            <Grid ColumnDefinitions="60,*" HeightRequest="36">
+                                <Label Grid.Column="0"
+                                       Text="Nr."
+                                       FontSize="12"
+                                       TextColor="{DynamicResource TextMuted}"
+                                       VerticalOptions="Center" />
+                                <HorizontalStackLayout Grid.Column="1"
+                                                       BindableLayout.ItemsSource="{Binding Players}"
+                                                       Spacing="0">
+                                    <BindableLayout.ItemTemplate>
+                                        <DataTemplate x:DataType="models:DartsPlayerVm">
+                                            <Label Text="{Binding Name}"
+                                                   FontSize="12"
+                                                   FontFamily="OpenSansSemibold"
+                                                   TextColor="{DynamicResource TextPrimary}"
+                                                   WidthRequest="72"
+                                                   HorizontalTextAlignment="Center"
+                                                   VerticalOptions="Center"
+                                                   LineBreakMode="TailTruncation" />
+                                        </DataTemplate>
+                                    </BindableLayout.ItemTemplate>
+                                </HorizontalStackLayout>
+                            </Grid>
+
+                            <BoxView HeightRequest="1" BackgroundColor="{DynamicResource DividerColor}" />
+
+                            <!-- Zeilen: Nummer + Marks pro Spieler -->
+                            <VerticalStackLayout BindableLayout.ItemsSource="{Binding CricketBoard}" Spacing="0">
+                                <BindableLayout.ItemTemplate>
+                                    <DataTemplate x:DataType="models:CricketRowVm">
+                                        <Grid ColumnDefinitions="60,*" HeightRequest="40">
+                                            <Label Grid.Column="0"
+                                                   Text="{Binding NumberDisplay}"
+                                                   FontSize="15"
+                                                   FontFamily="OpenSansSemibold"
+                                                   TextColor="{StaticResource CyanColor}"
+                                                   VerticalOptions="Center" />
+                                            <HorizontalStackLayout Grid.Column="1"
+                                                                   BindableLayout.ItemsSource="{Binding Cells}"
+                                                                   Spacing="0">
+                                                <BindableLayout.ItemTemplate>
+                                                    <DataTemplate x:DataType="models:CricketCellVm">
+                                                        <Border WidthRequest="72" HeightRequest="40"
+                                                                BackgroundColor="Transparent"
+                                                                StrokeThickness="0">
+                                                            <Label Text="{Binding Marks}"
+                                                                   FontSize="18"
+                                                                   FontFamily="OpenSansSemibold"
+                                                                   TextColor="White"
+                                                                   HorizontalOptions="Center"
+                                                                   VerticalOptions="Center"
+                                                                   Opacity="{Binding IsClosed, Converter={StaticResource BoolToOpacityConverter}}" />
+                                                        </Border>
+                                                    </DataTemplate>
+                                                </BindableLayout.ItemTemplate>
+                                            </HorizontalStackLayout>
+                                        </Grid>
+                                    </DataTemplate>
+                                </BindableLayout.ItemTemplate>
+                            </VerticalStackLayout>
+
+                            <BoxView HeightRequest="1" BackgroundColor="{DynamicResource DividerColor}" />
+
+                            <!-- Punkte-Zeile -->
+                            <Grid ColumnDefinitions="60,*" HeightRequest="36">
+                                <Label Grid.Column="0"
+                                       Text="Pkt."
+                                       FontSize="12"
+                                       TextColor="{DynamicResource TextMuted}"
+                                       VerticalOptions="Center" />
+                                <HorizontalStackLayout Grid.Column="1"
+                                                       BindableLayout.ItemsSource="{Binding Players}"
+                                                       Spacing="0">
+                                    <BindableLayout.ItemTemplate>
+                                        <DataTemplate x:DataType="models:DartsPlayerVm">
+                                            <Label Text="{Binding CricketPointsDisplay}"
+                                                   FontSize="13"
+                                                   FontFamily="OpenSansSemibold"
+                                                   TextColor="{StaticResource Accent}"
+                                                   WidthRequest="72"
+                                                   HorizontalTextAlignment="Center"
+                                                   VerticalOptions="Center" />
+                                        </DataTemplate>
+                                    </BindableLayout.ItemTemplate>
+                                </HorizontalStackLayout>
+                            </Grid>
+                        </VerticalStackLayout>
+                    </ScrollView>
+                </Border>
+
+                <!-- Multiplikator -->
+                <Grid ColumnDefinitions="*,*,*" ColumnSpacing="8">
+                    <Button Grid.Column="0" Text="Single"
+                            Command="{Binding SelectMultiplierCommand}" CommandParameter="1"
+                            BackgroundColor="{Binding IsMult1, Converter={StaticResource BoolToCardConverter}}"
+                            TextColor="White" FontSize="14" HeightRequest="44" CornerRadius="10" />
+                    <Button Grid.Column="1" Text="Double"
+                            Command="{Binding SelectMultiplierCommand}" CommandParameter="2"
+                            BackgroundColor="{Binding IsMult2, Converter={StaticResource BoolToCardConverter}}"
+                            TextColor="White" FontSize="14" HeightRequest="44" CornerRadius="10" />
+                    <Button Grid.Column="2" Text="Triple"
+                            Command="{Binding SelectMultiplierCommand}" CommandParameter="3"
+                            BackgroundColor="{Binding IsMult3, Converter={StaticResource BoolToCardConverter}}"
+                            TextColor="White" FontSize="14" HeightRequest="44" CornerRadius="10" />
+                </Grid>
+
+                <!-- Cricket-Nummern -->
+                <Grid ColumnDefinitions="*,*,*,*" RowDefinitions="Auto,Auto"
+                      ColumnSpacing="8" RowSpacing="8">
+                    <Button Grid.Row="0" Grid.Column="0" Text="20"
+                            Command="{Binding CricketHitCommand}" CommandParameter="20"
+                            BackgroundColor="{DynamicResource CardColor}" TextColor="White"
+                            FontSize="18" FontFamily="OpenSansSemibold" HeightRequest="54" CornerRadius="10" />
+                    <Button Grid.Row="0" Grid.Column="1" Text="19"
+                            Command="{Binding CricketHitCommand}" CommandParameter="19"
+                            BackgroundColor="{DynamicResource CardColor}" TextColor="White"
+                            FontSize="18" FontFamily="OpenSansSemibold" HeightRequest="54" CornerRadius="10" />
+                    <Button Grid.Row="0" Grid.Column="2" Text="18"
+                            Command="{Binding CricketHitCommand}" CommandParameter="18"
+                            BackgroundColor="{DynamicResource CardColor}" TextColor="White"
+                            FontSize="18" FontFamily="OpenSansSemibold" HeightRequest="54" CornerRadius="10" />
+                    <Button Grid.Row="0" Grid.Column="3" Text="17"
+                            Command="{Binding CricketHitCommand}" CommandParameter="17"
+                            BackgroundColor="{DynamicResource CardColor}" TextColor="White"
+                            FontSize="18" FontFamily="OpenSansSemibold" HeightRequest="54" CornerRadius="10" />
+                    <Button Grid.Row="1" Grid.Column="0" Text="16"
+                            Command="{Binding CricketHitCommand}" CommandParameter="16"
+                            BackgroundColor="{DynamicResource CardColor}" TextColor="White"
+                            FontSize="18" FontFamily="OpenSansSemibold" HeightRequest="54" CornerRadius="10" />
+                    <Button Grid.Row="1" Grid.Column="1" Text="15"
+                            Command="{Binding CricketHitCommand}" CommandParameter="15"
+                            BackgroundColor="{DynamicResource CardColor}" TextColor="White"
+                            FontSize="18" FontFamily="OpenSansSemibold" HeightRequest="54" CornerRadius="10" />
+                    <Button Grid.Row="1" Grid.Column="2" Text="Bull"
+                            Command="{Binding CricketHitCommand}" CommandParameter="25"
+                            BackgroundColor="{DynamicResource CardColor}" TextColor="{StaticResource CyanColor}"
+                            FontSize="16" FontFamily="OpenSansSemibold" HeightRequest="54" CornerRadius="10" />
+                    <Button Grid.Row="1" Grid.Column="3" Text="Miss"
+                            Command="{Binding CricketMissCommand}"
+                            BackgroundColor="{DynamicResource CardElevated}" TextColor="#E05252"
+                            FontSize="15" HeightRequest="54" CornerRadius="10" />
+                </Grid>
+
+                <Button Text="Zug beenden"
+                        Command="{Binding EndCricketTurnCommand}"
+                        BackgroundColor="{DynamicResource CardElevated}"
+                        TextColor="{DynamicResource TextMuted}"
+                        FontSize="15"
+                        HeightRequest="48"
+                        CornerRadius="10" />
+            </VerticalStackLayout>
+
+            <!-- ══════════════════════════════════════════════════════════ -->
+            <!-- AROUND THE CLOCK SECTION                                   -->
+            <!-- ══════════════════════════════════════════════════════════ -->
+            <VerticalStackLayout IsVisible="{Binding IsAtcPlaying}"
+                                 Padding="16,12"
+                                 Spacing="12">
+
+                <!-- Spieler-Fortschritt -->
+                <Border BackgroundColor="{DynamicResource CardColor}"
+                        Stroke="{DynamicResource BorderColor}" StrokeThickness="1"
+                        StrokeShape="RoundRectangle 12"
+                        Padding="12,10">
+                    <VerticalStackLayout BindableLayout.ItemsSource="{Binding Players}" Spacing="6">
+                        <BindableLayout.ItemTemplate>
+                            <DataTemplate x:DataType="models:DartsPlayerVm">
+                                <Grid ColumnDefinitions="*,Auto">
+                                    <Label Grid.Column="0"
+                                           Text="{Binding Name}"
+                                           FontSize="14"
+                                           TextColor="{DynamicResource TextPrimary}"
+                                           VerticalOptions="Center" />
+                                    <Label Grid.Column="1"
+                                           Text="{Binding AtcProgressDisplay}"
+                                           FontSize="14"
+                                           FontFamily="OpenSansSemibold"
+                                           TextColor="{StaticResource CyanColor}"
+                                           VerticalOptions="Center" />
+                                    <Grid.Triggers>
+                                        <DataTrigger TargetType="Grid"
+                                                     Binding="{Binding IsActive}"
+                                                     Value="True">
+                                            <Setter Property="BackgroundColor" Value="#1A2460" />
+                                        </DataTrigger>
+                                    </Grid.Triggers>
+                                </Grid>
+                            </DataTemplate>
+                        </BindableLayout.ItemTemplate>
+                    </VerticalStackLayout>
+                </Border>
+
+                <!-- Aktuelles Ziel -->
+                <Border BackgroundColor="{DynamicResource CardColor}"
+                        Stroke="{StaticResource Primary}" StrokeThickness="2"
+                        StrokeShape="RoundRectangle 14"
+                        Padding="0,24">
+                    <VerticalStackLayout Spacing="4">
+                        <Label Text="{Binding CurrentPlayer.Name}"
+                               FontSize="14"
+                               TextColor="{DynamicResource TextMuted}"
+                               HorizontalOptions="Center" />
+                        <Label Text="{Binding CurrentPlayer.AtcTargetDisplay}"
+                               FontSize="72"
+                               FontFamily="OpenSansSemibold"
+                               TextColor="White"
+                               HorizontalOptions="Center" />
+                        <Label Text="{Binding DartCountDisplay}"
+                               FontSize="13"
+                               TextColor="{DynamicResource TextMuted}"
+                               HorizontalOptions="Center" />
+                    </VerticalStackLayout>
+                </Border>
+
+                <!-- Treffer / Daneben -->
+                <Grid ColumnDefinitions="*,*" ColumnSpacing="12">
+                    <Button Grid.Column="0"
+                            Text="✓ Treffer"
+                            Command="{Binding AtcHitCommand}"
+                            BackgroundColor="{StaticResource Primary}"
+                            TextColor="White"
+                            FontFamily="OpenSansSemibold"
+                            FontSize="18"
+                            HeightRequest="64"
+                            CornerRadius="12" />
+                    <Button Grid.Column="1"
+                            Text="✕ Daneben"
+                            Command="{Binding AtcMissCommand}"
+                            BackgroundColor="{DynamicResource CardColor}"
+                            TextColor="#E05252"
+                            FontFamily="OpenSansSemibold"
+                            FontSize="18"
+                            HeightRequest="64"
+                            CornerRadius="12" />
+                </Grid>
+            </VerticalStackLayout>
+
+            <!-- ══════════════════════════════════════════════════════════ -->
+            <!-- FINISHED SECTION                                           -->
+            <!-- ══════════════════════════════════════════════════════════ -->
+            <VerticalStackLayout IsVisible="{Binding IsFinished}"
+                                 Padding="16,24"
+                                 Spacing="16">
+
+                <Label Text="🏆"
+                       FontSize="64"
+                       HorizontalOptions="Center" />
+                <Label Text="{Binding WinnerName}"
+                       FontSize="34"
+                       FontFamily="OpenSansSemibold"
+                       TextColor="{StaticResource Primary}"
+                       HorizontalOptions="Center" />
+                <Label Text="gewinnt das Spiel!"
+                       FontSize="18"
+                       TextColor="{DynamicResource TextPrimary}"
+                       HorizontalOptions="Center" />
+
+                <BoxView HeightRequest="1"
+                         BackgroundColor="{DynamicResource DividerColor}"
+                         Margin="0,8" />
+
+                <Label Text="Statistik"
+                       FontSize="13"
+                       FontFamily="OpenSansSemibold"
+                       TextColor="{DynamicResource TextMuted}" />
+
+                <CollectionView ItemsSource="{Binding Players}">
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate x:DataType="models:DartsPlayerVm">
+                            <Border BackgroundColor="{DynamicResource CardColor}"
+                                    Stroke="{DynamicResource BorderColor}" StrokeThickness="1"
+                                    StrokeShape="RoundRectangle 12"
+                                    Padding="14,12"
+                                    Margin="0,0,0,8">
+                                <Grid ColumnDefinitions="*,Auto,Auto">
+                                    <VerticalStackLayout Grid.Column="0" Spacing="2">
+                                        <Label Text="{Binding Name}"
+                                               FontSize="15"
+                                               FontFamily="OpenSansSemibold"
+                                               TextColor="{DynamicResource TextPrimary}" />
+                                        <Label Text="{Binding AvgDisplay}"
+                                               FontSize="13"
+                                               TextColor="{StaticResource CyanColor}" />
+                                    </VerticalStackLayout>
+                                    <Label Grid.Column="1"
+                                           Text="{Binding LegsDisplay}"
+                                           FontSize="14"
+                                           TextColor="{DynamicResource TextMuted}"
+                                           VerticalOptions="Center"
+                                           Margin="12,0" />
+                                </Grid>
+                            </Border>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+
+                <Button Text="Neues Spiel"
+                        Command="{Binding NewGameCommand}"
+                        BackgroundColor="{StaticResource Primary}"
+                        TextColor="White"
+                        FontFamily="OpenSansSemibold"
+                        FontSize="17"
+                        HeightRequest="54"
+                        CornerRadius="12"
+                        Margin="0,8,0,0" />
+            </VerticalStackLayout>
+
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

@@ -44,6 +44,7 @@ namespace VERA
 #endif
 
             // ViewModels
+            builder.Services.AddTransient<DartsViewModel>();
             builder.Services.AddSingleton<DashboardViewModel>();
             builder.Services.AddSingleton<GamificationViewModel>();
             builder.Services.AddSingleton<HistoryViewModel>();
@@ -52,6 +53,7 @@ namespace VERA
             builder.Services.AddTransient<EditEntryViewModel>();
 
             // Pages (transient für Navigation)
+            builder.Services.AddTransient<Views.DartsPage>();
             builder.Services.AddTransient<Views.EditEntryPage>();
             builder.Services.AddTransient<Views.LockPage>();
             builder.Services.AddTransient<Views.LevelingPage>();

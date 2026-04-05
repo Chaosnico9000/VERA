@@ -11,7 +11,20 @@ dieses Projekt hält sich an [Semantic Versioning](https://semver.org/lang/de/).
 
 ---
 
-## [1.7.1] - 2026-04-07
+## [1.8.0] - 2026-04-07
+
+### Added
+- **Darts Assistent** — Vollständige neue Seite für Darts-Spiele (`🎯 Darts` im Navigationsmenü):
+  - **Modi**: 301, 501, 701 (X01), Cricket, Around the Clock
+  - **Spieler-Setup**: 2–8 Spieler mit editierbaren Namen, einstellbare Leg-Anzahl
+  - **X01-Modus**: Numpad-Eingabe (3-stellig), Quick-Score-Buttons (26/60/100/140/180), Checkout-Hints für alle Kombinationen von 2–170, Bust-Erkennung, Rückgängig-Funktion, Leg-Zähler
+  - **Cricket**: Interaktives Marks-Board (/ X ○), Single/Double/Triple-Multiplikator, Punkteberechnung mit offenen Feldern, automatischer Siegescheck
+  - **Around the Clock**: Treffer/Daneben-Buttons, Zielfortschritt pro Spieler
+  - **Abschlussbildschirm**: Gewinner-Anzeige, Statistik (∅ Score, Legs) aller Spieler, Neues-Spiel-Button
+
+---
+
+## [1.7.1]
 
 ### Fixed
 - **Weitere korrupte Zeichen in Einstellungen** — `U+FFFD`-Zeichen (kaputte Umlaute) und `??`-Platzhalter in `EinstellungenPage.xaml` behoben:

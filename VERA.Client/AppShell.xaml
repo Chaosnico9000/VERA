@@ -80,6 +80,10 @@
         <ShellContent ContentTemplate="{DataTemplate views:HistoryPage}" />
     </FlyoutItem>
 
+    <FlyoutItem Title="🎯  Darts" Route="DartsPage">
+        <ShellContent ContentTemplate="{DataTemplate views:DartsPage}" />
+    </FlyoutItem>
+
     <FlyoutItem Title="🏆  Leveling" Route="LevelingPage">
         <ShellContent ContentTemplate="{DataTemplate views:LevelingPage}" />
     </FlyoutItem>
