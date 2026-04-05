@@ -3,7 +3,7 @@ namespace VERA.Shared;
 public static class AppVersion
 {
     /// <summary>Aktuelle Version dieses Builds (Client und Server).</summary>
-    public const string Current = "1.5.0";
+    public const string Current = "1.5.3";
 
     /// <summary>Älteste Server-Version, die der Client noch akzeptiert.</summary>
     public const string MinServerVersion = "1.0.0";

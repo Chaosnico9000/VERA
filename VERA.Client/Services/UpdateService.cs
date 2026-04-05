@@ -11,7 +11,7 @@ namespace VERA.Services
         private static readonly HttpClient _http = new()
         {
             DefaultRequestHeaders = { { "User-Agent", "VERA-App" } },
-            Timeout = TimeSpan.FromSeconds(10)
+            Timeout = TimeSpan.FromSeconds(30)
         };
 
         private const string ReleasesApiUrl = "https://api.github.com/repos/Chaosnico9000/VERA/releases/latest";
@@ -21,7 +21,7 @@ namespace VERA.Services
         {
             try
             {
-                var release = await _http.GetFromJsonAsync<GitHubRelease>(ReleasesApiUrl);
+                var release = await _http.GetFromJsonAsync<GitHubRelease>(ReleasesApiUrl).ConfigureAwait(false);
                 if (release is null) return null;
 
                 var tag = release.TagName.TrimStart('v');
@@ -57,20 +57,22 @@ namespace VERA.Services
                 using var response = await _http.GetAsync(downloadUrl, HttpCompletionOption.ResponseHeadersRead);
                 response.EnsureSuccessStatusCode();
 
-                var total   = response.Content.Headers.ContentLength ?? -1L;
-                var buffer  = new byte[81920];
+                var total      = response.Content.Headers.ContentLength ?? -1L;
+                // 256 KB Buffer statt 80 KB → weniger I/O-Runden, schnellerer Download
+                var buffer     = new byte[262144];
                 long downloaded = 0;
 
-                await using var stream = await response.Content.ReadAsStreamAsync();
-                await using var file   = File.Create(apkPath);
-
+                await using var stream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
+                await using var file   = new FileStream(apkPath, FileMode.Create, FileAccess.Write,
+                                             FileShare.None, bufferSize: 262144, useAsync: true);
                 int read;
-                while ((read = await stream.ReadAsync(buffer)) > 0)
+                while ((read = await stream.ReadAsync(buffer).ConfigureAwait(false)) > 0)
                 {
-                    await file.WriteAsync(buffer.AsMemory(0, read));
+                    await file.WriteAsync(buffer.AsMemory(0, read)).ConfigureAwait(false);
                     downloaded += read;
                     if (total > 0) progress?.Report((double)downloaded / total);
                 }
+                await file.FlushAsync().ConfigureAwait(false);
 
                 // FileProvider-URI erzeugen und Installer starten
                 var uri = AndroidX.Core.Content.FileProvider.GetUriForFile(

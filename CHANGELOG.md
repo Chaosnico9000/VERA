@@ -11,7 +11,45 @@ dieses Projekt hält sich an [Semantic Versioning](https://semver.org/lang/de/).
 
 ---
 
-## [1.5.0] - 2026-04-05
+## [1.5.3] - 2026-04-05
+
+### Fixed
+- **Wochenübersicht zeigt falsche Fehlstunden:** Die Berechnung nutzte immer ein fixes Ziel von 5 × Sollzeit, auch wenn die Woche erst am Mittwoch begann (z.B. 1. April 2026). Jetzt werden nur die tatsächlich vergangenen Werktage der aktuellen Kalenderwoche (Mo–Fr bis heute) als Pflicht gewertet — wer am Mittwoch anfängt, hat 3 Soll-Tage, nicht 5.
+- **Tage-Anzeige Wochenübersicht:** Zeigt jetzt `X / Y Tage` mit dem tatsächlichen Nenner (vergangene Werktage), statt immer `/ 5`.
+
+### Changed
+- **Download-Geschwindigkeit (In-App Update):** Buffer von 80 KB auf 256 KB erhöht, `FileStream` mit `useAsync: true` und explizitem `FlushAsync` — APK-Downloads laufen spürbar schneller durch.
+- **HTTP-Timeout Update-Check:** Von 10 s auf 30 s erhöht, um Timeouts bei langsamen Verbindungen zu vermeiden.
+- **`TimeTrackingService` Thread-Safety:** `SemaphoreSlim` schützt den Lade-/Schreib-Pfad gegen Race-Conditions bei gleichzeitigem Zugriff.
+- **`ConfigureAwait(false)`:** Alle `await`-Aufrufe in `DashboardViewModel`, `TimeTrackingService` und `UpdateService` nutzen jetzt `ConfigureAwait(false)` — reduziert Context-Switch-Overhead auf dem UI-Thread.
+- **Entry-Cache TTL:** Von 45 s auf 30 s reduziert für frischere Daten beim Pull-to-Refresh.
+
+---
+
+## [1.5.2]
+
+### Changed
+- **Timer-Karte:** Border leuchtet cyan wenn der Timer läuft — sofort erkennbar auf einen Blick. Status-Zeile zeigt Startzeit direkt neben "Läuft".
+- **Pull-to-Refresh:** Die gesamte Seite kann jetzt durch Runterziehen aktualisiert werden. Timestamp "Aktualisiert HH:mm:ss" im Header.
+- **Motivationstext:** Kontextsensitiver Text unter der Timer-Uhr — abhängig vom Wochentag, Fortschritt und verbleibender Zeit.
+- **Lade-Spinner:** Beim ersten Öffnen der Seite erscheint ein Ladeindikator statt leerer Karten.
+- **Tagesfortschritt:** Puffer-Badge hat jetzt farbigen Border passend zum Vorzeichen. Sollzeit wird als "von Xh Sollzeit" angezeigt.
+- **Wochenübersicht:** Puffer-Badge ebenfalls farbig. Tages-Fortschritt "X / 5 Tage" rechtbündig.
+- **Sondertypen-Karte:** Zeigt ein lila Badge mit dem eingetragenen Sondertyp wenn heute bereits einer vorhanden ist. Buttons werden halbtransparent deaktiviert.
+- **Letzte Einträge:** Zeitbereich (z.B. "08:00 – 16:30") wird neben der Startzeit angezeigt. Leer-Zustand mit Icon verbessert.
+- **Entry-Cache:** Einträge werden 45 Sekunden gecacht — kein doppelter API-Aufruf beim Pausen-Check und Statistik-Refresh.
+- **Pausen-Vorschlag:** Banner ist jetzt kompakter mit dunklerer Hintergrundfarbe.
+
+---
+
+## [1.5.1]
+
+### Changed
+- **Changelog-Seite komplett überarbeitet:** Statt rohem Markdown-Text werden jetzt strukturierte Release-Karten angezeigt — mit farbigen NEU/FIX/ÄNDERUNG-Badges, Titel + Beschreibung getrennt, aktuelle Version grün hervorgehoben und einer Puffer-Anzeige mit Anzahl der Änderungen pro Release.
+
+---
+
+## [1.5.0]
 
 ### Added
 - **Live-Uhrzeit im Header:** Die aktuelle Uhrzeit wird im Datums-Badge rechts oben sekündlich aktualisiert — unabhängig vom Gerätedisplay immer im Blick.

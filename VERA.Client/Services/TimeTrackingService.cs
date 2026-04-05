@@ -6,16 +6,19 @@ namespace VERA.Services
 {
     public class TimeTrackingService : ITimeTrackingService
     {
-        private readonly string _filePath;
-        private List<TimeEntry>? _cache;
+        private readonly string          _filePath;
+        private List<TimeEntry>?         _cache;
 
-        // Sichere Serialisierungsoptionen: kein polymorphes Type-Handling, kein Kommentar-Support
+        // Verhindert Race-Conditions bei parallelen Lese-/Schreib-Zugriffen
+        private readonly SemaphoreSlim   _lock = new(1, 1);
+
+        // Serialisierungsoptionen: kein polymorphes Type-Handling, kein Kommentar-Support
         private static readonly JsonSerializerOptions _jsonOptions = new()
         {
-            WriteIndented = false,
+            WriteIndented            = false,
             PropertyNameCaseInsensitive = true,
-            DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
-            UnknownTypeHandling = JsonUnknownTypeHandling.JsonElement
+            DefaultIgnoreCondition   = JsonIgnoreCondition.WhenWritingNull,
+            UnknownTypeHandling      = JsonUnknownTypeHandling.JsonElement
         };
 
         public TimeTrackingService()
@@ -26,22 +29,34 @@ namespace VERA.Services
         private async Task<List<TimeEntry>> LoadAsync()
         {
             if (_cache != null) return _cache;
-            if (!File.Exists(_filePath))
+
+            await _lock.WaitAsync().ConfigureAwait(false);
+            try
             {
-                _cache = [];
+                // Doppelt prüfen: anderer Thread könnte inzwischen geladen haben
+                if (_cache != null) return _cache;
+
+                if (!File.Exists(_filePath))
+                {
+                    _cache = [];
+                    return _cache;
+                }
+                var json = await File.ReadAllTextAsync(_filePath).ConfigureAwait(false);
+                _cache = JsonSerializer.Deserialize<List<TimeEntry>>(json, _jsonOptions) ?? [];
                 return _cache;
             }
-            var json = await File.ReadAllTextAsync(_filePath);
-            _cache = JsonSerializer.Deserialize<List<TimeEntry>>(json, _jsonOptions) ?? [];
-            return _cache;
+            finally
+            {
+                _lock.Release();
+            }
         }
 
         private async Task PersistAsync()
         {
             var json = JsonSerializer.Serialize(_cache ?? [], _jsonOptions);
             // Atomar schreiben: erst in Temp-Datei, dann umbenennen (verhindert Datenverlust bei Absturz)
-            var tmp = _filePath + ".tmp";
-            await File.WriteAllTextAsync(tmp, json);
+            var tmp  = _filePath + ".tmp";
+            await File.WriteAllTextAsync(tmp, json).ConfigureAwait(false);
             File.Move(tmp, _filePath, overwrite: true);
         }
 
