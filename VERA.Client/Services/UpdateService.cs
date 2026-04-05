@@ -38,59 +38,31 @@ namespace VERA.Services
         }
 
         /// <summary>
-        /// Lädt die APK herunter und startet den Android-System-Installer.
-        /// Gibt false zurück wenn der Download fehlschlägt oder die Plattform kein Android ist.
+        /// Startet den Download auf Android als Foreground-Service (läuft auch wenn App minimiert wird).
+        /// Auf anderen Plattformen wird der Browser-Download geöffnet.
         /// </summary>
-        public async Task<bool> DownloadAndInstallAsync(string downloadUrl, IProgress<double>? progress = null)
+        public Task<bool> DownloadAndInstallAsync(string downloadUrl, IProgress<double>? progress = null)
         {
 #if ANDROID
             try
             {
                 var context = Android.App.Application.Context;
-                var cacheDir = context.CacheDir!.AbsolutePath;
-                var apkPath  = Path.Combine(cacheDir, "vera-update.apk");
+                var intent  = new Android.Content.Intent(context,
+                    typeof(VERA.Platforms.Android.Services.UpdateDownloadService));
+                intent.SetAction(VERA.Platforms.Android.Services.UpdateDownloadService.ActionStart);
+                intent.PutExtra(VERA.Platforms.Android.Services.UpdateDownloadService.ExtraUrl, downloadUrl);
 
-                // Alte APK löschen falls vorhanden
-                if (File.Exists(apkPath)) File.Delete(apkPath);
+                if (OperatingSystem.IsAndroidVersionAtLeast(26))
+                    context.StartForegroundService(intent);
+                else
+                    context.StartService(intent);
 
-                // APK herunterladen mit Fortschrittsanzeige
-                using var response = await _http.GetAsync(downloadUrl, HttpCompletionOption.ResponseHeadersRead);
-                response.EnsureSuccessStatusCode();
-
-                var total      = response.Content.Headers.ContentLength ?? -1L;
-                // 256 KB Buffer statt 80 KB → weniger I/O-Runden, schnellerer Download
-                var buffer     = new byte[262144];
-                long downloaded = 0;
-
-                await using var stream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
-                await using var file   = new FileStream(apkPath, FileMode.Create, FileAccess.Write,
-                                             FileShare.None, bufferSize: 262144, useAsync: true);
-                int read;
-                while ((read = await stream.ReadAsync(buffer).ConfigureAwait(false)) > 0)
-                {
-                    await file.WriteAsync(buffer.AsMemory(0, read)).ConfigureAwait(false);
-                    downloaded += read;
-                    if (total > 0) progress?.Report((double)downloaded / total);
-                }
-                await file.FlushAsync().ConfigureAwait(false);
-
-                // FileProvider-URI erzeugen und Installer starten
-                var uri = AndroidX.Core.Content.FileProvider.GetUriForFile(
-                    context,
-                    context.PackageName + ".fileprovider",
-                    new Java.IO.File(apkPath));
-
-                var intent = new Android.Content.Intent(Android.Content.Intent.ActionView);
-                intent.SetDataAndType(uri, "application/vnd.android.package-archive");
-                intent.AddFlags(Android.Content.ActivityFlags.GrantReadUriPermission);
-                intent.AddFlags(Android.Content.ActivityFlags.NewTask);
-                context.StartActivity(intent);
-                return true;
+                return Task.FromResult(true);
             }
-            catch { return false; }
+            catch { return Task.FromResult(false); }
 #else
-            await Launcher.OpenAsync(new Uri(downloadUrl));
-            return true;
+            _ = Launcher.OpenAsync(new Uri(downloadUrl));
+            return Task.FromResult(true);
 #endif
         }
 

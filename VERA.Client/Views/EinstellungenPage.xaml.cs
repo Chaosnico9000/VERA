@@ -1,12 +1,20 @@
 using VERA.Services;
 using VERA.Shared;
 using VERA.ViewModels;
+#if ANDROID
+using Android.Content;
+using VERA.Platforms.Android.Services;
+#endif
 
 namespace VERA.Views
 {
     public partial class EinstellungenPage : ContentPage
     {
         private string? _updateUrl;
+
+#if ANDROID
+        private UpdateProgressReceiver? _receiver;
+#endif
 
         public EinstellungenPage()
         {
@@ -18,6 +26,53 @@ namespace VERA.Views
             BuildLabel.Text   = AppInfo.BuildString;
 
             _ = CheckUpdateAsync();
+        }
+
+        protected override void OnAppearing()
+        {
+            base.OnAppearing();
+#if ANDROID
+            _receiver = new UpdateProgressReceiver(OnUpdateProgress);
+            var filter = new IntentFilter(UpdateDownloadService.BroadcastAction);
+            Android.App.Application.Context.RegisterReceiver(_receiver, filter,
+                ReceiverFlags.NotExported);
+#endif
+        }
+
+        protected override void OnDisappearing()
+        {
+            base.OnDisappearing();
+#if ANDROID
+            if (_receiver != null)
+            {
+                try { Android.App.Application.Context.UnregisterReceiver(_receiver); }
+                catch { /* ignorieren falls nicht registriert */ }
+                _receiver = null;
+            }
+#endif
+        }
+
+        private void OnUpdateProgress(double progress, string statusText)
+        {
+            MainThread.BeginInvokeOnMainThread(() =>
+            {
+                if (progress < 0)
+                {
+                    // Fehler
+                    UpdateButton.Text      = "🆕  Update herunterladen";
+                    UpdateButton.IsEnabled = true;
+                }
+                else if (progress >= 2.0)
+                {
+                    // Fertig — Installer öffnet sich automatisch
+                    UpdateButton.Text      = "✅  Installer wird geöffnet…";
+                    UpdateButton.IsEnabled = false;
+                }
+                else
+                {
+                    UpdateButton.Text = statusText;
+                }
+            });
         }
 
         private async Task CheckUpdateAsync()
@@ -41,21 +96,17 @@ namespace VERA.Views
             if (_updateUrl is null) return;
 
             UpdateButton.IsEnabled = false;
-            UpdateButton.Text      = "⬇️  Wird heruntergeladen...";
+            UpdateButton.Text      = "⬇️  Wird gestartet…";
 
-            var svc      = MauiProgram.Services.GetRequiredService<UpdateService>();
-            var progress = new Progress<double>(p =>
-                MainThread.BeginInvokeOnMainThread(() =>
-                    UpdateButton.Text = $"⬇️  {p:P0} heruntergeladen..."));
-
-            var ok = await svc.DownloadAndInstallAsync(_updateUrl, progress);
+            var svc = MauiProgram.Services.GetRequiredService<UpdateService>();
+            var ok  = await svc.DownloadAndInstallAsync(_updateUrl);
             if (!ok)
             {
                 UpdateButton.Text      = "🆕  Update herunterladen";
                 UpdateButton.IsEnabled = true;
-                await DisplayAlertAsync("Fehler", "Download fehlgeschlagen. Bitte versuche es erneut.", "OK");
+                await DisplayAlertAsync("Fehler", "Download konnte nicht gestartet werden.", "OK");
             }
-            // Bei Erfolg startet der Android-Installer — App bleibt offen
+            // Fortschritt kommt via Broadcast → OnUpdateProgress
         }
 
         private void OnMenuClicked(object? sender, EventArgs e)
