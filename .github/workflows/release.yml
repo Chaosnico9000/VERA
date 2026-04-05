@@ -27,11 +27,21 @@ jobs:
   build-server:
     needs: read-version
     runs-on: ubuntu-latest
+    env:
+      DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
+      DOTNET_NOLOGO: true
+      NUGET_PACKAGES: ${{ github.workspace }}/.nuget/packages
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-dotnet@v4
         with:
           dotnet-version: "10.0.x"
+      - name: NuGet-Cache
+        uses: actions/cache@v4
+        with:
+          path: ${{ github.workspace }}/.nuget/packages
+          key: nuget-server-${{ hashFiles('**/*.csproj', '**/global.json') }}
+          restore-keys: nuget-server-
       - name: Publish VERA.Server
         run: dotnet publish VERA.Server/VERA.Server.csproj -c Release -r linux-x64 --no-self-contained -o ./publish/vera-server
       - name: ZIP erstellen
@@ -47,19 +57,49 @@ jobs:
     runs-on: ubuntu-latest
     env:
       ANDROID_SDK_ROOT: /usr/local/lib/android/sdk
+      DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
+      DOTNET_NOLOGO: true
+      NUGET_PACKAGES: ${{ github.workspace }}/.nuget/packages
     steps:
       - uses: actions/checkout@v4
+
       - uses: actions/setup-java@v4
         with:
           java-version: "17"
           distribution: microsoft
+
       - uses: actions/setup-dotnet@v4
         with:
           dotnet-version: "10.0.x"
+
+      # NuGet-Pakete cachen — spart ~30–60s bei Folge-Builds
+      - name: NuGet-Cache
+        uses: actions/cache@v4
+        with:
+          path: ${{ github.workspace }}/.nuget/packages
+          key: nuget-android-${{ hashFiles('**/*.csproj', '**/global.json') }}
+          restore-keys: nuget-android-
+
+      # MAUI-Workload cachen — spart ~2–3 Min bei Folge-Builds
+      - name: MAUI-Workload-Cache
+        id: workload-cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.dotnet/sdk-manifests
+            ~/.dotnet/workloads
+            /usr/local/share/dotnet/sdk-manifests
+            /usr/local/share/dotnet/packs
+          key: maui-workload-${{ runner.os }}-${{ hashFiles('**/global.json') }}-net10
+          restore-keys: maui-workload-${{ runner.os }}-
+
       - name: MAUI Android Workload installieren
-        run: dotnet workload install maui-android
+        if: steps.workload-cache.outputs.cache-hit != 'true'
+        run: dotnet workload install maui-android --skip-sign-check
+
       - name: Keystore dekodieren
         run: echo "${{ secrets.ANDROID_KEYSTORE_BASE64 }}" | base64 -d > vera.keystore
+
       - name: Android APK bauen und signieren
         run: |
           dotnet publish VERA.Client/VERA.Client.csproj \
@@ -68,12 +108,17 @@ jobs:
             -p:AndroidSigningKeyStore=${{ github.workspace }}/vera.keystore \
             -p:AndroidSigningKeyAlias=${{ secrets.ANDROID_KEY_ALIAS }} \
             -p:AndroidSigningKeyPass=${{ secrets.ANDROID_KEY_PASSWORD }} \
-            -p:AndroidSigningStorePass=${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+            -p:AndroidSigningStorePass=${{ secrets.ANDROID_KEYSTORE_PASSWORD }} \
+            -p:AndroidSupportedAbis=arm64-v8a \
+            -p:RunAOTCompilation=false \
+            -p:PublishTrimmed=false
+
       - name: APK kopieren
         run: |
           APK=$(find VERA.Client/bin/Release/net10.0-android -name "*-Signed.apk" | head -1)
           [ -z "$APK" ] && APK=$(find VERA.Client/bin/Release/net10.0-android -name "*.apk" | head -1)
           cp "$APK" vera-android.apk
+
       - uses: actions/upload-artifact@v4
         with:
           name: vera-android

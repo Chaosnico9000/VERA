@@ -11,7 +11,16 @@ dieses Projekt hält sich an [Semantic Versioning](https://semver.org/lang/de/).
 
 ---
 
-## [1.5.4] - 2026-04-05
+## [1.5.5] - 2026-04-05
+
+### Fixed
+- **App-Icon:** Das „.NET“-Logo wurde durch den eigenen VERA-Schriftzug ersetzt. Das Icon nutzt jetzt ein SVG-Background (`#080C1E`) + SVG-Foreground mit dem VERA-Wortmarken-Pfad, einem Cyan-Akzentpunkt und einem Cyan→Blau→Violett-Unterstrich.
+- **App-Icon füllt den Bereich nicht aus:** `MauiIcon` wurde von der alten `appicon.png` (Standard-.NET-Template) auf das neue `appicon.svg` umgestellt — der Foreground-Pfad füllt die Adaptive-Icon-Safe-Zone jetzt vollständig aus.
+- **Splash Screen:** `BaseSize` von `128,128` auf `512,512` erhöht für scharfe Darstellung auf allen Displaydichten. Splash zeigt denselben VERA-Schriftzug inkl. Untertitel „VERTRAUENSARBEITSZEIT“.
+
+---
+
+## [1.5.4]
 
 ### Fixed
 - **Wochenende wird korrekt erkannt:** Samstag und Sonntag haben keine Sollzeit mehr. Der Tagesfortschrittsbalken zeigt ein neutrales Bild, der Puffer-Badge zeigt `+Xh` (freiwillige Arbeit) statt Fehlstunden, und der Motivationstext lautet „Gutes Wochenende!“ / „Fleißig am Wochenende“ statt Soll-Bezug.
