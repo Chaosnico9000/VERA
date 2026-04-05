@@ -24,6 +24,7 @@ namespace VERA
             builder.Services.AddSingleton<GamificationService>();
             builder.Services.AddSingleton<AccountService>();
             builder.Services.AddSingleton<UpdateService>();
+            builder.Services.AddSingleton<ThemeService>();
             builder.Services.AddSingleton<ApiClient>(sp =>
             {
                 var client = new ApiClient();
@@ -63,6 +64,7 @@ namespace VERA
 
             var app = builder.Build();
             Services = app.Services;
+            Services.GetRequiredService<ThemeService>().ApplySaved();
             return app;
         }
     }

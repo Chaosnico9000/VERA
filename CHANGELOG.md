@@ -11,6 +11,21 @@ dieses Projekt hält sich an [Semantic Versioning](https://semver.org/lang/de/).
 
 ---
 
+## [1.6.0] - 2026-04-06
+
+### Added
+- **Dark/Light/System Mode Toggle** in Einstellungen — Theme wird persistent gespeichert und beim Start wiederhergestellt
+- **Teilen-Funktion** in Einstellungen — Tagesübersicht als formatierten Text über WhatsApp, Signal o.a. teilen
+- **vera_logo.png** als App Icon, Splash Screen und Flyout-Header
+- Logo ersetzt Text-Header auf der Hauptseite
+
+### Changed
+- Flyout Header zeigt jetzt das VERA-Logo anstelle von Text
+- App Icon und Splash Screen nutzen das echte VERA-Logo (vera_logo.png)
+- Build-Workflow: NuGet + MAUI-Workload gecacht, ABI auf arm64-v8a beschränkt (schnellere CI)
+
+---
+
 ## [1.5.5] - 2026-04-05
 
 ### Fixed

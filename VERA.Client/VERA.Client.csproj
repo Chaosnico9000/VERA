@@ -35,8 +35,8 @@
 		<ApplicationId>com.companyname.vera</ApplicationId>
 
 		<!-- Versions -->
-		<ApplicationDisplayVersion>1.5.5</ApplicationDisplayVersion>
-		<ApplicationVersion>22</ApplicationVersion>
+		<ApplicationDisplayVersion>1.6.0</ApplicationDisplayVersion>
+		<ApplicationVersion>23</ApplicationVersion>
 
 		<!-- To develop, package, and publish an app to the Microsoft Store, see: https://aka.ms/MauiTemplateUnpackaged -->
 		<WindowsPackageType>None</WindowsPackageType>
@@ -50,10 +50,10 @@
 
 	<ItemGroup>
 		<!-- App Icon -->
-		<MauiIcon Include="Resources\AppIcon\appicon.svg" ForegroundFile="Resources\AppIcon\appiconfg.svg" Color="#080C1E" />
+		<MauiIcon Include="Resources\AppIcon\appicon.png" ForegroundFile="" Color="#080C1E" />
 
 		<!-- Splash Screen -->
-		<MauiSplashScreen Include="Resources\Splash\splash.svg" Color="#080C1E" BaseSize="512,512" />
+		<MauiSplashScreen Include="Resources\Splash\splash.png" Color="#080C1E" BaseSize="512,512" />
 
 		<!-- Images -->
 		<MauiImage Include="Resources\Images\*" />

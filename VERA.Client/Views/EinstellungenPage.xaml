@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8" ?>
+<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:vm="clr-namespace:VERA.ViewModels"
@@ -21,6 +21,79 @@
                     <Label Text="Konfiguration" FontSize="11" TextColor="{StaticResource TextMuted}" />
                 </VerticalStackLayout>
             </Grid>
+
+            <!-- Sektion: Darstellung -->
+            <Label Text="DARSTELLUNG" FontSize="11" FontAttributes="Bold"
+                   TextColor="{StaticResource TextMuted}" Margin="20,24,20,8" CharacterSpacing="1.5" />
+
+            <Border Margin="16,0" BackgroundColor="{StaticResource CardColor}"
+                    Stroke="{StaticResource BorderColor}" StrokeThickness="1"
+                    StrokeShape="RoundRectangle 16" Padding="20,18">
+                <VerticalStackLayout Spacing="12">
+                    <Label Text="Theme" FontSize="16" TextColor="{StaticResource TextPrimary}" />
+                    <Grid ColumnDefinitions="*,*,*" ColumnSpacing="8">
+                        <!-- Dark -->
+                        <Border Grid.Column="0"
+                                BackgroundColor="{Binding IsDark, Converter={StaticResource BoolToCardConverter}}"
+                                Stroke="{StaticResource BorderColor}" StrokeThickness="1"
+                                StrokeShape="RoundRectangle 12" Padding="0,10">
+                            <Border.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding ThemeDarkCommand}" />
+                            </Border.GestureRecognizers>
+                            <VerticalStackLayout Spacing="4" HorizontalOptions="Center">
+                                <Label Text="??" FontSize="20" HorizontalOptions="Center" />
+                                <Label Text="Dunkel" FontSize="12"
+                                       TextColor="{StaticResource TextPrimary}"
+                                       HorizontalOptions="Center" />
+                            </VerticalStackLayout>
+                        </Border>
+                        <!-- Light -->
+                        <Border Grid.Column="1"
+                                BackgroundColor="{Binding IsLight, Converter={StaticResource BoolToCardConverter}}"
+                                Stroke="{StaticResource BorderColor}" StrokeThickness="1"
+                                StrokeShape="RoundRectangle 12" Padding="0,10">
+                            <Border.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding ThemeLightCommand}" />
+                            </Border.GestureRecognizers>
+                            <VerticalStackLayout Spacing="4" HorizontalOptions="Center">
+                                <Label Text="??" FontSize="20" HorizontalOptions="Center" />
+                                <Label Text="Hell" FontSize="12"
+                                       TextColor="{StaticResource TextPrimary}"
+                                       HorizontalOptions="Center" />
+                            </VerticalStackLayout>
+                        </Border>
+                        <!-- System -->
+                        <Border Grid.Column="2"
+                                BackgroundColor="{Binding IsSystem, Converter={StaticResource BoolToCardConverter}}"
+                                Stroke="{StaticResource BorderColor}" StrokeThickness="1"
+                                StrokeShape="RoundRectangle 12" Padding="0,10">
+                            <Border.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding ThemeSystemCommand}" />
+                            </Border.GestureRecognizers>
+                            <VerticalStackLayout Spacing="4" HorizontalOptions="Center">
+                                <Label Text="??" FontSize="20" HorizontalOptions="Center" />
+                                <Label Text="System" FontSize="12"
+                                       TextColor="{StaticResource TextPrimary}"
+                                       HorizontalOptions="Center" />
+                            </VerticalStackLayout>
+                        </Border>
+                    </Grid>
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- Sektion: Export -->
+            <Label Text="EXPORT" FontSize="11" FontAttributes="Bold"
+                   TextColor="{StaticResource TextMuted}" Margin="20,24,20,8" CharacterSpacing="1.5" />
+
+            <Border Margin="16,0" BackgroundColor="{StaticResource CardColor}"
+                    Stroke="{StaticResource BorderColor}" StrokeThickness="1"
+                    StrokeShape="RoundRectangle 16" Padding="4">
+                <Button Text="??  Tages�bersicht teilen (WhatsApp, �)"
+                        Command="{Binding ExportWhatsAppCommand}"
+                        BackgroundColor="Transparent"
+                        TextColor="{StaticResource CyanColor}"
+                        FontSize="15" HeightRequest="52" />
+            </Border>
 
             <!-- Sektion: Arbeitszeit -->
             <Label Text="ARBEITSZEIT" FontSize="11" FontAttributes="Bold"
@@ -82,7 +155,7 @@
                 <Grid ColumnDefinitions="*,Auto">
                     <VerticalStackLayout Grid.Column="0" Spacing="3">
                         <Label Text="Erster Arbeitstag" FontSize="16" TextColor="{StaticResource TextPrimary}" />
-                        <Label Text="Ab wann die Gesamtübersicht zählt" FontSize="12"
+                        <Label Text="Ab wann die Gesamt�bersicht z�hlt" FontSize="12"
                                TextColor="{StaticResource TextMuted}" />
                     </VerticalStackLayout>
                     <DatePicker Grid.Column="1"
@@ -171,7 +244,7 @@
                                    Keyboard="Url"
                                    Completed="OnServerUrlCompleted" />
                         </Border>
-                        <Button Text="🔌  Verbindung testen"
+                        <Button Text="??  Verbindung testen"
                                 Clicked="OnTestConnectionClicked"
                                 BackgroundColor="{StaticResource SurfaceColor}"
                                 TextColor="{StaticResource CyanColor}"
@@ -179,7 +252,7 @@
                                 CornerRadius="10" Margin="0,2,0,0" />
                     </VerticalStackLayout>
                     <BoxView HeightRequest="1" BackgroundColor="{StaticResource BorderColor}" />
-                    <Button Text="🔑  Passwort ändern"
+                    <Button Text="??  Passwort �ndern"
                             Clicked="OnChangePasswordClicked"
                             BackgroundColor="Transparent"
                             TextColor="{StaticResource TextPrimary}"
@@ -201,8 +274,8 @@
                         FontSize="15" HeightRequest="52" />
             </Border>
 
-            <!-- Sektion: Über die App -->
-            <Label Text="ÜBER DIE APP" FontSize="11" FontAttributes="Bold"
+            <!-- Sektion: �ber die App -->
+            <Label Text="�BER DIE APP" FontSize="11" FontAttributes="Bold"
                    TextColor="{StaticResource TextMuted}" Margin="20,24,20,8" CharacterSpacing="1.5" />
 
             <Border Margin="16,0,16,36" BackgroundColor="{StaticResource CardColor}"
@@ -226,7 +299,7 @@
 
                     <BoxView HeightRequest="1" BackgroundColor="{StaticResource BorderColor}" />
 
-                    <Button Text="📋  Changelog anzeigen"
+                    <Button Text="??  Changelog anzeigen"
                             Clicked="OnChangelogClicked"
                             BackgroundColor="Transparent"
                             TextColor="{StaticResource TextSecondary}"

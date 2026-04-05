@@ -17,15 +17,12 @@
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
-                <VerticalStackLayout Grid.Column="0" Spacing="1">
-                    <Label Text="VERA"
-                           FontSize="30"
-                           FontAttributes="Bold"
-                           TextColor="{StaticResource TextPrimary}" />
-                    <Label Text="Zeiterfassungs-Assistent"
-                           FontSize="13"
-                           TextColor="{StaticResource TextSecondary}" />
-                </VerticalStackLayout>
+                <Image Grid.Column="0"
+                       Source="vera_logo.png"
+                       HeightRequest="52"
+                       HorizontalOptions="Start"
+                       Aspect="AspectFit"
+                       VerticalOptions="Center" />
                 <Border Grid.Column="1"
                         BackgroundColor="{StaticResource CardColor}"
                         Stroke="{StaticResource BorderColor}"

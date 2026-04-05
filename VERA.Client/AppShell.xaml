@@ -15,27 +15,13 @@
     <!-- Flyout Header mit Logo -->
     <Shell.FlyoutHeader>
         <Grid BackgroundColor="{StaticResource CardColor}"
-              Padding="0,0,0,0">
-            <!-- Logo-Bild als Header-Banner -->
+              HeightRequest="140"
+              Padding="24,0">
             <Image Source="vera_logo.png"
-                   HeightRequest="160"
-                   Aspect="AspectFill" />
-            <!-- Gradient-Overlay für Lesbarkeit -->
-            <BoxView BackgroundColor="#CC080C1E"
-                     VerticalOptions="End"
-                     HeightRequest="80" />
-            <!-- VERA Text über dem Logo -->
-            <VerticalStackLayout VerticalOptions="End"
-                                 Padding="20,0,20,16"
-                                 Spacing="1">
-                <Label Text="VERA"
-                       FontSize="26"
-                       FontAttributes="Bold"
-                       TextColor="{StaticResource TextPrimary}" />
-                <Label Text="Zeiterfassungs-Assistent"
-                       FontSize="11"
-                       TextColor="{StaticResource TextSecondary}" />
-            </VerticalStackLayout>
+                   HeightRequest="80"
+                   HorizontalOptions="Start"
+                   VerticalOptions="Center"
+                   Aspect="AspectFit" />
         </Grid>
     </Shell.FlyoutHeader>
 
