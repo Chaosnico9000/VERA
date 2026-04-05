@@ -155,7 +155,7 @@
                 <Grid ColumnDefinitions="*,Auto">
                     <VerticalStackLayout Grid.Column="0" Spacing="3">
                         <Label Text="Erster Arbeitstag" FontSize="16" TextColor="{DynamicResource TextPrimary}" />
-                        <Label Text="Ab wann die Gesamt�bersicht z�hlt" FontSize="12"
+                        <Label Text="Ab wann die Gesamt&#xFC;bersicht z&#xE4;hlt" FontSize="12"
                                TextColor="{DynamicResource TextMuted}" />
                     </VerticalStackLayout>
                     <DatePicker Grid.Column="1"
@@ -244,7 +244,7 @@
                                    Keyboard="Url"
                                    Completed="OnServerUrlCompleted" />
                         </Border>
-                        <Button Text="??  Verbindung testen"
+                        <Button Text="&#x1F517;  Verbindung testen"
                                 Clicked="OnTestConnectionClicked"
                                 BackgroundColor="{DynamicResource SurfaceColor}"
                                 TextColor="{StaticResource CyanColor}"
@@ -252,7 +252,7 @@
                                 CornerRadius="10" Margin="0,2,0,0" />
                     </VerticalStackLayout>
                     <BoxView HeightRequest="1" BackgroundColor="{DynamicResource BorderColor}" />
-                    <Button Text="??  Passwort �ndern"
+                    <Button Text="&#x1F511;  Passwort &#xE4;ndern"
                             Clicked="OnChangePasswordClicked"
                             BackgroundColor="Transparent"
                             TextColor="{DynamicResource TextPrimary}"
@@ -274,8 +274,8 @@
                         FontSize="15" HeightRequest="52" />
             </Border>
 
-            <!-- Sektion: �ber die App -->
-            <Label Text="�BER DIE APP" FontSize="11" FontAttributes="Bold"
+            <!-- Sektion: &#xDC;ber die App -->
+            <Label Text="&#xDC;BER DIE APP" FontSize="11" FontAttributes="Bold"
                    TextColor="{DynamicResource TextMuted}" Margin="20,24,20,8" CharacterSpacing="1.5" />
 
             <Border Margin="16,0,16,36" BackgroundColor="{DynamicResource CardColor}"
@@ -299,7 +299,7 @@
 
                     <BoxView HeightRequest="1" BackgroundColor="{DynamicResource BorderColor}" />
 
-                    <Button Text="??  Changelog anzeigen"
+                    <Button Text="&#x1F4CB;  Changelog anzeigen"
                             Clicked="OnChangelogClicked"
                             BackgroundColor="Transparent"
                             TextColor="{DynamicResource TextSecondary}"

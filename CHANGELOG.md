@@ -11,6 +11,17 @@ dieses Projekt hält sich an [Semantic Versioning](https://semver.org/lang/de/).
 
 ---
 
+## [1.7.1] - 2026-04-07
+
+### Fixed
+- **Weitere korrupte Zeichen in Einstellungen** — `U+FFFD`-Zeichen (kaputte Umlaute) und `??`-Platzhalter in `EinstellungenPage.xaml` behoben:
+  - „Ab wann die Gesamtübersicht zählt" (ü, ä wiederhergestellt)
+  - „Über die App" / „ÜBER DIE APP" (Ü wiederhergestellt)
+  - „Passwort ändern" (ä wiederhergestellt)
+  - Button-Icons: `??  Verbindung testen` → 🔗, `??  Passwort ändern` → 🔑, `??  Changelog anzeigen` → 📋
+
+---
+
 ## [1.7.0] - 2026-04-07
 
 ### Added
