@@ -11,7 +11,15 @@ dieses Projekt hält sich an [Semantic Versioning](https://semver.org/lang/de/).
 
 ---
 
-## [1.5.3] - 2026-04-05
+## [1.5.4] - 2026-04-05
+
+### Fixed
+- **Wochenende wird korrekt erkannt:** Samstag und Sonntag haben keine Sollzeit mehr. Der Tagesfortschrittsbalken zeigt ein neutrales Bild, der Puffer-Badge zeigt `+Xh` (freiwillige Arbeit) statt Fehlstunden, und der Motivationstext lautet „Gutes Wochenende!“ / „Fleißig am Wochenende“ statt Soll-Bezug.
+- **Wochenübersicht am Wochenende:** Zeigt 5 Soll-Tage (Woche abgeschlossen), sodass der Wochenpuffer die korrekte Bilanz der abgelaufenen Mo–Fr-Tage ausweist.
+
+---
+
+## [1.5.3]
 
 ### Fixed
 - **Wochenübersicht zeigt falsche Fehlstunden:** Die Berechnung nutzte immer ein fixes Ziel von 5 × Sollzeit, auch wenn die Woche erst am Mittwoch begann (z.B. 1. April 2026). Jetzt werden nur die tatsächlich vergangenen Werktage der aktuellen Kalenderwoche (Mo–Fr bis heute) als Pflicht gewertet — wer am Mittwoch anfängt, hat 3 Soll-Tage, nicht 5.

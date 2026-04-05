@@ -478,25 +478,47 @@ namespace VERA.ViewModels
             SondertagTitel          = today.FirstOrDefault(e => e.IsSonderTag)?.TypeBadge ?? string.Empty;
 
             var totalMinuten = ComputeMinutes(today, sollMinuten, includeRunning: false);
+            bool istWochenende = DateTime.Today.DayOfWeek is DayOfWeek.Saturday or DayOfWeek.Sunday;
 
             var th = (int)(totalMinuten / 60);
             var tm = (int)(totalMinuten % 60);
-            TodayTotal    = th > 0 ? $"{th}h {tm:D2}m" : $"{tm}m";
-            TodayProgress = sollMinuten > 0 ? Math.Min(1.0, totalMinuten / sollMinuten) : 0;
+            TodayTotal = th > 0 ? $"{th}h {tm:D2}m" : $"{tm}m";
 
-            ProgressColor = TodayProgress >= 1.0 ? Color.FromArgb("#4ECCA3") :
-                            TodayProgress >= 0.8 ? Color.FromArgb("#3566E5") :
-                            TodayProgress >= 0.5 ? Color.FromArgb("#FFB347") :
-                            totalMinuten   < 1.0 ? Color.FromArgb("#1A2460") :
-                                                   Color.FromArgb("#8240CE");
+            // Am Wochenende kein Soll-Ziel: Fortschrittsbalken neutral, kein Fehlzeit-Puffer
+            if (istWochenende)
+            {
+                TodayProgress = totalMinuten > 0 ? 1.0 : 0;
+                ProgressColor = totalMinuten > 0 ? Color.FromArgb("#4ECCA3") : Color.FromArgb("#1A2460");
+                SollzeitDisplay = "―";
+                if (totalMinuten > 0)
+                {
+                    PufferDisplay = $"+{th}h {tm:D2}m";
+                    PufferColor   = Color.FromArgb("#4ECCA3");
+                }
+                else
+                {
+                    PufferDisplay = "―";
+                    PufferColor   = Color.FromArgb("#424F8A");
+                }
+            }
+            else
+            {
+                TodayProgress = sollMinuten > 0 ? Math.Min(1.0, totalMinuten / sollMinuten) : 0;
+                ProgressColor = TodayProgress >= 1.0 ? Color.FromArgb("#4ECCA3") :
+                                TodayProgress >= 0.8 ? Color.FromArgb("#3566E5") :
+                                TodayProgress >= 0.5 ? Color.FromArgb("#FFB347") :
+                                totalMinuten   < 1.0 ? Color.FromArgb("#1A2460") :
+                                                       Color.FromArgb("#8240CE");
+                var puffer = totalMinuten - sollMinuten;
+                var ph     = (int)(Math.Abs(puffer) / 60);
+                var pm     = (int)(Math.Abs(puffer) % 60);
+                PufferDisplay = puffer >= 0 ? $"+{ph}h {pm:D2}m" : $"-{ph}h {pm:D2}m";
+                PufferColor   = puffer >= 0 ? Color.FromArgb("#4ECCA3") : Color.FromArgb("#8240CE");
+            }
 
-            var puffer = totalMinuten - sollMinuten;
-            var ph     = (int)(Math.Abs(puffer) / 60);
-            var pm     = (int)(Math.Abs(puffer) % 60);
-            PufferDisplay = puffer >= 0 ? $"+{ph}h {pm:D2}m" : $"-{ph}h {pm:D2}m";
-            PufferColor   = puffer >= 0 ? Color.FromArgb("#4ECCA3") : Color.FromArgb("#8240CE");
-
-            TagesMotivation = BuildMotivation(totalMinuten, sollMinuten, TodayProgress);
+            TagesMotivation = BuildMotivation(totalMinuten,
+                istWochenende ? 0 : sollMinuten,
+                istWochenende ? (totalMinuten > 0 ? 1.0 : 0) : TodayProgress);
 
             // Letzte Einträge
             RecentEntries.Clear();
@@ -518,15 +540,24 @@ namespace VERA.ViewModels
                          && e.StartTime.Date <= DateTime.Today)
                 .ToList();
 
-            // Vergangene Werktage dieser Woche (Mo–Fr bis heute)
-            int vergangeneWerktage = 0;
-            for (var d = montagDieserWoche; d <= DateTime.Today; d = d.AddDays(1))
+            // Vergangene Werktage dieser Woche (Mo–Fr).
+            // Am Wochenende ist die Arbeitswoche abgeschlossen → immer 5 Soll-Tage.
+            bool istWochenendeBis = DateTime.Today.DayOfWeek is DayOfWeek.Saturday or DayOfWeek.Sunday;
+            int vergangeneWerktage;
+            if (istWochenendeBis)
             {
-                if (d.DayOfWeek is not DayOfWeek.Saturday and not DayOfWeek.Sunday)
-                    vergangeneWerktage++;
+                vergangeneWerktage = 5;
             }
-            // Maximal 5 (Wochentage Mo–Fr)
-            vergangeneWerktage = Math.Min(vergangeneWerktage, 5);
+            else
+            {
+                vergangeneWerktage = 0;
+                for (var d = montagDieserWoche; d <= DateTime.Today; d = d.AddDays(1))
+                {
+                    if (d.DayOfWeek is not DayOfWeek.Saturday and not DayOfWeek.Sunday)
+                        vergangeneWerktage++;
+                }
+                vergangeneWerktage = Math.Min(vergangeneWerktage, 5);
+            }
 
             double wochenZielMinuten = vergangeneWerktage * sollMinuten;
             double wochenTotal       = ComputeMinutes(weekEntries, sollMinuten, includeRunning: false);
@@ -585,6 +616,19 @@ namespace VERA.ViewModels
         private static string BuildMotivation(double totalMinuten, double sollMinuten, double progress)
         {
             var dow = DateTime.Today.DayOfWeek;
+
+            // Wochenende: kein Soll-Bezug, eigene Texte
+            if (dow is DayOfWeek.Saturday or DayOfWeek.Sunday)
+            {
+                if (totalMinuten < 1)
+                    return dow == DayOfWeek.Saturday
+                        ? "Gutes Wochenende! \ud83c\udf89"
+                        : "Schönen Sonntag! \u2600\ufe0f";
+                var wh = (int)(totalMinuten / 60);
+                var wm = (int)(totalMinuten % 60);
+                return $"Fleißig am Wochenende \u2014 {wh}h {wm:D2}m \ud83d\udcaa";
+            }
+
             if (totalMinuten < 1)
                 return dow switch
                 {
