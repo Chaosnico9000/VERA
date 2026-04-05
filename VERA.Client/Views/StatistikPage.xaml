@@ -4,7 +4,7 @@
              xmlns:vm="clr-namespace:VERA.ViewModels"
              x:Class="VERA.Views.StatistikPage"
              x:DataType="vm:StatistikViewModel"
-             BackgroundColor="{StaticResource AppBackground}"
+             BackgroundColor="{DynamicResource AppBackground}"
              Title="Statistiken">
 
     <Grid RowDefinitions="Auto,Auto,*">
@@ -12,30 +12,30 @@
         <!-- Header -->
         <Grid Grid.Row="0" Padding="8,48,20,12" ColumnDefinitions="56,*">
             <Button Grid.Column="0" Text="&#9776;" FontSize="22"
-                    TextColor="{StaticResource TextPrimary}" BackgroundColor="Transparent"
+                    TextColor="{DynamicResource TextPrimary}" BackgroundColor="Transparent"
                     Clicked="OnMenuClicked" VerticalOptions="Center" />
             <VerticalStackLayout Grid.Column="1" Spacing="1" VerticalOptions="Center">
                 <Label Text="Statistiken" FontSize="22" FontAttributes="Bold"
-                       TextColor="{StaticResource TextPrimary}" />
-                <Label Text="{Binding MonatLabel}" FontSize="11" TextColor="{StaticResource TextMuted}" />
+                       TextColor="{DynamicResource TextPrimary}" />
+                <Label Text="{Binding MonatLabel}" FontSize="11" TextColor="{DynamicResource TextMuted}" />
             </VerticalStackLayout>
         </Grid>
 
         <!-- Woche / Monat Umschalter -->
         <Border Grid.Row="1" Margin="16,0,16,12"
-                BackgroundColor="{StaticResource CardColor}"
-                Stroke="{StaticResource BorderColor}" StrokeThickness="1"
+                BackgroundColor="{DynamicResource CardColor}"
+                Stroke="{DynamicResource BorderColor}" StrokeThickness="1"
                 StrokeShape="RoundRectangle 14" Padding="4">
             <Grid ColumnDefinitions="*,*">
                 <Button Grid.Column="0" Text="Diese Woche"
                         Command="{Binding ZeigeWocheCommand}"
                         BackgroundColor="{Binding ZeigeWoche, Converter={StaticResource BoolToCardConverter}}"
-                        TextColor="{StaticResource TextPrimary}"
+                        TextColor="{DynamicResource TextPrimary}"
                         FontSize="14" CornerRadius="10" HeightRequest="40" />
                 <Button Grid.Column="1" Text="Dieser Monat"
                         Command="{Binding ZeigeMonatCommand}"
                         BackgroundColor="{Binding ZeigeMonat, Converter={StaticResource BoolToCardConverter}}"
-                        TextColor="{StaticResource TextPrimary}"
+                        TextColor="{DynamicResource TextPrimary}"
                         FontSize="14" CornerRadius="10" HeightRequest="40" />
             </Grid>
         </Border>
@@ -47,22 +47,22 @@
                 <VerticalStackLayout IsVisible="{Binding ZeigeWoche}" Spacing="14">
 
                     <!-- Wochen-Zusammenfassung -->
-                    <Border BackgroundColor="{StaticResource CardColor}"
-                            Stroke="{StaticResource BorderColor}" StrokeThickness="1"
+                    <Border BackgroundColor="{DynamicResource CardColor}"
+                            Stroke="{DynamicResource BorderColor}" StrokeThickness="1"
                             StrokeShape="RoundRectangle 18" Padding="20,18">
                         <Grid ColumnDefinitions="*,*,*" ColumnSpacing="8">
                             <VerticalStackLayout Grid.Column="0" Spacing="4">
-                                <Label Text="Gearbeitet" FontSize="11" TextColor="{StaticResource TextSecondary}" />
+                                <Label Text="Gearbeitet" FontSize="11" TextColor="{DynamicResource TextSecondary}" />
                                 <Label Text="{Binding WocheGesamt}" FontSize="20" FontAttributes="Bold"
-                                       TextColor="{StaticResource TextPrimary}" />
+                                       TextColor="{DynamicResource TextPrimary}" />
                             </VerticalStackLayout>
                             <VerticalStackLayout Grid.Column="1" Spacing="4">
-                                <Label Text="Sollzeit" FontSize="11" TextColor="{StaticResource TextSecondary}" />
+                                <Label Text="Sollzeit" FontSize="11" TextColor="{DynamicResource TextSecondary}" />
                                 <Label Text="{Binding WocheSoll}" FontSize="20" FontAttributes="Bold"
-                                       TextColor="{StaticResource TextMuted}" />
+                                       TextColor="{DynamicResource TextMuted}" />
                             </VerticalStackLayout>
                             <VerticalStackLayout Grid.Column="2" Spacing="4">
-                                <Label Text="Puffer" FontSize="11" TextColor="{StaticResource TextSecondary}" />
+                                <Label Text="Puffer" FontSize="11" TextColor="{DynamicResource TextSecondary}" />
                                 <Label Text="{Binding WochePuffer}" FontSize="20" FontAttributes="Bold"
                                        TextColor="{Binding PufferFarbe}" />
                             </VerticalStackLayout>
@@ -71,29 +71,29 @@
 
                     <!-- Tag-Kacheln -->
                     <Label Text="Tag&#252;bersicht" FontSize="17" FontAttributes="Bold"
-                           TextColor="{StaticResource TextPrimary}" Margin="4,0,0,0" />
+                           TextColor="{DynamicResource TextPrimary}" Margin="4,0,0,0" />
 
                     <CollectionView ItemsSource="{Binding WochenDaten}">
                         <CollectionView.ItemTemplate>
                             <DataTemplate x:DataType="vm:TagData">
-                                <Border BackgroundColor="{StaticResource CardColor}"
-                                        Stroke="{StaticResource BorderColor}" StrokeThickness="1"
+                                <Border BackgroundColor="{DynamicResource CardColor}"
+                                        Stroke="{DynamicResource BorderColor}" StrokeThickness="1"
                                         StrokeShape="RoundRectangle 14" Margin="0,4" Padding="18,14">
                                     <Grid ColumnDefinitions="36,*,Auto" ColumnSpacing="12">
                                         <Label Grid.Column="0" Text="{Binding Name}"
                                                FontSize="15" FontAttributes="Bold"
-                                               TextColor="{StaticResource TextPrimary}"
+                                               TextColor="{DynamicResource TextPrimary}"
                                                VerticalOptions="Center" />
                                         <VerticalStackLayout Grid.Column="1" Spacing="6" VerticalOptions="Center">
                                             <ProgressBar Progress="{Binding Fortschritt}"
                                                          ProgressColor="{Binding FortschrittFarbe}"
-                                                         BackgroundColor="{StaticResource SurfaceColor}"
+                                                         BackgroundColor="{DynamicResource SurfaceColor}"
                                                          HeightRequest="7" />
                                             <Label Text="{Binding GearbeiteteAnzeige}" FontSize="12"
-                                                   TextColor="{StaticResource TextMuted}" />
+                                                   TextColor="{DynamicResource TextMuted}" />
                                         </VerticalStackLayout>
                                         <Border Grid.Column="2"
-                                                BackgroundColor="{StaticResource SurfaceColor}"
+                                                BackgroundColor="{DynamicResource SurfaceColor}"
                                                 Stroke="{StaticResource Primary}" StrokeThickness="1"
                                                 StrokeShape="RoundRectangle 8" Padding="8,4"
                                                 VerticalOptions="Center" IsVisible="{Binding IstHeute}">
@@ -111,22 +111,22 @@
                 <VerticalStackLayout IsVisible="{Binding ZeigeMonat}" Spacing="14">
 
                     <!-- Monats-Zusammenfassung -->
-                    <Border BackgroundColor="{StaticResource CardColor}"
-                            Stroke="{StaticResource BorderColor}" StrokeThickness="1"
+                    <Border BackgroundColor="{DynamicResource CardColor}"
+                            Stroke="{DynamicResource BorderColor}" StrokeThickness="1"
                             StrokeShape="RoundRectangle 18" Padding="20,18">
                         <Grid ColumnDefinitions="*,*,*" ColumnSpacing="8">
                             <VerticalStackLayout Grid.Column="0" Spacing="4">
-                                <Label Text="Gearbeitet" FontSize="11" TextColor="{StaticResource TextSecondary}" />
+                                <Label Text="Gearbeitet" FontSize="11" TextColor="{DynamicResource TextSecondary}" />
                                 <Label Text="{Binding MonatGesamt}" FontSize="20" FontAttributes="Bold"
-                                       TextColor="{StaticResource TextPrimary}" />
+                                       TextColor="{DynamicResource TextPrimary}" />
                             </VerticalStackLayout>
                             <VerticalStackLayout Grid.Column="1" Spacing="4">
-                                <Label Text="Bis heute" FontSize="11" TextColor="{StaticResource TextSecondary}" />
+                                <Label Text="Bis heute" FontSize="11" TextColor="{DynamicResource TextSecondary}" />
                                 <Label Text="{Binding MonatSoll}" FontSize="20" FontAttributes="Bold"
-                                       TextColor="{StaticResource TextMuted}" />
+                                       TextColor="{DynamicResource TextMuted}" />
                             </VerticalStackLayout>
                             <VerticalStackLayout Grid.Column="2" Spacing="4">
-                                <Label Text="Puffer" FontSize="11" TextColor="{StaticResource TextSecondary}" />
+                                <Label Text="Puffer" FontSize="11" TextColor="{DynamicResource TextSecondary}" />
                                 <Label Text="{Binding MonatPuffer}" FontSize="20" FontAttributes="Bold"
                                        TextColor="{Binding MonatPufferFarbe}" />
                             </VerticalStackLayout>
@@ -134,8 +134,8 @@
                     </Border>
 
                     <!-- Kalender -->
-                    <Border BackgroundColor="{StaticResource CardColor}"
-                            Stroke="{StaticResource BorderColor}" StrokeThickness="1"
+                    <Border BackgroundColor="{DynamicResource CardColor}"
+                            Stroke="{DynamicResource BorderColor}" StrokeThickness="1"
                             StrokeShape="RoundRectangle 18" Padding="14,16">
                         <VerticalStackLayout Spacing="10">
 
@@ -143,19 +143,19 @@
                             <Grid ColumnDefinitions="Auto,*,Auto">
                                 <Button Grid.Column="0"
                                         Text="◀" FontSize="16"
-                                        TextColor="{StaticResource TextSecondary}"
+                                        TextColor="{DynamicResource TextSecondary}"
                                         BackgroundColor="Transparent"
                                         Command="{Binding VorigerMonatCommand}"
                                         WidthRequest="40" HeightRequest="36" Padding="0" />
                                 <Label Grid.Column="1"
                                        Text="{Binding MonatLabel}"
                                        FontSize="15" FontAttributes="Bold"
-                                       TextColor="{StaticResource TextPrimary}"
+                                       TextColor="{DynamicResource TextPrimary}"
                                        HorizontalOptions="Center"
                                        VerticalOptions="Center" />
                                 <Button Grid.Column="2"
                                         Text="▶" FontSize="16"
-                                        TextColor="{StaticResource TextSecondary}"
+                                        TextColor="{DynamicResource TextSecondary}"
                                         BackgroundColor="Transparent"
                                         Command="{Binding NaechsterMonatCommand}"
                                         WidthRequest="40" HeightRequest="36" Padding="0" />
@@ -164,19 +164,19 @@
                             <!-- Wochentag-Header -->
                             <Grid ColumnDefinitions="*,*,*,*,*,*,*" ColumnSpacing="3">
                                 <Label Grid.Column="0" Text="Mo" FontSize="11" FontAttributes="Bold"
-                                       TextColor="{StaticResource TextMuted}" HorizontalOptions="Center"/>
+                                       TextColor="{DynamicResource TextMuted}" HorizontalOptions="Center"/>
                                 <Label Grid.Column="1" Text="Di" FontSize="11" FontAttributes="Bold"
-                                       TextColor="{StaticResource TextMuted}" HorizontalOptions="Center"/>
+                                       TextColor="{DynamicResource TextMuted}" HorizontalOptions="Center"/>
                                 <Label Grid.Column="2" Text="Mi" FontSize="11" FontAttributes="Bold"
-                                       TextColor="{StaticResource TextMuted}" HorizontalOptions="Center"/>
+                                       TextColor="{DynamicResource TextMuted}" HorizontalOptions="Center"/>
                                 <Label Grid.Column="3" Text="Do" FontSize="11" FontAttributes="Bold"
-                                       TextColor="{StaticResource TextMuted}" HorizontalOptions="Center"/>
+                                       TextColor="{DynamicResource TextMuted}" HorizontalOptions="Center"/>
                                 <Label Grid.Column="4" Text="Fr" FontSize="11" FontAttributes="Bold"
-                                       TextColor="{StaticResource TextMuted}" HorizontalOptions="Center"/>
+                                       TextColor="{DynamicResource TextMuted}" HorizontalOptions="Center"/>
                                 <Label Grid.Column="5" Text="Sa" FontSize="11" FontAttributes="Bold"
-                                       TextColor="{StaticResource BorderColor}" HorizontalOptions="Center"/>
+                                       TextColor="{DynamicResource BorderColor}" HorizontalOptions="Center"/>
                                 <Label Grid.Column="6" Text="So" FontSize="11" FontAttributes="Bold"
-                                       TextColor="{StaticResource BorderColor}" HorizontalOptions="Center"/>
+                                       TextColor="{DynamicResource BorderColor}" HorizontalOptions="Center"/>
                             </Grid>
 
                             <!-- Kalender-Grid (7 Spalten, dynamische Zeilen via CollectionView) -->
@@ -213,17 +213,17 @@
                                 <HorizontalStackLayout Grid.Column="0" Spacing="5" HorizontalOptions="Center">
                                     <BoxView WidthRequest="10" HeightRequest="10" CornerRadius="3"
                                              Color="#0D2B22" VerticalOptions="Center"/>
-                                    <Label Text="Soll ✓" FontSize="10" TextColor="{StaticResource TextMuted}" VerticalOptions="Center"/>
+                                    <Label Text="Soll ✓" FontSize="10" TextColor="{DynamicResource TextMuted}" VerticalOptions="Center"/>
                                 </HorizontalStackLayout>
                                 <HorizontalStackLayout Grid.Column="1" Spacing="5" HorizontalOptions="Center">
                                     <BoxView WidthRequest="10" HeightRequest="10" CornerRadius="3"
                                              Color="#2A1555" VerticalOptions="Center"/>
-                                    <Label Text="Sondertag" FontSize="10" TextColor="{StaticResource TextMuted}" VerticalOptions="Center"/>
+                                    <Label Text="Sondertag" FontSize="10" TextColor="{DynamicResource TextMuted}" VerticalOptions="Center"/>
                                 </HorizontalStackLayout>
                                 <HorizontalStackLayout Grid.Column="2" Spacing="5" HorizontalOptions="Center">
                                     <BoxView WidthRequest="10" HeightRequest="10" CornerRadius="3"
                                              Color="#1A3580" VerticalOptions="Center"/>
-                                    <Label Text="Heute" FontSize="10" TextColor="{StaticResource TextMuted}" VerticalOptions="Center"/>
+                                    <Label Text="Heute" FontSize="10" TextColor="{DynamicResource TextMuted}" VerticalOptions="Center"/>
                                 </HorizontalStackLayout>
                             </Grid>
 

@@ -1,9 +1,9 @@
-<?xml version="1.0" encoding="utf-8" ?>
+﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:local="clr-namespace:VERA.Views"
              x:Class="VERA.Views.ChangelogPage"
-             BackgroundColor="{StaticResource AppBackground}"
+             BackgroundColor="{DynamicResource AppBackground}"
              Title="Changelog">
 
     <Grid RowDefinitions="Auto,*">
@@ -13,29 +13,29 @@
             <Button Grid.Column="0"
                     Text="&#8592;"
                     FontSize="22"
-                    TextColor="{StaticResource TextPrimary}"
+                    TextColor="{DynamicResource TextPrimary}"
                     BackgroundColor="Transparent"
                     Clicked="OnBackClicked"
                     VerticalOptions="Center" />
             <VerticalStackLayout Grid.Column="1" Spacing="2" VerticalOptions="Center">
                 <Label Text="Changelog"
                        FontSize="22" FontAttributes="Bold"
-                       TextColor="{StaticResource TextPrimary}" />
+                       TextColor="{DynamicResource TextPrimary}" />
                 <Label Text="Versionshistorie"
                        FontSize="11"
-                       TextColor="{StaticResource TextMuted}" />
+                       TextColor="{DynamicResource TextMuted}" />
             </VerticalStackLayout>
             <!-- Anzahl Releases Badge -->
             <Border Grid.Column="2"
-                    BackgroundColor="{StaticResource SurfaceColor}"
-                    Stroke="{StaticResource BorderColor}"
+                    BackgroundColor="{DynamicResource SurfaceColor}"
+                    Stroke="{DynamicResource BorderColor}"
                     StrokeThickness="1"
                     StrokeShape="RoundRectangle 10"
                     Padding="10,5"
                     VerticalOptions="Center">
                 <Label x:Name="ReleaseBadgeLabel"
                        FontSize="11" FontAttributes="Bold"
-                       TextColor="{StaticResource TextSecondary}" />
+                       TextColor="{DynamicResource TextSecondary}" />
             </Border>
         </Grid>
 
@@ -109,14 +109,14 @@
                                             IsVisible="{Binding HasChanged}">
                                         <Label Text="{Binding ChangedCountLabel}"
                                                FontSize="10" FontAttributes="Bold"
-                                               TextColor="{StaticResource TextSecondary}" />
+                                               TextColor="{DynamicResource TextSecondary}" />
                                     </Border>
                                 </HorizontalStackLayout>
                             </Grid>
                         </Border>
 
                         <!-- Section-Inhalte -->
-                        <Border BackgroundColor="{StaticResource CardColor}"
+                        <Border BackgroundColor="{DynamicResource CardColor}"
                                 Stroke="{Binding HeaderBorderColor}"
                                 StrokeThickness="1.5"
                                 StrokeShape="RoundRectangle 0,0,16,16"
@@ -151,11 +151,11 @@
                                                     <VerticalStackLayout Grid.Column="1" Spacing="1">
                                                         <Label Text="{Binding Title}"
                                                                FontSize="13" FontAttributes="Bold"
-                                                               TextColor="{StaticResource TextPrimary}"
+                                                               TextColor="{DynamicResource TextPrimary}"
                                                                IsVisible="{Binding HasTitle}" />
                                                         <Label Text="{Binding Body}"
                                                                FontSize="12"
-                                                               TextColor="{StaticResource TextSecondary}"
+                                                               TextColor="{DynamicResource TextSecondary}"
                                                                LineBreakMode="WordWrap" />
                                                     </VerticalStackLayout>
                                                 </Grid>
@@ -166,7 +166,7 @@
 
                                 <!-- Trennlinie Added→Fixed -->
                                 <BoxView HeightRequest="1"
-                                         Color="{StaticResource DividerColor}"
+                                         Color="{DynamicResource DividerColor}"
                                          IsVisible="{Binding HasAddedAndFixed}" />
 
                                 <!-- Fixed -->
@@ -197,11 +197,11 @@
                                                     <VerticalStackLayout Grid.Column="1" Spacing="1">
                                                         <Label Text="{Binding Title}"
                                                                FontSize="13" FontAttributes="Bold"
-                                                               TextColor="{StaticResource TextPrimary}"
+                                                               TextColor="{DynamicResource TextPrimary}"
                                                                IsVisible="{Binding HasTitle}" />
                                                         <Label Text="{Binding Body}"
                                                                FontSize="12"
-                                                               TextColor="{StaticResource TextSecondary}"
+                                                               TextColor="{DynamicResource TextSecondary}"
                                                                LineBreakMode="WordWrap" />
                                                     </VerticalStackLayout>
                                                 </Grid>
@@ -212,7 +212,7 @@
 
                                 <!-- Trennlinie →Changed -->
                                 <BoxView HeightRequest="1"
-                                         Color="{StaticResource DividerColor}"
+                                         Color="{DynamicResource DividerColor}"
                                          IsVisible="{Binding HasFixedAndChanged}" />
 
                                 <!-- Changed -->
@@ -224,7 +224,7 @@
                                                 Padding="8,3">
                                             <Label Text="↻ ÄNDERUNG"
                                                    FontSize="9" FontAttributes="Bold"
-                                                   TextColor="{StaticResource TextSecondary}"
+                                                   TextColor="{DynamicResource TextSecondary}"
                                                    CharacterSpacing="1.5" />
                                         </Border>
                                     </HorizontalStackLayout>
@@ -237,17 +237,17 @@
                                                     <Label Grid.Column="0"
                                                            Text="~"
                                                            FontSize="13" FontAttributes="Bold"
-                                                           TextColor="{StaticResource TextSecondary}"
+                                                           TextColor="{DynamicResource TextSecondary}"
                                                            VerticalOptions="Start"
                                                            Margin="0,1,0,0" />
                                                     <VerticalStackLayout Grid.Column="1" Spacing="1">
                                                         <Label Text="{Binding Title}"
                                                                FontSize="13" FontAttributes="Bold"
-                                                               TextColor="{StaticResource TextPrimary}"
+                                                               TextColor="{DynamicResource TextPrimary}"
                                                                IsVisible="{Binding HasTitle}" />
                                                         <Label Text="{Binding Body}"
                                                                FontSize="12"
-                                                               TextColor="{StaticResource TextSecondary}"
+                                                               TextColor="{DynamicResource TextSecondary}"
                                                                LineBreakMode="WordWrap" />
                                                     </VerticalStackLayout>
                                                 </Grid>

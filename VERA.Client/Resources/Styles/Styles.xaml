@@ -13,17 +13,17 @@
     </Style>
 
     <Style TargetType="Border">
-        <Setter Property="Stroke" Value="{StaticResource BorderColor}" />
+        <Setter Property="Stroke" Value="{DynamicResource BorderColor}" />
         <Setter Property="StrokeShape" Value="Rectangle"/>
         <Setter Property="StrokeThickness" Value="1"/>
     </Style>
 
     <Style TargetType="BoxView">
-        <Setter Property="BackgroundColor" Value="{StaticResource DividerColor}" />
+        <Setter Property="BackgroundColor" Value="{DynamicResource DividerColor}" />
     </Style>
 
     <Style TargetType="Button">
-        <Setter Property="TextColor" Value="{StaticResource TextPrimary}" />
+        <Setter Property="TextColor" Value="{DynamicResource TextPrimary}" />
         <Setter Property="BackgroundColor" Value="{StaticResource Primary}" />
         <Setter Property="FontFamily" Value="OpenSansRegular"/>
         <Setter Property="FontSize" Value="14"/>
@@ -154,7 +154,7 @@
     </Style>
 
     <Style TargetType="Label">
-        <Setter Property="TextColor" Value="{StaticResource TextPrimary}" />
+        <Setter Property="TextColor" Value="{DynamicResource TextPrimary}" />
         <Setter Property="BackgroundColor" Value="Transparent" />
         <Setter Property="FontFamily" Value="OpenSansRegular" />
         <Setter Property="FontSize" Value="14" />

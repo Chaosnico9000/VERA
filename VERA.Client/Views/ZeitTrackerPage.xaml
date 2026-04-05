@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8" ?>
+﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:vm="clr-namespace:VERA.ViewModels"
@@ -6,7 +6,7 @@
              xmlns:models="clr-namespace:VERA.Models"
              x:Class="VERA.Views.ZeitTrackerPage"
              x:DataType="vm:DashboardViewModel"
-             BackgroundColor="{StaticResource AppBackground}"
+             BackgroundColor="{DynamicResource AppBackground}"
              Title="Zeittracker">
 
     <Grid RowDefinitions="Auto,*">
@@ -15,12 +15,12 @@
         <Grid Grid.Row="0"
               Padding="8,48,16,10"
               ColumnDefinitions="56,*,Auto"
-              BackgroundColor="{StaticResource AppBackground}">
+              BackgroundColor="{DynamicResource AppBackground}">
 
             <Button Grid.Column="0"
                     Text="&#9776;"
                     FontSize="22"
-                    TextColor="{StaticResource TextPrimary}"
+                    TextColor="{DynamicResource TextPrimary}"
                     BackgroundColor="Transparent"
                     Clicked="OnMenuClicked"
                     VerticalOptions="Center" />
@@ -28,16 +28,16 @@
             <VerticalStackLayout Grid.Column="1" Spacing="1" VerticalOptions="Center">
                 <Label Text="Zeittracker"
                        FontSize="22" FontAttributes="Bold"
-                       TextColor="{StaticResource TextPrimary}" />
+                       TextColor="{DynamicResource TextPrimary}" />
                 <Label Text="{Binding LastRefreshed}"
                        FontSize="10"
-                       TextColor="{StaticResource TextMuted}" />
+                       TextColor="{DynamicResource TextMuted}" />
             </VerticalStackLayout>
 
             <!-- Datum + Uhrzeit Badge -->
             <Border Grid.Column="2"
-                    BackgroundColor="{StaticResource CardColor}"
-                    Stroke="{StaticResource BorderColor}"
+                    BackgroundColor="{DynamicResource CardColor}"
+                    Stroke="{DynamicResource BorderColor}"
                     StrokeThickness="1"
                     StrokeShape="RoundRectangle 12"
                     Padding="10,7"
@@ -45,11 +45,11 @@
                 <VerticalStackLayout Spacing="1" HorizontalOptions="Center">
                     <Label x:Name="DateLabel"
                            FontSize="11"
-                           TextColor="{StaticResource TextSecondary}"
+                           TextColor="{DynamicResource TextSecondary}"
                            HorizontalOptions="Center" />
                     <Label Text="{Binding UhrzeitDisplay}"
                            FontSize="14" FontAttributes="Bold"
-                           TextColor="{StaticResource TextPrimary}"
+                           TextColor="{DynamicResource TextPrimary}"
                            HorizontalOptions="Center" />
                 </VerticalStackLayout>
             </Border>
@@ -72,7 +72,7 @@
 
                     <!-- ── Timer-Karte ─────────────────────────────────── -->
                     <Border Margin="16,8,16,0"
-                            BackgroundColor="{StaticResource CardColor}"
+                            BackgroundColor="{DynamicResource CardColor}"
                             Stroke="{Binding TimerCardBorderColor}"
                             StrokeThickness="1.5"
                             StrokeShape="RoundRectangle 20"
@@ -83,7 +83,7 @@
                             <Label Text="{Binding TimerDisplay}"
                                    FontSize="48"
                                    FontAttributes="Bold"
-                                   TextColor="{StaticResource TextPrimary}"
+                                   TextColor="{DynamicResource TextPrimary}"
                                    HorizontalOptions="Center"
                                    CharacterSpacing="2" />
 
@@ -114,7 +114,7 @@
                                 <!-- Idle-Hinweis -->
                                 <Label Text="Bereit zum Starten"
                                        FontSize="12"
-                                       TextColor="{StaticResource TextMuted}"
+                                       TextColor="{DynamicResource TextMuted}"
                                        VerticalOptions="Center"
                                        IsVisible="{Binding IsNotRunning}" />
                             </HorizontalStackLayout>
@@ -122,7 +122,7 @@
                             <!-- Motivationstext -->
                             <Label Text="{Binding TagesMotivation}"
                                    FontSize="12"
-                                   TextColor="{StaticResource TextSecondary}"
+                                   TextColor="{DynamicResource TextSecondary}"
                                    HorizontalOptions="Center"
                                    HorizontalTextAlignment="Center"
                                    IsVisible="{Binding IsNotRunning}" />
@@ -131,7 +131,7 @@
                             <Button Text="{Binding ButtonLabel}"
                                     Command="{Binding ToggleTimerCommand}"
                                     BackgroundColor="{Binding ButtonColor}"
-                                    TextColor="{StaticResource TextPrimary}"
+                                    TextColor="{DynamicResource TextPrimary}"
                                     FontSize="17" FontAttributes="Bold"
                                     HeightRequest="54"
                                     CornerRadius="14"
@@ -170,8 +170,8 @@
 
                     <!-- ── Tagesfortschritt ────────────────────────────── -->
                     <Border Margin="16,12,16,0"
-                            BackgroundColor="{StaticResource CardColor}"
-                            Stroke="{StaticResource BorderColor}"
+                            BackgroundColor="{DynamicResource CardColor}"
+                            Stroke="{DynamicResource BorderColor}"
                             StrokeThickness="1"
                             StrokeShape="RoundRectangle 18"
                             Padding="18,16">
@@ -182,13 +182,13 @@
                                 <Label Grid.Column="0"
                                        Text="HEUTE"
                                        FontSize="10" FontAttributes="Bold"
-                                       TextColor="{StaticResource TextMuted}"
+                                       TextColor="{DynamicResource TextMuted}"
                                        CharacterSpacing="1.5"
                                        VerticalOptions="Center" />
                                 <Label Grid.Column="1"
                                        Text="{Binding TodayCount, StringFormat='{0} Einträge'}"
                                        FontSize="11"
-                                       TextColor="{StaticResource TextMuted}" />
+                                       TextColor="{DynamicResource TextMuted}" />
                             </Grid>
 
                             <!-- Stunden + Puffer -->
@@ -196,21 +196,21 @@
                                 <VerticalStackLayout Grid.Column="0" Spacing="1">
                                     <Label Text="{Binding TodayTotal}"
                                            FontSize="28" FontAttributes="Bold"
-                                           TextColor="{StaticResource TextPrimary}" />
-                                    <Label FontSize="11" TextColor="{StaticResource TextMuted}">
+                                           TextColor="{DynamicResource TextPrimary}" />
+                                    <Label FontSize="11" TextColor="{DynamicResource TextMuted}">
                                         <Label.FormattedText>
                                             <FormattedString>
                                                 <Span Text="von " />
                                                 <Span Text="{Binding SollzeitDisplay}"
                                                       FontAttributes="Bold"
-                                                      TextColor="{StaticResource TextSecondary}" />
+                                                      TextColor="{DynamicResource TextSecondary}" />
                                                 <Span Text=" Sollzeit" />
                                             </FormattedString>
                                         </Label.FormattedText>
                                     </Label>
                                 </VerticalStackLayout>
                                 <Border Grid.Column="1"
-                                        BackgroundColor="{StaticResource SurfaceColor}"
+                                        BackgroundColor="{DynamicResource SurfaceColor}"
                                         Stroke="{Binding PufferColor}"
                                         StrokeThickness="1"
                                         StrokeShape="RoundRectangle 12"
@@ -225,7 +225,7 @@
                             <!-- Fortschrittsbalken -->
                             <ProgressBar Progress="{Binding TodayProgress}"
                                          ProgressColor="{Binding ProgressColor}"
-                                         BackgroundColor="{StaticResource SurfaceColor}"
+                                         BackgroundColor="{DynamicResource SurfaceColor}"
                                          HeightRequest="8" />
 
                         </VerticalStackLayout>
@@ -233,8 +233,8 @@
 
                     <!-- ── Sondertypen eintragen ───────────────────────── -->
                     <Border Margin="16,12,16,0"
-                            BackgroundColor="{StaticResource CardColor}"
-                            Stroke="{StaticResource BorderColor}"
+                            BackgroundColor="{DynamicResource CardColor}"
+                            Stroke="{DynamicResource BorderColor}"
                             StrokeThickness="1"
                             StrokeShape="RoundRectangle 18"
                             Padding="18,14">
@@ -244,7 +244,7 @@
                                 <Label Grid.Column="0"
                                        Text="FÜR HEUTE EINTRAGEN"
                                        FontSize="10" FontAttributes="Bold"
-                                       TextColor="{StaticResource TextMuted}"
+                                       TextColor="{DynamicResource TextMuted}"
                                        CharacterSpacing="1.5"
                                        VerticalOptions="Center" />
                                 <!-- Badge wenn Sondertyp vorhanden -->
@@ -268,24 +268,24 @@
                                 <Button Grid.Column="0"
                                         Text="🏖 Urlaub&#10;ganztags"
                                         Command="{Binding UrlaubGanztagCommand}"
-                                        BackgroundColor="{StaticResource SurfaceColor}"
-                                        TextColor="{StaticResource TextSecondary}"
+                                        BackgroundColor="{DynamicResource SurfaceColor}"
+                                        TextColor="{DynamicResource TextSecondary}"
                                         FontSize="12" HeightRequest="56"
                                         CornerRadius="12" LineBreakMode="WordWrap"
                                         Padding="4" />
                                 <Button Grid.Column="1"
                                         Text="⛅ Urlaub&#10;halbtags"
                                         Command="{Binding UrlaubHalbtagCommand}"
-                                        BackgroundColor="{StaticResource SurfaceColor}"
-                                        TextColor="{StaticResource TextSecondary}"
+                                        BackgroundColor="{DynamicResource SurfaceColor}"
+                                        TextColor="{DynamicResource TextSecondary}"
                                         FontSize="12" HeightRequest="56"
                                         CornerRadius="12" LineBreakMode="WordWrap"
                                         Padding="4" />
                                 <Button Grid.Column="2"
                                         Text="🎉 Feiertag"
                                         Command="{Binding FeiertagCommand}"
-                                        BackgroundColor="{StaticResource SurfaceColor}"
-                                        TextColor="{StaticResource TextSecondary}"
+                                        BackgroundColor="{DynamicResource SurfaceColor}"
+                                        TextColor="{DynamicResource TextSecondary}"
                                         FontSize="12" HeightRequest="56"
                                         CornerRadius="12" Padding="4" />
                             </Grid>
@@ -295,8 +295,8 @@
 
                     <!-- ── Wochenübersicht ─────────────────────────────── -->
                     <Border Margin="16,12,16,0"
-                            BackgroundColor="{StaticResource CardColor}"
-                            Stroke="{StaticResource BorderColor}"
+                            BackgroundColor="{DynamicResource CardColor}"
+                            Stroke="{DynamicResource BorderColor}"
                             StrokeThickness="1"
                             StrokeShape="RoundRectangle 18"
                             Padding="18,14">
@@ -307,13 +307,13 @@
                                 <Label Grid.Column="0"
                                        Text="DIESE WOCHE"
                                        FontSize="10" FontAttributes="Bold"
-                                       TextColor="{StaticResource TextMuted}"
+                                       TextColor="{DynamicResource TextMuted}"
                                        CharacterSpacing="1.5"
                                        VerticalOptions="Center" />
                                 <Label Grid.Column="1"
                                        Text="{Binding WochenTageFortschritt}"
                                        FontSize="11"
-                                       TextColor="{StaticResource TextMuted}" />
+                                       TextColor="{DynamicResource TextMuted}" />
                             </Grid>
 
                             <!-- Stunden + Puffer -->
@@ -321,21 +321,21 @@
                                 <VerticalStackLayout Grid.Column="0" Spacing="1">
                                     <Label Text="{Binding WochenStundenDisplay}"
                                            FontSize="28" FontAttributes="Bold"
-                                           TextColor="{StaticResource TextPrimary}" />
-                                    <Label FontSize="11" TextColor="{StaticResource TextMuted}">
+                                           TextColor="{DynamicResource TextPrimary}" />
+                                    <Label FontSize="11" TextColor="{DynamicResource TextMuted}">
                                         <Label.FormattedText>
                                             <FormattedString>
                                                 <Span Text="Ziel " />
                                                 <Span Text="{Binding WochenZielDisplay}"
                                                       FontAttributes="Bold"
-                                                      TextColor="{StaticResource TextSecondary}" />
+                                                      TextColor="{DynamicResource TextSecondary}" />
                                                 <Span Text=" · 5 Werktage" />
                                             </FormattedString>
                                         </Label.FormattedText>
                                     </Label>
                                 </VerticalStackLayout>
                                 <Border Grid.Column="1"
-                                        BackgroundColor="{StaticResource SurfaceColor}"
+                                        BackgroundColor="{DynamicResource SurfaceColor}"
                                         Stroke="{Binding WochenPufferFarbe}"
                                         StrokeThickness="1"
                                         StrokeShape="RoundRectangle 12"
@@ -350,7 +350,7 @@
                             <!-- Fortschrittsbalken -->
                             <ProgressBar Progress="{Binding WochenProgress}"
                                          ProgressColor="{Binding WochenPufferFarbe}"
-                                         BackgroundColor="{StaticResource SurfaceColor}"
+                                         BackgroundColor="{DynamicResource SurfaceColor}"
                                          HeightRequest="8" />
 
                         </VerticalStackLayout>
@@ -359,8 +359,8 @@
                     <!-- ── Gamification-Karte ──────────────────────────── -->
                     <Border x:Name="GamificationCard"
                             Margin="16,12,16,0"
-                            BackgroundColor="{StaticResource CardColor}"
-                            Stroke="{StaticResource BorderColor}"
+                            BackgroundColor="{DynamicResource CardColor}"
+                            Stroke="{DynamicResource BorderColor}"
                             StrokeThickness="1"
                             StrokeShape="RoundRectangle 18"
                             Padding="18,14">
@@ -369,7 +369,7 @@
                             <!-- Header: Rang + Titel -->
                             <Grid ColumnDefinitions="Auto,*,Auto">
                                 <Border Grid.Column="0"
-                                        BackgroundColor="{StaticResource SurfaceColor}"
+                                        BackgroundColor="{DynamicResource SurfaceColor}"
                                         Stroke="{Binding Gamification.RangFarbe}"
                                         StrokeThickness="1.5"
                                         StrokeShape="RoundRectangle 8"
@@ -382,14 +382,14 @@
                                 <Label Grid.Column="1"
                                        Text="FORTSCHRITT"
                                        FontSize="10" FontAttributes="Bold"
-                                       TextColor="{StaticResource TextMuted}"
+                                       TextColor="{DynamicResource TextMuted}"
                                        CharacterSpacing="1.5"
                                        VerticalOptions="Center"
                                        Margin="10,0,0,0" />
                                 <Label Grid.Column="2"
                                        Text="{Binding Gamification.AchievementLabel}"
                                        FontSize="11"
-                                       TextColor="{StaticResource TextMuted}"
+                                       TextColor="{DynamicResource TextMuted}"
                                        VerticalOptions="Center" />
                             </Grid>
 
@@ -403,9 +403,9 @@
                                     <VerticalStackLayout Spacing="2" VerticalOptions="Center">
                                         <Label Text="{Binding Gamification.LevelTitle}"
                                                FontSize="16" FontAttributes="Bold"
-                                               TextColor="{StaticResource TextPrimary}" />
+                                               TextColor="{DynamicResource TextPrimary}" />
                                         <HorizontalStackLayout Spacing="5">
-                                            <Label FontSize="12" TextColor="{StaticResource TextMuted}">
+                                            <Label FontSize="12" TextColor="{DynamicResource TextMuted}">
                                                 <Label.FormattedText>
                                                     <FormattedString>
                                                         <Span Text="Lvl " />
@@ -415,17 +415,17 @@
                                                     </FormattedString>
                                                 </Label.FormattedText>
                                             </Label>
-                                            <Label Text="·" FontSize="12" TextColor="{StaticResource TextMuted}" />
+                                            <Label Text="·" FontSize="12" TextColor="{DynamicResource TextMuted}" />
                                             <Label Text="{Binding Gamification.ArbeitszeitGesamt}"
-                                                   FontSize="12" TextColor="{StaticResource TextMuted}" />
+                                                   FontSize="12" TextColor="{DynamicResource TextMuted}" />
                                         </HorizontalStackLayout>
                                     </VerticalStackLayout>
                                 </HorizontalStackLayout>
 
                                 <!-- Streak-Box -->
                                 <Border Grid.Column="1"
-                                        BackgroundColor="{StaticResource SurfaceColor}"
-                                        Stroke="{StaticResource BorderColor}"
+                                        BackgroundColor="{DynamicResource SurfaceColor}"
+                                        Stroke="{DynamicResource BorderColor}"
                                         StrokeThickness="1"
                                         StrokeShape="RoundRectangle 14"
                                         Padding="14,8"
@@ -438,11 +438,11 @@
                                                TextColor="{StaticResource WarningColor}"
                                                HorizontalOptions="Center" />
                                         <Label Text="Wochen" FontSize="10"
-                                               TextColor="{StaticResource TextMuted}"
+                                               TextColor="{DynamicResource TextMuted}"
                                                HorizontalOptions="Center" />
                                         <Label Text="{Binding Gamification.BesterStreakLabel}"
                                                FontSize="9"
-                                               TextColor="{StaticResource TextMuted}"
+                                               TextColor="{DynamicResource TextMuted}"
                                                HorizontalOptions="Center" />
                                     </VerticalStackLayout>
                                 </Border>
@@ -452,52 +452,52 @@
                             <VerticalStackLayout Spacing="5">
                                 <Grid ColumnDefinitions="*,Auto">
                                     <Label Grid.Column="0" FontSize="12"
-                                           TextColor="{StaticResource TextSecondary}">
+                                           TextColor="{DynamicResource TextSecondary}">
                                         <Label.FormattedText>
                                             <FormattedString>
                                                 <Span Text="{Binding Gamification.XPInLevel, StringFormat='{0:N0}'}"
                                                       TextColor="{Binding Gamification.ProgressColor}"
                                                       FontAttributes="Bold" FontSize="12" />
                                                 <Span Text=" / "
-                                                      TextColor="{StaticResource TextMuted}" FontSize="12" />
+                                                      TextColor="{DynamicResource TextMuted}" FontSize="12" />
                                                 <Span Text="{Binding Gamification.XPForNextLevel, StringFormat='{0:N0}'}"
-                                                      TextColor="{StaticResource TextMuted}" FontSize="12" />
+                                                      TextColor="{DynamicResource TextMuted}" FontSize="12" />
                                                 <Span Text=" XP"
-                                                      TextColor="{StaticResource TextMuted}" FontSize="12" />
+                                                      TextColor="{DynamicResource TextMuted}" FontSize="12" />
                                             </FormattedString>
                                         </Label.FormattedText>
                                     </Label>
                                     <Label Grid.Column="1"
                                            Text="{Binding Gamification.TotalXPLabel}"
-                                           FontSize="11" TextColor="{StaticResource TextMuted}"
+                                           FontSize="11" TextColor="{DynamicResource TextMuted}"
                                            VerticalOptions="Center" />
                                 </Grid>
                                 <ProgressBar x:Name="XpProgressBar"
                                              Progress="{Binding Gamification.LevelProgress}"
                                              ProgressColor="{Binding Gamification.ProgressColor}"
-                                             BackgroundColor="{StaticResource SurfaceColor}"
+                                             BackgroundColor="{DynamicResource SurfaceColor}"
                                              HeightRequest="10" />
                             </VerticalStackLayout>
 
                             <!-- Stats-Zeile -->
                             <Grid ColumnDefinitions="*,*,*" ColumnSpacing="8">
                                 <Border Grid.Column="0"
-                                        BackgroundColor="{StaticResource SurfaceColor}"
-                                        Stroke="{StaticResource BorderColor}" StrokeThickness="1"
+                                        BackgroundColor="{DynamicResource SurfaceColor}"
+                                        Stroke="{DynamicResource BorderColor}" StrokeThickness="1"
                                         StrokeShape="RoundRectangle 10" Padding="8,7">
                                     <VerticalStackLayout Spacing="2" HorizontalOptions="Center">
                                         <Label Text="{Binding Gamification.Arbeitstage}"
                                                FontSize="15" FontAttributes="Bold"
-                                               TextColor="{StaticResource TextPrimary}"
+                                               TextColor="{DynamicResource TextPrimary}"
                                                HorizontalOptions="Center" />
                                         <Label Text="Tage" FontSize="10"
-                                               TextColor="{StaticResource TextMuted}"
+                                               TextColor="{DynamicResource TextMuted}"
                                                HorizontalOptions="Center" />
                                     </VerticalStackLayout>
                                 </Border>
                                 <Border Grid.Column="1"
-                                        BackgroundColor="{StaticResource SurfaceColor}"
-                                        Stroke="{StaticResource BorderColor}" StrokeThickness="1"
+                                        BackgroundColor="{DynamicResource SurfaceColor}"
+                                        Stroke="{DynamicResource BorderColor}" StrokeThickness="1"
                                         StrokeShape="RoundRectangle 10" Padding="8,7">
                                     <VerticalStackLayout Spacing="2" HorizontalOptions="Center">
                                         <Label Text="{Binding Gamification.AchievementCount}"
@@ -505,13 +505,13 @@
                                                TextColor="{StaticResource WarningColor}"
                                                HorizontalOptions="Center" />
                                         <Label Text="Erfolge" FontSize="10"
-                                               TextColor="{StaticResource TextMuted}"
+                                               TextColor="{DynamicResource TextMuted}"
                                                HorizontalOptions="Center" />
                                     </VerticalStackLayout>
                                 </Border>
                                 <Border Grid.Column="2"
-                                        BackgroundColor="{StaticResource SurfaceColor}"
-                                        Stroke="{StaticResource BorderColor}" StrokeThickness="1"
+                                        BackgroundColor="{DynamicResource SurfaceColor}"
+                                        Stroke="{DynamicResource BorderColor}" StrokeThickness="1"
                                         StrokeShape="RoundRectangle 10" Padding="8,7">
                                     <VerticalStackLayout Spacing="2" HorizontalOptions="Center">
                                         <Label Text="{Binding Gamification.ArbeitszeitGesamt}"
@@ -519,7 +519,7 @@
                                                TextColor="{StaticResource CyanColor}"
                                                HorizontalOptions="Center" />
                                         <Label Text="Gesamt" FontSize="10"
-                                               TextColor="{StaticResource TextMuted}"
+                                               TextColor="{DynamicResource TextMuted}"
                                                HorizontalOptions="Center" />
                                     </VerticalStackLayout>
                                 </Border>
@@ -533,8 +533,8 @@
                                 </CollectionView.ItemsLayout>
                                 <CollectionView.ItemTemplate>
                                     <DataTemplate x:DataType="svc:Achievement">
-                                        <Border BackgroundColor="{StaticResource SurfaceColor}"
-                                                Stroke="{StaticResource BorderColor}"
+                                        <Border BackgroundColor="{DynamicResource SurfaceColor}"
+                                                Stroke="{DynamicResource BorderColor}"
                                                 StrokeThickness="1"
                                                 StrokeShape="RoundRectangle 10"
                                                 Padding="10,6"
@@ -544,7 +544,7 @@
                                                        FontSize="16" HorizontalOptions="Center" />
                                                 <Label Text="{Binding Titel}"
                                                        FontSize="8"
-                                                       TextColor="{StaticResource TextMuted}"
+                                                       TextColor="{DynamicResource TextMuted}"
                                                        HorizontalOptions="Center"
                                                        LineBreakMode="TailTruncation"
                                                        MaximumWidthRequest="60" />
@@ -570,7 +570,7 @@
                         <Label x:Name="LevelUpLabel"
                                Text="🎉 Level Up!"
                                FontSize="16" FontAttributes="Bold"
-                               TextColor="{StaticResource TextPrimary}"
+                               TextColor="{DynamicResource TextPrimary}"
                                HorizontalOptions="Center" />
                     </Border>
 
@@ -581,19 +581,19 @@
                             <Label Grid.Column="0"
                                    Text="Zuletzt"
                                    FontSize="17" FontAttributes="Bold"
-                                   TextColor="{StaticResource TextPrimary}" />
+                                   TextColor="{DynamicResource TextPrimary}" />
                             <Label Grid.Column="1"
                                    Text="{Binding TodayCount, StringFormat='Heute: {0}'}"
                                    FontSize="12"
-                                   TextColor="{StaticResource TextMuted}"
+                                   TextColor="{DynamicResource TextMuted}"
                                    VerticalOptions="Center" />
                         </Grid>
 
                         <CollectionView ItemsSource="{Binding RecentEntries}">
                             <CollectionView.ItemTemplate>
                                 <DataTemplate x:DataType="models:TimeEntry">
-                                    <Border BackgroundColor="{StaticResource CardColor}"
-                                            Stroke="{StaticResource BorderColor}"
+                                    <Border BackgroundColor="{DynamicResource CardColor}"
+                                            Stroke="{DynamicResource BorderColor}"
                                             StrokeThickness="1"
                                             StrokeShape="RoundRectangle 14"
                                             Margin="0,3"
@@ -606,18 +606,18 @@
                                             <VerticalStackLayout Grid.Column="1" Spacing="2">
                                                 <Label Text="{Binding Title}"
                                                        FontSize="13" FontAttributes="Bold"
-                                                       TextColor="{StaticResource TextPrimary}"
+                                                       TextColor="{DynamicResource TextPrimary}"
                                                        LineBreakMode="TailTruncation" />
                                                 <HorizontalStackLayout Spacing="8">
                                                     <Label Text="{Binding StartTimeDisplay}"
                                                            FontSize="11"
-                                                           TextColor="{StaticResource TextMuted}" />
+                                                           TextColor="{DynamicResource TextMuted}" />
                                                     <Label Text="·"
                                                            FontSize="11"
-                                                           TextColor="{StaticResource TextMuted}" />
+                                                           TextColor="{DynamicResource TextMuted}" />
                                                     <Label Text="{Binding TimeRangeDisplay}"
                                                            FontSize="11"
-                                                           TextColor="{StaticResource TextMuted}" />
+                                                           TextColor="{DynamicResource TextMuted}" />
                                                 </HorizontalStackLayout>
                                             </VerticalStackLayout>
                                             <Label Grid.Column="2"
@@ -633,11 +633,11 @@
                                 <VerticalStackLayout Spacing="8" HorizontalOptions="Center" Margin="0,20">
                                     <Label Text="▶"
                                            FontSize="28"
-                                           TextColor="{StaticResource TextMuted}"
+                                           TextColor="{DynamicResource TextMuted}"
                                            HorizontalOptions="Center" />
                                     <Label Text="Starte deinen ersten Timer"
                                            FontSize="14"
-                                           TextColor="{StaticResource TextMuted}"
+                                           TextColor="{DynamicResource TextMuted}"
                                            HorizontalOptions="Center" />
                                 </VerticalStackLayout>
                             </CollectionView.EmptyView>

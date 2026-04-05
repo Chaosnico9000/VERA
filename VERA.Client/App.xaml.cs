@@ -12,6 +12,7 @@ namespace VERA
         public App()
         {
             InitializeComponent();
+            MauiProgram.Services.GetRequiredService<ThemeService>().ApplySaved();
         }
 
         protected override Window CreateWindow(IActivationState? activationState)

@@ -1,11 +1,11 @@
-<?xml version="1.0" encoding="utf-8" ?>
+﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:vm="clr-namespace:VERA.ViewModels"
              xmlns:models="clr-namespace:VERA.Models"
              x:Class="VERA.Views.HistoryPage"
              x:DataType="vm:HistoryViewModel"
-             BackgroundColor="{StaticResource AppBackground}"
+             BackgroundColor="{DynamicResource AppBackground}"
              Title="Verlauf">
 
     <!-- Outer Grid: List + FAB overlay -->
@@ -19,11 +19,11 @@
                     <Label Text="Verlauf"
                            FontSize="28"
                            FontAttributes="Bold"
-                           TextColor="{StaticResource TextPrimary}" />
-                    <Label FontSize="13" TextColor="{StaticResource TextSecondary}">
+                           TextColor="{DynamicResource TextPrimary}" />
+                    <Label FontSize="13" TextColor="{DynamicResource TextSecondary}">
                         <Label.FormattedText>
                             <FormattedString>
-                                <Span Text="Diese Woche: " TextColor="{StaticResource TextMuted}" FontSize="13"/>
+                                <Span Text="Diese Woche: " TextColor="{DynamicResource TextMuted}" FontSize="13"/>
                                 <Span Text="{Binding WeekTotal}" TextColor="{StaticResource SuccessColor}" FontAttributes="Bold" FontSize="13"/>
                             </FormattedString>
                         </Label.FormattedText>
@@ -44,7 +44,7 @@
                                    Text="{Binding DayLabel}"
                                    FontSize="13"
                                    FontAttributes="Bold"
-                                   TextColor="{StaticResource TextSecondary}" />
+                                   TextColor="{DynamicResource TextSecondary}" />
                             <Label Grid.Column="1"
                                    Text="{Binding DeltaText}"
                                    FontSize="12"
@@ -62,8 +62,8 @@
 
                 <CollectionView.ItemTemplate>
                     <DataTemplate x:DataType="models:TimeEntry">
-                        <Border BackgroundColor="{StaticResource CardColor}"
-                                Stroke="{StaticResource BorderColor}"
+                        <Border BackgroundColor="{DynamicResource CardColor}"
+                                Stroke="{DynamicResource BorderColor}"
                                 StrokeThickness="1"
                                 StrokeShape="RoundRectangle 14"
                                 Margin="0,3"
@@ -96,14 +96,14 @@
                                     <Label Text="{Binding Title}"
                                            FontSize="15"
                                            FontAttributes="Bold"
-                                           TextColor="{StaticResource TextPrimary}"
+                                           TextColor="{DynamicResource TextPrimary}"
                                            LineBreakMode="TailTruncation" />
                                     <Label Text="{Binding TimeRangeDisplay}"
                                            FontSize="12"
-                                           TextColor="{StaticResource TextMuted}"
+                                           TextColor="{DynamicResource TextMuted}"
                                            IsVisible="{Binding HasTypeBadge, Converter={StaticResource InverseBoolConverter}}" />
                                     <Border IsVisible="{Binding HasTypeBadge}"
-                                            BackgroundColor="{StaticResource SurfaceColor}"
+                                            BackgroundColor="{DynamicResource SurfaceColor}"
                                             Stroke="Transparent"
                                             StrokeShape="RoundRectangle 6"
                                             Padding="7,2"
@@ -111,7 +111,7 @@
                                         <Label Text="{Binding TypeBadge}"
                                                FontSize="11"
                                                FontAttributes="Bold"
-                                               TextColor="{StaticResource TextSecondary}" />
+                                               TextColor="{DynamicResource TextSecondary}" />
                                     </Border>
                                 </VerticalStackLayout>
 
@@ -129,8 +129,8 @@
 
                                     <!-- Bearbeiten-Button -->
                                     <Border Grid.Row="1" Grid.Column="0"
-                                            BackgroundColor="{StaticResource SurfaceColor}"
-                                            Stroke="{StaticResource BorderColor}"
+                                            BackgroundColor="{DynamicResource SurfaceColor}"
+                                            Stroke="{DynamicResource BorderColor}"
                                             StrokeThickness="1"
                                             StrokeShape="RoundRectangle 8">
                                         <Border.GestureRecognizers>
@@ -147,8 +147,8 @@
 
                                     <!-- Löschen-Button -->
                                     <Border Grid.Row="1" Grid.Column="1"
-                                            BackgroundColor="{StaticResource SurfaceColor}"
-                                            Stroke="{StaticResource BorderColor}"
+                                            BackgroundColor="{DynamicResource SurfaceColor}"
+                                            Stroke="{DynamicResource BorderColor}"
                                             StrokeThickness="1"
                                             StrokeShape="RoundRectangle 8">
                                         <Border.GestureRecognizers>
@@ -175,7 +175,7 @@
                         <Label Text="📋" FontSize="48" HorizontalOptions="Center" />
                         <Label Text="Noch keine Eintr&#228;ge"
                                FontSize="16"
-                               TextColor="{StaticResource TextMuted}"
+                               TextColor="{DynamicResource TextMuted}"
                                HorizontalOptions="Center" />
                     </VerticalStackLayout>
                 </CollectionView.EmptyView>
@@ -201,9 +201,9 @@
             </Border.GestureRecognizers>
             <HorizontalStackLayout HorizontalOptions="Center" VerticalOptions="Center" Spacing="8">
                 <Label Text="+" FontSize="22" FontAttributes="Bold"
-                       TextColor="{StaticResource TextPrimary}" VerticalOptions="Center" />
+                       TextColor="{DynamicResource TextPrimary}" VerticalOptions="Center" />
                 <Label Text="Neuer Eintrag" FontSize="15" FontAttributes="Bold"
-                       TextColor="{StaticResource TextPrimary}" VerticalOptions="Center" />
+                       TextColor="{DynamicResource TextPrimary}" VerticalOptions="Center" />
             </HorizontalStackLayout>
         </Border>
 

@@ -64,7 +64,6 @@ namespace VERA
 
             var app = builder.Build();
             Services = app.Services;
-            Services.GetRequiredService<ThemeService>().ApplySaved();
             return app;
         }
     }

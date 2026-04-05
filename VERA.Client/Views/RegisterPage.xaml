@@ -1,8 +1,8 @@
-<?xml version="1.0" encoding="utf-8" ?>
+﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="VERA.Views.RegisterPage"
-             BackgroundColor="{StaticResource AppBackground}"
+             BackgroundColor="{DynamicResource AppBackground}"
              Shell.NavBarIsVisible="False"
              NavigationPage.HasNavigationBar="False">
 
@@ -15,7 +15,7 @@
 
                 <!-- Logo -->
                 <VerticalStackLayout HorizontalOptions="Center" Spacing="8" Margin="0,0,0,36">
-                    <Border BackgroundColor="{StaticResource CardColor}"
+                    <Border BackgroundColor="{DynamicResource CardColor}"
                             Stroke="{StaticResource Primary}"
                             StrokeThickness="2"
                             StrokeShape="RoundRectangle 28"
@@ -26,10 +26,10 @@
                                HorizontalOptions="Center" VerticalOptions="Center" />
                     </Border>
                     <Label Text="VERA" FontSize="28" FontAttributes="Bold"
-                           TextColor="{StaticResource TextPrimary}"
+                           TextColor="{DynamicResource TextPrimary}"
                            HorizontalOptions="Center" CharacterSpacing="4" />
                     <Label Text="Account erstellen"
-                           FontSize="13" TextColor="{StaticResource TextMuted}"
+                           FontSize="13" TextColor="{DynamicResource TextMuted}"
                            HorizontalOptions="Center" />
                 </VerticalStackLayout>
 
@@ -40,15 +40,15 @@
                     <VerticalStackLayout Spacing="6">
                         <Label Text="SERVER-URL"
                                FontSize="11" FontAttributes="Bold"
-                               TextColor="{StaticResource TextMuted}"
+                               TextColor="{DynamicResource TextMuted}"
                                CharacterSpacing="1.2" />
-                        <Border BackgroundColor="{StaticResource CardColor}"
-                                Stroke="{StaticResource BorderColor}" StrokeThickness="1"
+                        <Border BackgroundColor="{DynamicResource CardColor}"
+                                Stroke="{DynamicResource BorderColor}" StrokeThickness="1"
                                 StrokeShape="RoundRectangle 14" Padding="16,0">
                             <Entry x:Name="ServerUrlEntry"
                                    Placeholder="https://dein-server:8080"
-                                   PlaceholderColor="{StaticResource TextMuted}"
-                                   TextColor="{StaticResource TextPrimary}"
+                                   PlaceholderColor="{DynamicResource TextMuted}"
+                                   TextColor="{DynamicResource TextPrimary}"
                                    FontSize="14"
                                    HeightRequest="50"
                                    BackgroundColor="Transparent"
@@ -61,15 +61,15 @@
 
                     <!-- Verbindungsstatus -->
                     <Border x:Name="StatusBorder"
-                            BackgroundColor="{StaticResource SurfaceColor}"
-                            Stroke="{StaticResource BorderColor}" StrokeThickness="1"
+                            BackgroundColor="{DynamicResource SurfaceColor}"
+                            Stroke="{DynamicResource BorderColor}" StrokeThickness="1"
                             StrokeShape="RoundRectangle 12" Padding="14,10">
                         <HorizontalStackLayout Spacing="8" HorizontalOptions="Center">
                             <Label x:Name="StatusDot" Text="●" FontSize="11"
-                                   TextColor="{StaticResource TextMuted}"
+                                   TextColor="{DynamicResource TextMuted}"
                                    VerticalOptions="Center" />
                             <Label x:Name="StatusLabel" Text="Bitte Server-URL eingeben"
-                                   FontSize="13" TextColor="{StaticResource TextMuted}"
+                                   FontSize="13" TextColor="{DynamicResource TextMuted}"
                                    VerticalOptions="Center" />
                         </HorizontalStackLayout>
                     </Border>
@@ -78,15 +78,15 @@
                     <VerticalStackLayout Spacing="6">
                         <Label Text="BENUTZERNAME"
                                FontSize="11" FontAttributes="Bold"
-                               TextColor="{StaticResource TextMuted}"
+                               TextColor="{DynamicResource TextMuted}"
                                CharacterSpacing="1.2" />
-                        <Border BackgroundColor="{StaticResource CardColor}"
-                                Stroke="{StaticResource BorderColor}" StrokeThickness="1"
+                        <Border BackgroundColor="{DynamicResource CardColor}"
+                                Stroke="{DynamicResource BorderColor}" StrokeThickness="1"
                                 StrokeShape="RoundRectangle 14" Padding="16,0">
                             <Entry x:Name="UsernameEntry"
                                    Placeholder="Dein Name"
-                                   PlaceholderColor="{StaticResource TextMuted}"
-                                   TextColor="{StaticResource TextPrimary}"
+                                   PlaceholderColor="{DynamicResource TextMuted}"
+                                   TextColor="{DynamicResource TextPrimary}"
                                    FontSize="15"
                                    HeightRequest="50"
                                    BackgroundColor="Transparent"
@@ -100,15 +100,15 @@
                     <VerticalStackLayout Spacing="6">
                         <Label Text="PASSWORT"
                                FontSize="11" FontAttributes="Bold"
-                               TextColor="{StaticResource TextMuted}"
+                               TextColor="{DynamicResource TextMuted}"
                                CharacterSpacing="1.2" />
-                        <Border BackgroundColor="{StaticResource CardColor}"
-                                Stroke="{StaticResource BorderColor}" StrokeThickness="1"
+                        <Border BackgroundColor="{DynamicResource CardColor}"
+                                Stroke="{DynamicResource BorderColor}" StrokeThickness="1"
                                 StrokeShape="RoundRectangle 14" Padding="16,0">
                             <Entry x:Name="PasswordEntry"
                                    Placeholder="Mind. 8 Zeichen"
-                                   PlaceholderColor="{StaticResource TextMuted}"
-                                   TextColor="{StaticResource TextPrimary}"
+                                   PlaceholderColor="{DynamicResource TextMuted}"
+                                   TextColor="{DynamicResource TextPrimary}"
                                    FontSize="15"
                                    HeightRequest="50"
                                    BackgroundColor="Transparent"
@@ -120,27 +120,27 @@
                         <ProgressBar x:Name="StrengthBar"
                                      Progress="0"
                                      ProgressColor="{StaticResource Accent}"
-                                     BackgroundColor="{StaticResource SurfaceColor}"
+                                     BackgroundColor="{DynamicResource SurfaceColor}"
                                      HeightRequest="4" />
                         <Label x:Name="StrengthLabel"
                                Text=""
                                FontSize="11"
-                               TextColor="{StaticResource TextMuted}" />
+                               TextColor="{DynamicResource TextMuted}" />
                     </VerticalStackLayout>
 
                     <!-- Passwort bestätigen -->
                     <VerticalStackLayout Spacing="6">
                         <Label Text="PASSWORT BESTÄTIGEN"
                                FontSize="11" FontAttributes="Bold"
-                               TextColor="{StaticResource TextMuted}"
+                               TextColor="{DynamicResource TextMuted}"
                                CharacterSpacing="1.2" />
-                        <Border BackgroundColor="{StaticResource CardColor}"
-                                Stroke="{StaticResource BorderColor}" StrokeThickness="1"
+                        <Border BackgroundColor="{DynamicResource CardColor}"
+                                Stroke="{DynamicResource BorderColor}" StrokeThickness="1"
                                 StrokeShape="RoundRectangle 14" Padding="16,0">
                             <Entry x:Name="ConfirmEntry"
                                    Placeholder="Passwort wiederholen"
-                                   PlaceholderColor="{StaticResource TextMuted}"
-                                   TextColor="{StaticResource TextPrimary}"
+                                   PlaceholderColor="{DynamicResource TextMuted}"
+                                   TextColor="{DynamicResource TextPrimary}"
                                    FontSize="15"
                                    HeightRequest="50"
                                    BackgroundColor="Transparent"
@@ -164,7 +164,7 @@
                             Text="🔐  Account erstellen"
                             Clicked="OnRegisterClicked"
                             BackgroundColor="{StaticResource Primary}"
-                            TextColor="{StaticResource TextPrimary}"
+                            TextColor="{DynamicResource TextPrimary}"
                             FontSize="16" FontAttributes="Bold"
                             HeightRequest="54" CornerRadius="16"
                             HorizontalOptions="Fill"
@@ -173,7 +173,7 @@
                     <!-- Info -->
                     <Label Text="Dein Account wird auf dem verbundenen Server gespeichert."
                            FontSize="11"
-                           TextColor="{StaticResource TextMuted}"
+                           TextColor="{DynamicResource TextMuted}"
                            HorizontalTextAlignment="Center"
                            Margin="0,8,0,32" />
 

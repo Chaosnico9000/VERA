@@ -11,7 +11,22 @@ dieses Projekt hält sich an [Semantic Versioning](https://semver.org/lang/de/).
 
 ---
 
-## [1.6.0] - 2026-04-06
+## [1.7.0] - 2026-04-07
+
+### Added
+- **„Eingeloggt bleiben"-Checkbox** auf der Login-Seite — standardmäßig aktiv; wenn deaktiviert, wird der Refresh-Token nach dem Login nicht persistiert, sodass beim nächsten App-Start die Login-Seite wieder erscheint.
+
+### Fixed
+- **Theme-Wechsel funktioniert jetzt korrekt** — alle XAML-Seiten nutzen `{DynamicResource}` statt `{StaticResource}` für theme-veränderliche Farben (AppBackground, CardColor, TextPrimary usw.), sodass Farbänderungen live übernommen werden.
+- **`ThemeService.ApplySaved()` hatte keine Wirkung** — der Aufruf wurde in `App.xaml.cs` verschoben, wo `Application.Current` bereits gesetzt ist (zuvor in `MauiProgram.CreateMauiApp()` aufgerufen, wo `Application.Current` noch `null` ist).
+- **`??` Emojis in Einstellungen** — Theme-Buttons (Dunkel/Hell/System) und Export-Button zeigten fehlerhafte Zeichen; ersetzt durch korrekte Unicode-Entities (🌙 ☀ ⚙ 📤).
+
+### Changed
+- **Logo auf Hauptseite vergrößert** — `HeightRequest` von 52 auf 64, `WidthRequest="160"`, `Aspect="AspectFill"` mit Clip-Rechteck; der weiße Rand des Logo-Assets wird abgeschnitten.
+
+---
+
+## [1.6.0]
 
 ### Added
 - **Dark/Light/System Mode Toggle** in Einstellungen — Theme wird persistent gespeichert und beim Start wiederhergestellt

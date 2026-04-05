@@ -5,7 +5,7 @@
              xmlns:models="clr-namespace:VERA.Models"
              x:Class="VERA.MainPage"
              x:DataType="vm:DashboardViewModel"
-             BackgroundColor="{StaticResource AppBackground}"
+             BackgroundColor="{DynamicResource AppBackground}"
              Title="VERA">
 
     <ScrollView>
@@ -19,27 +19,32 @@
                 </Grid.ColumnDefinitions>
                 <Image Grid.Column="0"
                        Source="vera_logo.png"
-                       HeightRequest="52"
+                       HeightRequest="64"
+                       WidthRequest="160"
                        HorizontalOptions="Start"
-                       Aspect="AspectFit"
-                       VerticalOptions="Center" />
+                       Aspect="AspectFill"
+                       VerticalOptions="Center">
+                    <Image.Clip>
+                        <RectangleGeometry Rect="0,0,160,64" />
+                    </Image.Clip>
+                </Image>
                 <Border Grid.Column="1"
-                        BackgroundColor="{StaticResource CardColor}"
-                        Stroke="{StaticResource BorderColor}"
+                        BackgroundColor="{DynamicResource CardColor}"
+                        Stroke="{DynamicResource BorderColor}"
                         StrokeThickness="1"
                         StrokeShape="RoundRectangle 12"
                         Padding="12,8"
                         VerticalOptions="Center">
                     <Label x:Name="DateLabel"
                            FontSize="12"
-                           TextColor="{StaticResource TextSecondary}" />
+                           TextColor="{DynamicResource TextSecondary}" />
                 </Border>
             </Grid>
 
             <!-- Timer-Karte -->
             <Border Margin="16,0"
-                    BackgroundColor="{StaticResource CardColor}"
-                    Stroke="{StaticResource BorderColor}"
+                    BackgroundColor="{DynamicResource CardColor}"
+                    Stroke="{DynamicResource BorderColor}"
                     StrokeThickness="1"
                     StrokeShape="RoundRectangle 20">
                 <VerticalStackLayout Padding="24,28" Spacing="18">
@@ -48,7 +53,7 @@
                     <Label Text="{Binding TimerDisplay}"
                            FontSize="60"
                            FontAttributes="Bold"
-                           TextColor="{StaticResource TextPrimary}"
+                           TextColor="{DynamicResource TextPrimary}"
                            HorizontalOptions="Center"
                            FontFamily="OpenSansRegular"
                            CharacterSpacing="2" />
@@ -66,15 +71,15 @@
                     </HorizontalStackLayout>
 
                     <!-- Aufgaben-Eingabe (nur sichtbar wenn gestoppt) -->
-                    <Border BackgroundColor="{StaticResource SurfaceColor}"
-                            Stroke="{StaticResource BorderColor}"
+                    <Border BackgroundColor="{DynamicResource SurfaceColor}"
+                            Stroke="{DynamicResource BorderColor}"
                             StrokeThickness="1"
                             StrokeShape="RoundRectangle 12"
                             IsVisible="{Binding IsNotRunning}">
                         <Entry Text="{Binding TaskTitle}"
                                Placeholder="Aufgabe beschreiben..."
-                               PlaceholderColor="{StaticResource TextMuted}"
-                               TextColor="{StaticResource TextPrimary}"
+                               PlaceholderColor="{DynamicResource TextMuted}"
+                               TextColor="{DynamicResource TextPrimary}"
                                BackgroundColor="Transparent"
                                Margin="16,0"
                                FontSize="15"
@@ -84,7 +89,7 @@
                     <!-- Aufgabenname (sichtbar wenn läuft) -->
                     <Label Text="{Binding TaskTitle}"
                            FontSize="15"
-                           TextColor="{StaticResource TextSecondary}"
+                           TextColor="{DynamicResource TextSecondary}"
                            HorizontalOptions="Center"
                            IsVisible="{Binding IsRunning}"
                            HorizontalTextAlignment="Center"
@@ -95,7 +100,7 @@
                     <Button Text="{Binding ButtonLabel}"
                             Command="{Binding ToggleTimerCommand}"
                             BackgroundColor="{Binding ButtonColor}"
-                            TextColor="{StaticResource TextPrimary}"
+                            TextColor="{DynamicResource TextPrimary}"
                             FontSize="17"
                             FontAttributes="Bold"
                             HeightRequest="54"
@@ -112,13 +117,13 @@
                 </Grid.ColumnDefinitions>
 
                 <Border Grid.Column="0"
-                        BackgroundColor="{StaticResource CardColor}"
-                        Stroke="{StaticResource BorderColor}"
+                        BackgroundColor="{DynamicResource CardColor}"
+                        Stroke="{DynamicResource BorderColor}"
                         StrokeThickness="1"
                         StrokeShape="RoundRectangle 16"
                         Padding="16,14">
                     <VerticalStackLayout Spacing="4">
-                        <Label Text="Heute gesamt" FontSize="12" TextColor="{StaticResource TextSecondary}" />
+                        <Label Text="Heute gesamt" FontSize="12" TextColor="{DynamicResource TextSecondary}" />
                         <Label Text="{Binding TodayTotal}"
                                FontSize="22"
                                FontAttributes="Bold"
@@ -127,13 +132,13 @@
                 </Border>
 
                 <Border Grid.Column="1"
-                        BackgroundColor="{StaticResource CardColor}"
-                        Stroke="{StaticResource BorderColor}"
+                        BackgroundColor="{DynamicResource CardColor}"
+                        Stroke="{DynamicResource BorderColor}"
                         StrokeThickness="1"
                         StrokeShape="RoundRectangle 16"
                         Padding="16,14">
                     <VerticalStackLayout Spacing="4">
-                        <Label Text="Einträge heute" FontSize="12" TextColor="{StaticResource TextSecondary}" />
+                        <Label Text="Einträge heute" FontSize="12" TextColor="{DynamicResource TextSecondary}" />
                         <Label Text="{Binding TodayCount}"
                                FontSize="22"
                                FontAttributes="Bold"
@@ -147,14 +152,14 @@
                 <Label Text="Zuletzt"
                        FontSize="18"
                        FontAttributes="Bold"
-                       TextColor="{StaticResource TextPrimary}"
+                       TextColor="{DynamicResource TextPrimary}"
                        Margin="4,8,0,4" />
 
                 <CollectionView ItemsSource="{Binding RecentEntries}">
                     <CollectionView.ItemTemplate>
                         <DataTemplate x:DataType="models:TimeEntry">
-                            <Border BackgroundColor="{StaticResource CardColor}"
-                                    Stroke="{StaticResource BorderColor}"
+                            <Border BackgroundColor="{DynamicResource CardColor}"
+                                    Stroke="{DynamicResource BorderColor}"
                                     StrokeThickness="1"
                                     StrokeShape="RoundRectangle 14"
                                     Margin="0,4"
@@ -168,11 +173,11 @@
                                         <Label Text="{Binding Title}"
                                                FontSize="15"
                                                FontAttributes="Bold"
-                                               TextColor="{StaticResource TextPrimary}"
+                                               TextColor="{DynamicResource TextPrimary}"
                                                LineBreakMode="TailTruncation" />
                                         <Label Text="{Binding StartTimeDisplay}"
                                                FontSize="12"
-                                               TextColor="{StaticResource TextMuted}" />
+                                               TextColor="{DynamicResource TextMuted}" />
                                     </VerticalStackLayout>
                                     <Label Grid.Column="2"
                                            Text="{Binding DurationDisplay}"
@@ -187,7 +192,7 @@
                     <CollectionView.EmptyView>
                         <Label Text="Noch keine Aufgaben – starte deinen ersten Timer!"
                                FontSize="14"
-                               TextColor="{StaticResource TextMuted}"
+                               TextColor="{DynamicResource TextMuted}"
                                HorizontalOptions="Center"
                                Margin="0,16" />
                     </CollectionView.EmptyView>

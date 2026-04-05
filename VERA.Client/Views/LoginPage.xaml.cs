@@ -102,6 +102,8 @@ namespace VERA.Views
             {
                 case LoginResult.Success:
                     PasswordEntry.Text = string.Empty;
+                    if (!RememberMeCheckBox.IsChecked)
+                        _api.ForgetSession();
                     Application.Current!.Windows[0].Page = new AppShell();
                     break;
                 case LoginResult.AccountLocked:

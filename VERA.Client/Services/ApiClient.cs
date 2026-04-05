@@ -253,5 +253,8 @@ namespace VERA.Services
                 catch { /* App noch nicht bereit */ }
             });
         }
+
+        // Löscht nur den gespeicherten Refresh-Token, ohne die aktive Sitzung zu beenden
+        public void ForgetSession() => Preferences.Default.Remove(PrefKeyRefresh);
     }
 }
